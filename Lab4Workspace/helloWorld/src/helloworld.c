@@ -59,6 +59,7 @@ int alienBulletCounter = 0;		//Contains the count until the random time an alien
 int spaceshipCounter = 0;		//Counts to the next time a spaceship will appear
 int randBulletTime = 0;
 int randSpaceshipTime = 0;
+int alienUpdateTime = 60;		//The time that will increase as more and more aliens are killed
 bool started = false;
 
 XGpio gpLED;  // This is a handle for the LED GPIO block.
@@ -88,9 +89,11 @@ void timer_interrupt_handler() {
 	spaceshipCounter++;
 	updateSpaceshipCounter++;
 	// The FIT counter that will update the aliens every half second
-	if(fitCounter >= 50) {
-		if(started)
+	if(fitCounter >= alienUpdateTime) {
+		if(started){
 			updateAliens();
+		}
+		alienUpdateTime = getAlienUpdateTime();
 		fitCounter = 0;
 	}
 	// The screen will update every 5ms
@@ -116,6 +119,13 @@ void timer_interrupt_handler() {
 		}
 		randSpaceshipTime = (rand()%25)*100 + 1000;
 		spaceshipCounter = 0;
+	}
+	if(spaceshipCounter == 50){
+		//If the score has been on for 1/2 second, erase it
+		if(getSpaceship().isFree){
+			//-1 means no aliens, true means the spaceship, true means erase
+			incScore(-1, true, true);
+		}
 	}
 	//Will move the spaceship across the screen
 	if(updateSpaceshipCounter >= 10){

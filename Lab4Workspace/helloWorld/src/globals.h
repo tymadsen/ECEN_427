@@ -9,7 +9,6 @@
 #define GLOBALS_H_
 #include <stdio.h>
 #include <stdlib.h>
-//#include "time.h"
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -106,6 +105,7 @@ aBullet getAlienBullet3();
 void setAlienBullet3(point_t point, unsigned short type, bool isFree, short counter);
 bool getAlienRight();
 bool getAlienDown();
+int getAlienUpdateTime();
 
 uint32_t getBunkerErosion();
 void setBunkerErosion(int bunker, int block);
@@ -136,7 +136,7 @@ void setLives(bool increment);
 int getLives();
 bool isGameOver();
 
-void incScore(int alienNum, bool spaceshipHit);
+void incScore(int alienNum, bool spaceshipHit, bool erase);
 int getScore();
 
 #endif /* GLOBALS_H_ */

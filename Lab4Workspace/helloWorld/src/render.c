@@ -42,7 +42,7 @@ void initScreen() {
 	// Write the score label on top of the frame
 	drawScoreLabel();
 	// Draw score
-	drawScore();
+	drawScore(0,0);
 	// Draw the lives label
 	drawLivesLabel();
 	// Draw the lives
@@ -55,7 +55,7 @@ void initScreen() {
 	activeFramePointer = background;
 	// Write the score and label in background
 	drawScoreLabel();
-	drawScore();
+	drawScore(0,0);
 	// Draw the lives and label in background
 	drawLivesLabel();
 	drawLives();
@@ -137,41 +137,48 @@ void drawScore(int index, int number) {
 	score_pos.y = SCOREY;
 	//Get the bitmap for the number we are going to show
 	const uint32_t* bitmap = getNumberBitmap(number);
-	drawBitmap(bitmap, score_pos, NUMBERWIDTH, LABELHEIGHT, true, GREEN, false);
+	//Draw it in the background first.
+	activeFramePointer = background;
+	drawBitmap(bitmap, score_pos, NUMBERWIDTH, NUMBERHEIGHT, true, GREEN, false);
+	//Now draw it in the foreground
+	activeFramePointer = foreground;
+	drawBitmap(bitmap, score_pos, NUMBERWIDTH, NUMBERHEIGHT, true, GREEN, false);
 }
 
-void printSpaceshipValue(int spaceshipValue){
+void printSpaceshipValue(int spaceshipValue, bool erase){
+//	xil_printf("We are printing the value: %d\r\n", spaceshipValue);
 	point_t position = getSpaceship().pos;
-	int tempVal = 0;
 	int index = spaceshipValue;
 	const uint32_t* bitmap;
 	//Draw the 100s digit if our value is over 99
-	if(spaceshipValue > 99){
-		bitmap = getNumberBitmap(tempVal/100);
-		drawBitmap(bitmap, position, NUMBERWIDTH, LABELHEIGHT, false, RED, false);
-		tempVal = spaceshipValue%100;
+	if(index > 99){
+		bitmap = getNumberBitmap(index/100);
+//		xil_printf("We are printing %d at %d, %d\r\n", index/100, position.x, position.y);
+		drawBitmap(bitmap, position, NUMBERWIDTH, NUMBERHEIGHT, true, RED, erase);
+		index = index%100;
 		position.x += NUMBERWIDTH + NUMBERSPACING;
 	}
 	//Draw the 10s digit
-	bitmap = getNumberBitmap(tempVal/10);
-	drawBitmap(bitmap, position, NUMBERWIDTH, LABELHEIGHT, false, RED, false);
+	bitmap = getNumberBitmap(index/10);
+//	xil_printf("We are printing %d at %d, %d\r\n", index/10, position.x, position.y);
+	drawBitmap(bitmap, position, NUMBERWIDTH, NUMBERHEIGHT, true, RED, erase);
 	position.x += NUMBERSPACING + NUMBERWIDTH;
 	//Draw the 1s digit which will always be 0
-	drawBitmap(number_0_5x5, position, NUMBERWIDTH, LABELHEIGHT, false, RED, false);
+	drawBitmap(number_0_5x5, position, NUMBERWIDTH, NUMBERHEIGHT, true, RED, erase);
 	return;
 }
 
 const uint32_t* getNumberBitmap(int number){
 	if(number == 0) { return number_0_5x5;	}
-	else if(number == 1) {	return number_1_5x5;	}
-	else if(number == 2) {	return number_2_5x5;	}
-	else if(number == 3) {	return number_3_5x5;	}
-	else if(number == 4) {	return number_4_5x5;	}
-	else if(number == 5) {	return number_5_5x5;	}
-	else if(number == 6) {	return number_6_5x5;	}
-	else if(number == 7) { 	return number_7_5x5;	}
-	else if(number == 8) { 	return number_8_5x5;	}
-	else {	return number_9_5x5;	}
+	else if(number == 1) {return number_1_5x5;	}
+	else if(number == 2) {return number_2_5x5;	}
+	else if(number == 3) {return number_3_5x5;	}
+	else if(number == 4) {return number_4_5x5;	}
+	else if(number == 5) {return number_5_5x5;	}
+	else if(number == 6) {return number_6_5x5;	}
+	else if(number == 7) {return number_7_5x5;	}
+	else if(number == 8) {return number_8_5x5;	}
+	else {return number_9_5x5;	}
 }
 
 void drawLivesLabel() { 
@@ -423,18 +430,17 @@ void drawBitmap(const uint32_t* bitmap, point_t pos, int width, int height, bool
 				}
 			}
 			else {//paint the background color
-				int new_color = background[(pos.y*SCREENWIDTH + pos.x)];
+				bool use_new_color = (background != activeFramePointer);
 				int index = (pos.y*SCREENWIDTH + pos.x);
 				if(!double_size)
-					activeFramePointer[index] = (background != activeFramePointer) ? new_color : BLACK;
+					activeFramePointer[index] = use_new_color ? background[index] : BLACK;
 				else{
-					new_color = (background != activeFramePointer) ? background[(sRow+pos.y)*SCREENWIDTH + (sCol+pos.x)] : BLACK;
 					index = (sRow+pos.y)*SCREENWIDTH + (sCol+pos.x);
-					activeFramePointer[index] = new_color;
-					activeFramePointer[index+1] = new_color;
+					activeFramePointer[index] = use_new_color ? background[index] : BLACK;
+					activeFramePointer[index+1] = use_new_color ? background[index+1] : BLACK;
 					index += SCREENWIDTH;
-					activeFramePointer[index] = new_color;
-					activeFramePointer[index+1] = new_color;
+					activeFramePointer[index] = use_new_color ? background[index] : BLACK;
+					activeFramePointer[index+1] = use_new_color ? background[index+1] : BLACK;
 				}
 			}
 		}

@@ -29,8 +29,8 @@ aBullet aBullet3;
 bool alienRight = true;
 bool alienDown = false;
 bool alienOnLeftScreen = false;
-int alien_block_width = 4 * 10 + 11 * 12 * 2;
-int alienSpacing = 12 * 2 + 4;
+int alien_block_width = 4 * 10 + 11 * alien_width * 2;
+int alienSpacing = alien_width * 2 + alien_x_spacing*2;
 int lives = 3;
 int score = 0;
 
@@ -42,12 +42,11 @@ uint32_t bunkerStates[] = { 0, 0, 0, 0 };
 //uint32_t bunker1State = 0;
 //uint32_t bunker2State = 0;
 //uint32_t bunker3State = 0;
-bool alienDeaths[55] = { false, false, false, false, false, false, false,
-		false, false, false, false, false, false, false, false, false, false,
-		false, false, false, false, false, false, false, false, false, false,
-		false, false, false, false, false, false, false, false, false, false,
-		false, false, false, false, false, false, false, false, false, false,
-		false, false, false, false, false, false, false, false };
+bool alienDeaths[55] = { false, false, false, false, false, false, false, false, false, false, false,
+						false, false, false, false, false, false, false, false, false, false, false,
+						false, false, false, false, false, false, false, false, false, false, false,
+						false, false, false, false, false, false, false, false, false, false, false,
+						false, false, false, false, false, false, false, false, false, false, false };
 
 void setSpaceship(int direction) {
 	if (spaceship.isFree) {
@@ -85,7 +84,8 @@ void updateSpaceship() {
 			if (spaceship.pos.x <= (0)) {
 				offscreen = true;
 			}
-		} else {
+		}
+		else {
 			//			xil_printf("The direction is right\r\n");
 			spaceship.pos.x += pixel_adjustment;
 			if (spaceship.pos.x >= screen_width - spaceship_width * 2) {
@@ -173,8 +173,7 @@ void setAlienBlockPosition(point_t point) {
 aBullet getAlienBullet0() {
 	return aBullet0;
 }
-void setAlienBullet0(point_t point, unsigned short type, bool isFree,
-		short counter) {
+void setAlienBullet0(point_t point, unsigned short type, bool isFree,short counter) {
 	aBullet0.pos = point;
 	aBullet0.type = type;
 	aBullet0.isFree = isFree;
@@ -183,8 +182,7 @@ void setAlienBullet0(point_t point, unsigned short type, bool isFree,
 aBullet getAlienBullet1() {
 	return aBullet1;
 }
-void setAlienBullet1(point_t point, unsigned short type, bool isFree,
-		short counter) {
+void setAlienBullet1(point_t point, unsigned short type, bool isFree, short counter) {
 	aBullet1.pos = point;
 	aBullet1.type = type;
 	aBullet1.isFree = isFree;
@@ -193,8 +191,7 @@ void setAlienBullet1(point_t point, unsigned short type, bool isFree,
 aBullet getAlienBullet2() {
 	return aBullet2;
 }
-void setAlienBullet2(point_t point, unsigned short type, bool isFree,
-		short counter) {
+void setAlienBullet2(point_t point, unsigned short type, bool isFree, short counter) {
 	aBullet2.pos = point;
 	aBullet2.type = type;
 	aBullet2.isFree = isFree;
@@ -203,8 +200,7 @@ void setAlienBullet2(point_t point, unsigned short type, bool isFree,
 aBullet getAlienBullet3() {
 	return aBullet3;
 }
-void setAlienBullet3(point_t point, unsigned short type, bool isFree,
-		short counter) {
+void setAlienBullet3(point_t point, unsigned short type, bool isFree, short counter) {
 	aBullet3.pos = point;
 	aBullet3.type = type;
 	aBullet3.isFree = isFree;
@@ -220,10 +216,10 @@ void fireAlienBullet() {
 	//Determine which alien it is coming from
 	while (emptyCol) {
 		idx = col + 44;
-		if (!alienDeaths[idx] || !alienDeaths[idx -= 11] || !alienDeaths[idx
-				-= 11] || !alienDeaths[idx -= 11] || !alienDeaths[idx -= 11]) {
+		if (!alienDeaths[idx] || !alienDeaths[idx -= 11] || !alienDeaths[idx-= 11] || !alienDeaths[idx -= 11] || !alienDeaths[idx -= 11]) {
 			emptyCol = false;
-		} else {
+		}
+		else {
 			col = rand() % 11;
 		}
 	}
@@ -242,10 +238,8 @@ void fireAlienBullet() {
 		row = 4;
 	}
 	//Calculate the coordinates based on the row and col
-	temp.x = alienBlockPosition.x + (col * (2 * alien_width)) + (col * 2
-			* alien_x_spacing) + (alien_width - alien_x_spacing - 1);
-	temp.y = alienBlockPosition.y + (row * (2 * (alien_height))) + ((row)
-			*alien_y_actual_spacing) + (alien_height * 2);
+	temp.x = alienBlockPosition.x + (col * (2 * alien_width)) + (col * 2* alien_x_spacing) + (alien_width - alien_x_spacing - 1);
+	temp.y = alienBlockPosition.y + (row * (2 * (alien_height))) + ((row)*alien_y_actual_spacing) + (alien_height * 2);
 	//Choose what type the bullet will be. 1 = squiggly, 0 = cross
 	//	xil_printf("row: %d, idx: %d, col: %d\r\n", row, idx, col);
 	//	xil_printf("These are the coordinates of the bullets: x- %d, y- %d\r\n", temp.x, temp.y);
@@ -354,6 +348,7 @@ void setAlienDeaths(short alien, bool dead) {
 	if (alien >= 0 && alien < 55) {
 		alienDeaths[alien] = dead;
 	}
+	return;
 }
 
 void updateBullets() {
@@ -370,14 +365,13 @@ void updateBullets() {
 				|| (pix_color = activeFramePointer[(y - 2) * SCREENWIDTH + x])
 				|| (pix_color = activeFramePointer[(y - 3) * SCREENWIDTH + x])
 				|| (pix_color = activeFramePointer[(y - 4) * SCREENWIDTH + x])) {
-			xil_printf("We hit something..\n");
+//			xil_printf("We hit something..\n");
 			int left_check_pos;
 			point_t alien_pos = getAlienBlockPosition();
 			// What did it hit?
 			// Was it a bunker?
 			if (y >= BUNKERSTARTY) {
-				xil_printf(
-						"It was below the top of the bunker (bunker or bullet)\n");
+//				xil_printf("It was below the top of the bunker (bunker or bullet)\n");
 				//#define BUNKERWIDTH 24
 				//#define BUNKERHEIGHT 18
 				//#define BUNKERXSPACING 45
@@ -389,8 +383,7 @@ void updateBullets() {
 				left_check_pos = BUNKERSTARTX;
 				int bunker = 0;
 				bool off_screen = false;
-				while ((x < left_check_pos || x > left_check_pos + 2
-						* BUNKERWIDTH) && !off_screen) {
+				while ((x < left_check_pos || x > left_check_pos + 2 * BUNKERWIDTH) && !off_screen) {
 					left_check_pos += 2 * (BUNKERXSPACING + BUNKERWIDTH);
 					if (left_check_pos > SCREENWIDTH)
 						off_screen = true;
@@ -399,33 +392,31 @@ void updateBullets() {
 				}
 				// Now find which block it was
 				if (!off_screen) {
-					xil_printf("It is not offscreen, Bunker: %d\n", bunker);
+//					xil_printf("It is not offscreen, Bunker: %d\n", bunker);
 					int block_col = (x - left_check_pos) / (2 * BLOCKWIDTH);
 					int block_row = (y - BUNKERSTARTY) / (2 * BLOCKHEIGHT);
 					int block = (block_row * 4) + block_col;
 					// Set to block 9 if it was greater than 9, since we
 					// don't use 10 or 11
 					block = (block > 9) ? 9 : block;
-					xil_printf("Block: %d\n", block);
+//					xil_printf("Block: %d\n", block);
 					setBunkerErosion(bunker, block);
 					// Draw erosion
-					int mask = (bunker == 3) ? bunker_3_render_mask : (bunker
-							== 2) ? bunker_2_render_mask
-							: (bunker == 1) ? bunker_1_render_mask
-									: bunker_0_render_mask;
+					int mask = (bunker == 3) ? bunker_3_render_mask : (bunker== 2) ? bunker_2_render_mask: (bunker == 1) ? bunker_1_render_mask	: bunker_0_render_mask;
 					render(false, mask, block, 0);
 					// Erase bullet
 					render(true, tank_bullet_render_mask, 0, UP);
 					// Move bullet so it will be reset, and made free
 					tankBulletPosition.y = -(tank_bullet_height + 1);
-				} else {
+				}
+				else {
 					tankBulletPosition.y -= tank_bullet_pixel_adjustment;
-					xil_printf("It was offscreen (or a bullet)\n");
+//					xil_printf("It was offscreen (or a bullet)\n");
 				}
 
 			}// Was it an alien?! If the pix_color was not green then its not a bullet
 			else if (y >= alien_pos.y && pix_color != GREEN) {
-				xil_printf("We hit an alien...Pix_color: %d\n", pix_color);
+//				xil_printf("We hit an alien...Pix_color: %d\n", pix_color);
 
 				//#define ALIENHEIGHT 8
 				//#define ALIENWIDTH 12
@@ -436,48 +427,46 @@ void updateBullets() {
 				//#define ALIENSPERROW 11
 				//				left_check_pos = alien_pos.x;
 				//				xil_printf("Params: x:%d\ny:%d\n,alien_blk_x:%d\n,alien_blk_y:%d\nAlienWidth:%d\nAlienHeight:%d\nXspc:%d\nYspc:%d\n",x,y,alien_pos.x,alien_pos.y,ALIENWIDTH,ALIENHEIGHT,ALIENXSPACING,ALIENYSPACING);
-				int alien_col = (x - alien_pos.x) / (2 * (ALIENWIDTH
-						+ ALIENXSPACING));
-				int alien_row = (y - alien_pos.y) / (ALIENHEIGHT
-						+ ALIENYSPACING);
-				short alien_index = (short) ((alien_row * ALIENSPERROW)
-						+ alien_col);
+				int alien_col = (x - alien_pos.x) / (2 * (ALIENWIDTH+ ALIENXSPACING));
+				int alien_row = (y - alien_pos.y) / (ALIENHEIGHT+ ALIENYSPACING);
+				short alien_index = (short) ((alien_row * ALIENSPERROW)+ alien_col);
 				//				xil_printf("alien col: %d\n", alien_col);
 				//				xil_printf("alien row: %d\n", alien_row);
 				//				xil_printf("Killing alien: %d\n", alien_index);
 				// Kill alien at alien_index
 				setAlienDeaths(alien_index, true);
+//				xil_printf("We hit alien %d \r\n", alien_index);
+				incScore(alien_index, false, false);
 				// Erase alien
 				// Draw Explosion
 				point_t pos;
-				pos.x = alien_pos.x + (alien_col * 2 * (ALIENWIDTH
-						+ ALIENXSPACING));
-				pos.y = alien_pos.y + (alien_row
-						* (ALIENHEIGHT + ALIENYSPACING)) - 2;
-				drawBitmap(alien_explosion_12x10, pos, 12, 10, true, WHITE,
-						false);
+				pos.x = alien_pos.x + (alien_col * 2 * (ALIENWIDTH+ ALIENXSPACING));
+				pos.y = alien_pos.y + (alien_row* (ALIENHEIGHT + ALIENYSPACING)) - 2;
+				drawBitmap(alien_explosion_12x10, pos, 12, 10, true, WHITE,false);
 				// Erase tank bullet
 				render(true, tank_bullet_render_mask, 0, UP);
 				// Move bullet so it will be reset, and made free
 				tankBulletPosition.y = -(tank_bullet_height + 1);
-			} else if (pix_color == RED) {
-				xil_printf("You hit the spaceship!!!\n");
+			}
+			else if (pix_color == RED) {
+//				xil_printf("You hit the spaceship!!!\n");
 				// Erase tank bullet
 				render(true, tank_bullet_render_mask, 0, UP);
 				tankBulletPosition.y = -(tank_bullet_height + 1);
 				// Erase Spaceship
-				drawBitmap(saucer_16x7, getSpaceship().pos, spaceship_width,
-						spaceship_height, true, RED, true);
+				drawBitmap(saucer_16x7, getSpaceship().pos, spaceship_width,spaceship_height, true, RED, true);
+				incScore(-1, true, false);
 				//TODO: Show score with spaceship.pos
-				spaceship.pos.x = bullet_offscreen, spaceship.pos.y
-						= bullet_offscreen;
+				spaceship.pos.x = bullet_offscreen, spaceship.pos.y = bullet_offscreen;
 				spaceship.isFree = true;
-			} else {
-				xil_printf("It was above the alien block, and not green...\n");
+			}
+			else {
+//				xil_printf("It was above the alien block, and not green...\n");
 				tankBulletPosition.y -= tank_bullet_pixel_adjustment;
 			}
 
-		} else
+		}
+		else
 			// Else just increment
 			tankBulletPosition.y -= tank_bullet_pixel_adjustment;
 	}
@@ -529,8 +518,7 @@ void updateBullets() {
 }
 
 void eraseBullet(point_t pos, unsigned short type) {
-	drawBitmap(alien_bullet_11_7x3, pos, alien_bullet_width,
-			alien_bullet_height, true, GREEN, true);
+	drawBitmap(alien_bullet_11_7x3, pos, alien_bullet_width,alien_bullet_height, true, GREEN, true);
 	return;
 }
 
@@ -545,6 +533,7 @@ void updateAlienBlock() {
 	for (col = 0; col < 11; col++) {
 		for (row = 0; row < 5; row++) {
 			if (alienDeaths[(row * 11) + col] == false) {
+//				xil_printf("index of live alien: %d\r\n", ((row*11)+col));
 				//If the alien is alive, set a flag
 				alienAlive = true;
 			}
@@ -556,6 +545,7 @@ void updateAlienBlock() {
 		//Reset for the next column
 		alienAlive = false;
 	}
+//	xil_printf("colWithLiveAlien: %x\n\r", colWithLiveAlien);
 	//Determine the right side first
 	//If the number anded with 1 is 0, there is no live alien in the column
 	if ((colWithLiveAlien & col11_mask) == 0) {
@@ -563,6 +553,7 @@ void updateAlienBlock() {
 		if ((colWithLiveAlien & col10_mask) == 0) {
 			leftOffset += alienSpacing;
 			if ((colWithLiveAlien & col9_mask) == 0) {
+//				xil_printf("We made it to the 3rd column from the left\r\n");
 				leftOffset += alienSpacing;
 				if ((colWithLiveAlien & col8_mask) == 0) {
 					leftOffset += alienSpacing;
@@ -578,8 +569,7 @@ void updateAlienBlock() {
 										leftOffset += alienSpacing;
 										if ((colWithLiveAlien & col2_mask) == 0) {
 											leftOffset += alienSpacing;
-											if ((colWithLiveAlien & col1_mask)
-													== 0) {
+											if ((colWithLiveAlien & col1_mask)== 0) {
 												leftOffset += alienSpacing;
 											}
 										}
@@ -592,7 +582,7 @@ void updateAlienBlock() {
 			}
 		}
 	}
-	//Now determine the left side
+	//Now determine the right side
 	if ((colWithLiveAlien & col1_mask) == 0) {
 		rightOffset += alienSpacing;
 		if ((colWithLiveAlien & col2_mask) == 0) {
@@ -611,11 +601,9 @@ void updateAlienBlock() {
 									rightOffset += alienSpacing;
 									if ((colWithLiveAlien & col9_mask) == 0) {
 										rightOffset += alienSpacing;
-										if ((colWithLiveAlien & col10_mask)
-												== 0) {
+										if ((colWithLiveAlien & col10_mask)== 0) {
 											rightOffset += alienSpacing;
-											if ((colWithLiveAlien & col11_mask)
-													== 0) {
+											if ((colWithLiveAlien & col11_mask)== 0) {
 												rightOffset += alienSpacing;
 											}
 										}
@@ -628,6 +616,7 @@ void updateAlienBlock() {
 			}
 		}
 	}
+	rightOffset -= alien_x_spacing*2;
 	//If the alien is moving right, add pixels
 	if (alienRight == true) {
 		alienDown = false;
@@ -639,25 +628,25 @@ void updateAlienBlock() {
 		alienBlockPosition.x -= pixel_adjustment;
 	}
 	//If the block has hit the right side of the screen, set them equal to the screen and move them down
-	if ((alienBlockPosition.x + alien_block_width - rightOffset * 2) > 640) {
+	if ((alienBlockPosition.x + alien_block_width - rightOffset) > 640) {
 		alienDown = true;
 		//call the render function
 		render(true, alien_block_render_mask, 0, DOWN);
-		alienBlockPosition.x = 640 - alien_block_width + rightOffset * 2;
+		alienBlockPosition.x = 640 - alien_block_width + rightOffset;
 		alienBlockPosition.y += alien_height;
 		//Make the aliens go left instead of right
 		alienRight = false;
 	}
 	//Will move the alien block down a row
 	else if (alienOnLeftScreen) {
-		alienBlockPosition.x = -leftOffset * 2;
+		alienBlockPosition.x = -leftOffset;
 		alienBlockPosition.y += alien_height;
 		alienOnLeftScreen = false;
 		alienDown = true;
 	}
 	//If the block hits the left side of the string, set x equal to 0 and move the aliens down
-	else if (alienBlockPosition.x + leftOffset * 2 <= 0) {
-		alienBlockPosition.x = -leftOffset * 2;
+	else if (alienBlockPosition.x + leftOffset <= 0) {
+		alienBlockPosition.x = -leftOffset;
 		alienOnLeftScreen = true;
 		//Make the aliens go right instead of left
 		alienRight = true;
@@ -710,68 +699,96 @@ bool isGameOver() {
 	}
 	//	xil_printf("This is the row of the last live alien: %d\r\n", row);
 	//If the last live alien reaches the bottom of the bunkers, the game is over
-	if ((alienBlockPosition.y + (row * alien_height * 2) + (row - 1)
-			* (alienSpacing)) >= (BUNKERSTARTY + BUNKERHEIGHT * 2)) {
+	if ((alienBlockPosition.y + (row * alien_height * 2) + (row - 1)* (alienSpacing)) >= (BUNKERSTARTY + BUNKERHEIGHT * 2)) {
 		gameOver = true;
 	}
 	return gameOver;
 }
 
-void incScore(int alienNum, bool spaceshipHit) {
+void incScore(int alienNum, bool spaceshipHit, bool erase) {
 	//alienNum of -1 means just the spaceship is hit
 	int oldScore = score;
-	//Increment the score to reflect the value of the alien just killed
-	//If the alien is in the bottom two rows, it is worth 10 pts
-	if ((alienNum >= 0) && (alienNum < 22)) {
-		score += bottom_row_pts;
-	} //If the alien is in the middle two rows, it is worth 20 pts
-	else if ((alienNum >= 22) && (alienNum < 44)) {
-		score += middle_row_pts;
-	} //If the alien is in the top row, it is worth 40 pts
-	else if ((alienNum >= 44)) {
-		score += top_row_pts;
+	if(alienNum != -1){
+		//Increment the score to reflect the value of the alien just killed
+		//If the alien is in the bottom two rows, it is worth 10 pts
+		if ((alienNum >= 0) && (alienNum < 11)) {
+//			xil_printf("We are adding %d pts\r\n", top_row_pts);
+			score += top_row_pts;
+		} //If the alien is in the middle two rows, it is worth 20 pts
+		else if ((alienNum >= 11) && (alienNum < 33)) {
+//			xil_printf("We are adding %d pts\r\n", middle_row_pts);
+			score += middle_row_pts;
+		} //If the alien is in the top row, it is worth 40 pts
+		else if ((alienNum >= 33)) {
+//			xil_printf("We are adding %d pts\r\n", bottom_row_pts);
+			score += bottom_row_pts;
+		}
 	}
 	//add the value of the spaceship
 	if (spaceshipHit) {
-		int spaceScore = (rand() % 7 + 1) * spaceship_multiple;
+		int spaceScore = (rand() % 6 + 1) * spaceship_multiple;
 		//Print the value of the spaceship underneath the ship
-		printSpaceshipValue(spaceScore);
-		score += spaceScore;
+		printSpaceshipValue(spaceScore, erase);
+//		xil_printf("The spaceship score is: %d\r\n", spaceScore);
+		if(!erase)
+			score += spaceScore;
 	}
-	tempScore = score;
-	int index = 0;
-	//Update the screen to reflect the new score
-	//Update the first number?
-	if ((score > 999)) {
-		if ((oldScore / 1000 != tempScore / 1000)) {
-			drawScore(index, tempScore / 1000);
+	if(!erase) {
+		int tempScore = score;
+		int index = 0;
+		//Update the screen to reflect the new score
+		//Update the first number?
+		if ((score > 999)) {
+	//		xil_printf("The first number is %d \r\n",tempScore/1000);
+			if ((oldScore / 1000 != tempScore / 1000)) {
+				drawScore(index, tempScore / 1000);
+			}
+			index++;
 		}
-		index++;
+		oldScore = oldScore % 1000;
+		tempScore = tempScore % 1000;
+		if ((score > 99)) {
+	//		xil_printf("The second number is %d \r\n",tempScore/100);
+			if (oldScore / 100 != tempScore / 100) {
+				drawScore(index, tempScore / 100);
+			}
+			index++;
+			//update drawScore(index, number)
+		} //Update the second number?
+		oldScore = oldScore % 100;
+		tempScore = tempScore % 100;
+		if ((score > 9)) {
+	//		xil_printf("The third number is %d \r\n",tempScore/10);
+			if ((oldScore / 10 != tempScore / 10)) {
+				drawScore(index, tempScore / 10);
+			}
+			index++;
+		}
+		oldScore = oldScore % 10;
+		tempScore = tempScore % 10;
+		//update the third number?
+	//	xil_printf("The last number is %d \r\n",tempScore);
+		drawScore(index, tempScore);
+		//Draw the last number of the score
 	}
-	oldScore = oldScore % 1000;
-	tempScore = tempScore % 1000;
-	if ((score > 99)) {
-		if (oldScore / 100 != tempScore / 100) {
-			drawScore(index, tempScore / 100);
-		}
-		index++;
-		//update drawScore(index, number)
-	} //Update the second number?
-	oldScore = oldScore % 100;
-	tempScore = tempScore % 100;
-	if ((score > 9)) {
-		if ((oldScore / 10 != tempScore / 10)) {
-			drawScore(index, tempScore / 10);
-		}
-		index++;
-	}
-	oldScore = oldScore % 10;
-	tempScore = tempScore % 10;
-	//update the third number?
-	drawScore(index, tempScore);
-	//Draw the last number of the score
 }
 
 int getScore() {
 	return score;
-{
+}
+
+int getAlienUpdateTime() {
+	int numAliens;
+	int i = 0;
+	for(i = 0; i < 55; i++){
+		if(alienDeaths[i] == false){
+			numAliens++;
+		}
+	}
+	if(numAliens/11 >= 4) {	return 60;	}
+	else if(numAliens/11 == 3)	{ 	return 55;	}
+	else if(numAliens/11 == 2)	{	return 50;	}
+	else if(numAliens/11 == 1)	{	return 40;	}
+	else if(numAliens/11 == 0)	{	return 30;	}
+	else return 0;
+}
