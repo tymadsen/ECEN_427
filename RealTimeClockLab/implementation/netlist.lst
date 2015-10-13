@@ -1,0 +1,18 @@
+E:\ECEN427\RealTimeClockLab\implementation\system.ngc 1442586424
+E:/ECEN427/RealTimeClockLab/implementation/push_buttons_5bits_wrapper.ngc 1442586350
+E:/ECEN427/RealTimeClockLab/implementation/dip_switches_8bits_wrapper.ngc 1442586380
+E:/ECEN427/RealTimeClockLab/implementation/rs232_uart_1_wrapper.ngc 1442586336
+E:/ECEN427/RealTimeClockLab/implementation/proc_sys_reset_0_wrapper.ngc 1442586174
+E:/ECEN427/RealTimeClockLab/implementation/clock_generator_0_wrapper.ngc 1442586404
+E:/ECEN427/RealTimeClockLab/implementation/microblaze_0_ilmb_wrapper.ngc 1442586392
+E:/ECEN427/RealTimeClockLab/implementation/microblaze_0_dlmb_wrapper.ngc 1442586394
+E:/ECEN427/RealTimeClockLab/implementation/axi4lite_0_wrapper.ngc 1442586408
+E:/ECEN427/RealTimeClockLab/implementation/microblaze_0_wrapper.ngc 1442586402
+E:/ECEN427/RealTimeClockLab/implementation/microblaze_0_intc_wrapper.ngc 1442586188
+E:/ECEN427/RealTimeClockLab/implementation/microblaze_0_i_bram_ctrl_wrapper.ngc 1442586202
+E:/ECEN427/RealTimeClockLab/implementation/microblaze_0_d_bram_ctrl_wrapper.ngc 1442586216
+E:/ECEN427/RealTimeClockLab/implementation/debug_module_wrapper.ngc 1442586300
+E:/ECEN427/RealTimeClockLab/implementation/leds_8bits_wrapper.ngc 1442586366
+E:/ECEN427/RealTimeClockLab/implementation/fit_timer_0_wrapper.ngc 1442586386
+E:/ECEN427/RealTimeClockLab/implementation/microblaze_0_bram_block_wrapper.ngc 1442586226
+OK
