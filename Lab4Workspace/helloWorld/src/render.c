@@ -260,6 +260,23 @@ void drawBunkerErosion(int bunker, int block){
 	else {
 		drawBitmap(bunkerDamage3_6x6, block_pos, BLOCKWIDTH, BLOCKHEIGHT, true, BLACK, false);
 	}
+	activeFramePointer = background;
+	if(erosion_block == 0x0){
+		//do nothing
+	}
+	else if(erosion_block == 0x1){
+		drawBitmap(bunkerDamage0_6x6, block_pos, BLOCKWIDTH, BLOCKHEIGHT, true, BLACK, false);
+	}
+	else if(erosion_block == 0x2){
+		drawBitmap(bunkerDamage1_6x6, block_pos, BLOCKWIDTH, BLOCKHEIGHT, true, BLACK, false);
+	}
+	else if(erosion_block == 0x3){
+		drawBitmap(bunkerDamage2_6x6, block_pos, BLOCKWIDTH, BLOCKHEIGHT, true, BLACK, false);
+	}
+	else {
+		drawBitmap(bunkerDamage3_6x6, block_pos, BLOCKWIDTH, BLOCKHEIGHT, true, BLACK, false);
+	}
+	activeFramePointer = foreground;
 
 }
 
@@ -429,18 +446,17 @@ void drawBitmap(const uint32_t* bitmap, point_t pos, int width, int height, bool
 					activeFramePointer[(sRow+pos.y+1)*SCREENWIDTH + (sCol+pos.x+1)] = color;
 				}
 			}
-			else {//paint the background color
-				bool use_new_color = (background != activeFramePointer);
+			else if(activeFramePointer != background){//ignore the color
 				int index = (pos.y*SCREENWIDTH + pos.x);
 				if(!double_size)
-					activeFramePointer[index] = use_new_color ? background[index] : BLACK;
+					activeFramePointer[index] = background[index];
 				else{
 					index = (sRow+pos.y)*SCREENWIDTH + (sCol+pos.x);
-					activeFramePointer[index] = use_new_color ? background[index] : BLACK;
-					activeFramePointer[index+1] = use_new_color ? background[index+1] : BLACK;
+					activeFramePointer[index] = background[index];
+					activeFramePointer[index+1] = background[index+1];
 					index += SCREENWIDTH;
-					activeFramePointer[index] = use_new_color ? background[index] : BLACK;
-					activeFramePointer[index+1] = use_new_color ? background[index+1] : BLACK;
+					activeFramePointer[index] = background[index];
+					activeFramePointer[index+1] = background[index+1];
 				}
 			}
 		}
