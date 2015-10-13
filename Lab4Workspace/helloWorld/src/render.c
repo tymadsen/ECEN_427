@@ -42,7 +42,7 @@ void initScreen() {
 	// Write the score label on top of the frame
 	drawScoreLabel();
 	// Draw score
-	drawScore();
+	drawScore(0,0);
 	// Draw the lives label
 	drawLivesLabel();
 	// Draw the lives
@@ -55,7 +55,7 @@ void initScreen() {
 	activeFramePointer = background;
 	// Write the score and label in background
 	drawScoreLabel();
-	drawScore();
+	drawScore(0,0);
 	// Draw the lives and label in background
 	drawLivesLabel();
 	drawLives();
@@ -142,18 +142,17 @@ void drawScore(int index, int number) {
 
 void printSpaceshipValue(int spaceshipValue){
 	point_t position = getSpaceship().pos;
-	int tempVal = 0;
-	int index = spaceshipValue;
+	int index = 0;
 	const uint32_t* bitmap;
 	//Draw the 100s digit if our value is over 99
 	if(spaceshipValue > 99){
-		bitmap = getNumberBitmap(tempVal/100);
+		bitmap = getNumberBitmap(index/100);
 		drawBitmap(bitmap, position, NUMBERWIDTH, LABELHEIGHT, false, RED, false);
-		tempVal = spaceshipValue%100;
+		index = spaceshipValue%100;
 		position.x += NUMBERWIDTH + NUMBERSPACING;
 	}
 	//Draw the 10s digit
-	bitmap = getNumberBitmap(tempVal/10);
+	bitmap = getNumberBitmap(index/10);
 	drawBitmap(bitmap, position, NUMBERWIDTH, LABELHEIGHT, false, RED, false);
 	position.x += NUMBERSPACING + NUMBERWIDTH;
 	//Draw the 1s digit which will always be 0
@@ -253,6 +252,23 @@ void drawBunkerErosion(int bunker, int block){
 	else {
 		drawBitmap(bunkerDamage3_6x6, block_pos, BLOCKWIDTH, BLOCKHEIGHT, true, BLACK, false);
 	}
+	activeFramePointer = background;
+	if(erosion_block == 0x0){
+		//do nothing
+	}
+	else if(erosion_block == 0x1){
+		drawBitmap(bunkerDamage0_6x6, block_pos, BLOCKWIDTH, BLOCKHEIGHT, true, BLACK, false);
+	}
+	else if(erosion_block == 0x2){
+		drawBitmap(bunkerDamage1_6x6, block_pos, BLOCKWIDTH, BLOCKHEIGHT, true, BLACK, false);
+	}
+	else if(erosion_block == 0x3){
+		drawBitmap(bunkerDamage2_6x6, block_pos, BLOCKWIDTH, BLOCKHEIGHT, true, BLACK, false);
+	}
+	else {
+		drawBitmap(bunkerDamage3_6x6, block_pos, BLOCKWIDTH, BLOCKHEIGHT, true, BLACK, false);
+	}
+	activeFramePointer = foreground;
 
 }
 
@@ -422,19 +438,17 @@ void drawBitmap(const uint32_t* bitmap, point_t pos, int width, int height, bool
 					activeFramePointer[(sRow+pos.y+1)*SCREENWIDTH + (sCol+pos.x+1)] = color;
 				}
 			}
-			else {//paint the background color
-				int new_color = background[(pos.y*SCREENWIDTH + pos.x)];
+			else if(activeFramePointer != background){//ignore the color
 				int index = (pos.y*SCREENWIDTH + pos.x);
 				if(!double_size)
-					activeFramePointer[index] = (background != activeFramePointer) ? new_color : BLACK;
+					activeFramePointer[index] = background[index];
 				else{
-					new_color = (background != activeFramePointer) ? background[(sRow+pos.y)*SCREENWIDTH + (sCol+pos.x)] : BLACK;
 					index = (sRow+pos.y)*SCREENWIDTH + (sCol+pos.x);
-					activeFramePointer[index] = new_color;
-					activeFramePointer[index+1] = new_color;
+					activeFramePointer[index] = background[index];
+					activeFramePointer[index+1] = background[index+1];
 					index += SCREENWIDTH;
-					activeFramePointer[index] = new_color;
-					activeFramePointer[index+1] = new_color;
+					activeFramePointer[index] = background[index];
+					activeFramePointer[index+1] = background[index+1];
 				}
 			}
 		}
