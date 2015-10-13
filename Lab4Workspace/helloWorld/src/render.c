@@ -295,7 +295,7 @@ void drawTank(bool erase, int direction) {
 
 void drawTankBullet(bool erase) {
 	point_t tankBulletPosition = getTankBulletPosition();
-	drawBitmap(tank_bullet_5x3, tankBulletPosition, TANKBULLETWIDTH, TANKBULLETHEIGHT, true, GREEN, erase);
+	drawBitmap(tank_bullet_1x3, tankBulletPosition, TANKBULLETWIDTH, TANKBULLETHEIGHT, true, GREEN, erase);
 	return;
 }
 
@@ -395,25 +395,25 @@ const uint32_t* determineAlienBulletBitmap(short bulletType, short counter)
 	//Return the correct bitmap for the bulletType
 	if(bulletType == 1){
 		if(counter == 0){
-			return alien_bullet_21_7x3;
+			return alien_bullet_21_3x7;
 		}
 		else if(counter == 1){
-			return alien_bullet_22_7x3;
+			return alien_bullet_22_3x7;
 		}
 		else if(counter == 2){
-			return alien_bullet_23_7x3;
+			return alien_bullet_23_3x7;
 		}
 		else {}
 	}
 	else if(bulletType == 0) {
 		if(counter == 0){
-			return alien_bullet_11_7x3;
+			return alien_bullet_11_3x7;
 		}
 		else if(counter == 1){
-			return alien_bullet_12_7x3;
+			return alien_bullet_12_3x7;
 		}
 		else if(counter == 2){
-			return alien_bullet_13_7x3;
+			return alien_bullet_13_3x7;
 		}
 		else {}
 	}

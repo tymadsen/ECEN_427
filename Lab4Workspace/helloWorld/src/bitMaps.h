@@ -324,7 +324,7 @@ packword5(0,0,0,1,0),
 packword5(0,1,1,0,0)
 };
 
-static const uint32_t alien_bullet_11_7x3[] = {
+static const uint32_t alien_bullet_11_3x7[] = {
 	packword3(0,1,0),
 	packword3(1,1,1),
 	packword3(0,1,0),
@@ -334,7 +334,7 @@ static const uint32_t alien_bullet_11_7x3[] = {
 	packword3(0,1,0),
 };
 
-static const uint32_t alien_bullet_12_7x3[] = {
+static const uint32_t alien_bullet_12_3x7[] = {
 	packword3(0,1,0),
 	packword3(0,1,0),
 	packword3(0,1,0),
@@ -344,7 +344,7 @@ static const uint32_t alien_bullet_12_7x3[] = {
 	packword3(0,1,0),
 };
 
-static const uint32_t alien_bullet_13_7x3[] = {
+static const uint32_t alien_bullet_13_3x7[] = {
 	packword3(0,1,0),
 	packword3(0,1,0),
 	packword3(0,1,0),
@@ -354,7 +354,7 @@ static const uint32_t alien_bullet_13_7x3[] = {
 	packword3(0,1,0),
 };
 
-static const uint32_t alien_bullet_21_7x3[] = {
+static const uint32_t alien_bullet_21_3x7[] = {
 	packword3(1,0,0),
 	packword3(0,1,0),
 	packword3(0,0,1),
@@ -364,7 +364,7 @@ static const uint32_t alien_bullet_21_7x3[] = {
 	packword3(0,0,1),
 };
 
-static const uint32_t alien_bullet_22_7x3[] = {
+static const uint32_t alien_bullet_22_3x7[] = {
 	packword3(0,1,0),
 	packword3(0,0,1),
 	packword3(0,1,0),
@@ -374,7 +374,7 @@ static const uint32_t alien_bullet_22_7x3[] = {
 	packword3(0,1,0),
 };
 
-static const uint32_t alien_bullet_23_7x3[] = {
+static const uint32_t alien_bullet_23_3x7[] = {
 	packword3(0,0,1),
 	packword3(0,1,0),
 	packword3(1,0,0),
@@ -384,6 +384,6 @@ static const uint32_t alien_bullet_23_7x3[] = {
 	packword3(1,0,0),
 };
 
-static const uint32_t tank_bullet_5x3[] = { 111 };
+static const uint32_t tank_bullet_1x3[] = { 1,1,1 };
 
 #endif /* BITMAPS_H_ */
