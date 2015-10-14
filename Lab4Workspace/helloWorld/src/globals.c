@@ -364,7 +364,7 @@ void updateBullets() {
 		int y = tankBulletPosition.y;
 		int x = tankBulletPosition.x;
 
-		point_t pix = getHitPixel(x,y,1,6,false);
+		point_t pix = getHitPixel(x, y, TANKBULLETWIDTH, tank_bullet_pixel_adjustment, false);
 		int pix_color = activeFramePointer[pix.y*SCREENWIDTH + pix.x];
 		if(pix_color){
 			point_t alien_pos = getAlienBlockPosition();
@@ -372,7 +372,10 @@ void updateBullets() {
 			// Was it a bunker?
 			if (y >= BUNKERSTARTY) {
 				xil_printf("It was below the top of the bunker (bunker or bullet)\n");
-				if(determineBunkerErosion(x,y-6)){//new function name)
+				point_t bunk_blk = determineBunkerErosion(pix.x, pix.y);
+				if(bunk_blk.x != -1 && bunk_blk.y != -1){
+					// Erode bunker bunk_blk.x = bunker, bunk_blk.y = block
+					setBunkerErosion(bunk_blk.x, bunk_blk.y);
 					// Erase bullet
 					render(true, tank_bullet_render_mask, 0, UP);
 					// Move bullet so it will be reset, and made free
@@ -386,21 +389,9 @@ void updateBullets() {
 			else if (y >= alien_pos.y && pix_color != GREEN) {
 				xil_printf("We hit an alien...Pix_color: %d\n", pix_color);
 
-				//#define ALIENHEIGHT 8
-				//#define ALIENWIDTH 12
-				//#define ALIENXSPACING 2
-				//#define ALIENYSPACING 20
-				//#define ALIENBLOCKSTARTX 167
-				//#define ALIENBLOCKSTARTY 75
-				//#define ALIENSPERROW 11
-				//				left_check_pos = alien_pos.x;
-				//				xil_printf("Params: x:%d\ny:%d\n,alien_blk_x:%d\n,alien_blk_y:%d\nAlienWidth:%d\nAlienHeight:%d\nXspc:%d\nYspc:%d\n",x,y,alien_pos.x,alien_pos.y,ALIENWIDTH,ALIENHEIGHT,ALIENXSPACING,ALIENYSPACING);
 				int alien_col = (x - alien_pos.x) / (2 * (ALIENWIDTH + ALIENXSPACING));
 				int alien_row = (y - alien_pos.y) / (ALIENHEIGHT + ALIENYSPACING);
 				short alien_index = (short) ((alien_row * ALIENSPERROW) + alien_col);
-				//				xil_printf("alien col: %d\n", alien_col);
-				//				xil_printf("alien row: %d\n", alien_row);
-				//				xil_printf("Killing alien: %d\n", alien_index);
 				// Kill alien at alien_index
 				setAlienDeaths(alien_index, true);
 				// Increase score
@@ -425,7 +416,6 @@ void updateBullets() {
 				oldSpaceshipLocation = spaceship.pos;
 				incScore(-1, true);
 				setSpaceshipHit(true);
-				//TODO: Show score with spaceship.pos
 				spaceship.pos.x = bullet_offscreen, spaceship.pos.y = bullet_offscreen;
 				spaceship.isFree = true;
 			} else {
@@ -452,7 +442,7 @@ void updateBullets() {
 		int y = aBullet0.pos.y+2*alien_bullet_height;
 		// Check if y is even at bunkers
 		if(y >= BUNKERSTARTY){
-			point_t pix = getHitPixel(x,y,2*BULLETWIDTH,2*BULLETHEIGHT,true);
+			point_t pix = getHitPixel(x, y, 2*BULLETWIDTH, aBullet_pixel_adjustment, true);
 			point_t bunk_blk = determineBunkerErosion(pix.x,pix.y);
 
 			// If bullet is at the ground or hit & eroded a bunker
@@ -480,7 +470,7 @@ void updateBullets() {
 		int y = aBullet1.pos.y+2*alien_bullet_height;
 		// Check if y is even at bunkers
 		if(y >= BUNKERSTARTY){
-			point_t pix = getHitPixel(x,y,2*BULLETWIDTH,2*BULLETHEIGHT,true);
+			point_t pix = getHitPixel(x, y, 2*BULLETWIDTH, aBullet_pixel_adjustment, true);
 			point_t bunk_blk = determineBunkerErosion(pix.x,pix.y);
 
 			// If bullet is at the ground or hit & eroded a bunker
@@ -508,7 +498,7 @@ void updateBullets() {
 		int y = aBullet2.pos.y+2*alien_bullet_height;
 		// Check if y is even at bunkers
 		if(y >= BUNKERSTARTY){
-			point_t pix = getHitPixel(x,y,2*BULLETWIDTH,2*BULLETHEIGHT,true);
+			point_t pix = getHitPixel(x, y, 2*BULLETWIDTH, aBullet_pixel_adjustment, true);
 			point_t bunk_blk = determineBunkerErosion(pix.x,pix.y);
 
 			// If bullet is at the ground or hit & eroded a bunker
@@ -536,7 +526,7 @@ void updateBullets() {
 		int y = aBullet3.pos.y+2*alien_bullet_height;
 		// Check if y is even at bunkers
 		if(y >= BUNKERSTARTY){
-			point_t pix = getHitPixel(x,y,2*BULLETWIDTH,2*BULLETHEIGHT,true);
+			point_t pix = getHitPixel(x, y, 2*BULLETWIDTH, aBullet_pixel_adjustment, true);
 			point_t bunk_blk = determineBunkerErosion(pix.x,pix.y);
 
 			// If bullet is at the ground or hit & eroded a bunker
