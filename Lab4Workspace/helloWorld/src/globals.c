@@ -361,7 +361,8 @@ void updateBullets() {
 		int y = tankBulletPosition.y;
 		int x = tankBulletPosition.x;
 
-		int pix_color = getPixelColor(x,y,1,6,true);
+		point_t pix = getHitPixel(x,y,1,6,false);
+		int pix_color = activeFramePointer[pix.y*SCREENWIDTH + pix.x];
 		if(pix_color){
 			point_t alien_pos = getAlienBlockPosition();
 			// What did it hit?
@@ -448,72 +449,78 @@ void updateBullets() {
 		int y = aBullet0.pos.y+2*alien_bullet_height;
 		// Check if y is even at bunkers
 		if(y >= BUNKERSTARTY){
+			point_t pix = getHitPixel(x,y,2*BULLETWIDTH,2*BULLETHEIGHT,true);
 			// If bullet is at the ground or hit & eroded a bunker
-			if ((aBullet0.pos.y > green_line_y - (2 * alien_bullet_height))
-				|| (getPixelColor(x,y,6,14,false) && determineBunkerErosion(x+3,y+7))) {
+			if (aBullet0.pos.y > green_line_y - (2 * alien_bullet_height)
+				|| determineBunkerErosion(pix.x,pix.y)) {
 				// Remove the bullet
 				eraseBullet(aBullet0.pos, aBullet0.type);
 				aBullet0.pos.x = bullet_offscreen;
 				aBullet0.pos.y = bullet_offscreen;
 				aBullet0.isFree = true;
 			}
+			else{
+				aBullet0.pos.y += aBullet_pixel_adjustment;
+			}
 		}
-		aBullet0.pos.y += aBullet_pixel_adjustment;
+		else{
+			aBullet0.pos.y += aBullet_pixel_adjustment;
+		}
 	}
-	if (!aBullet1.isFree) {
+//	if (!aBullet1.isFree) {
+//		//aBullet1.pos.y += aBullet_pixel_adjustment;
+//		int x = aBullet1.pos.x;
+//		int y = aBullet1.pos.y+2*alien_bullet_height;
+//		// Check if y is even at bunkers
+//		if(y >= BUNKERSTARTY){
+//			// If bullet is at the ground or hit & eroded a bunker
+//			if ((aBullet1.pos.y > green_line_y - (2 * alien_bullet_height))
+//				|| (getPixelColor(x,y,6,14,false) && determineBunkerErosion(x+3,y+7))) {
+//				// Remove the bullet
+//				eraseBullet(aBullet1.pos, aBullet1.type);
+//				aBullet1.pos.x = bullet_offscreen;
+//				aBullet1.pos.y = bullet_offscreen;
+//				aBullet1.isFree = true;
+//			}
+//		}
 //		aBullet1.pos.y += aBullet_pixel_adjustment;
-		int x = aBullet1.pos.x;
-		int y = aBullet1.pos.y+2*alien_bullet_height;
-		// Check if y is even at bunkers
-		if(y >= BUNKERSTARTY){
-			// If bullet is at the ground or hit & eroded a bunker
-			if ((aBullet1.pos.y > green_line_y - (2 * alien_bullet_height))
-				|| (getPixelColor(x,y,6,14,false) && determineBunkerErosion(x+3,y+7))) {
-				// Remove the bullet
-				eraseBullet(aBullet1.pos, aBullet1.type);
-				aBullet1.pos.x = bullet_offscreen;
-				aBullet1.pos.y = bullet_offscreen;
-				aBullet1.isFree = true;
-			}
-		}
-		aBullet1.pos.y += aBullet_pixel_adjustment;
-	}
-	if (!aBullet2.isFree) {
+//	}
+//	if (!aBullet2.isFree) {
+//		//aBullet2.pos.y += aBullet_pixel_adjustment;
+//		int x = aBullet2.pos.x;
+//		int y = aBullet2.pos.y+2*alien_bullet_height;
+//		// Check if y is even at bunkers
+//		if(y >= BUNKERSTARTY){
+//			// If bullet is at the ground or hit & eroded a bunker
+//			if ((aBullet2.pos.y > green_line_y - (2 * alien_bullet_height))
+//				|| (getPixelColor(x,y,6,14,false) && determineBunkerErosion(x+3,y+7))) {
+//				// Remove the bullet
+//				eraseBullet(aBullet2.pos, aBullet2.type);
+//				aBullet2.pos.x = bullet_offscreen;
+//				aBullet2.pos.y = bullet_offscreen;
+//				aBullet2.isFree = true;
+//			}
+//		}
 //		aBullet2.pos.y += aBullet_pixel_adjustment;
-		int x = aBullet2.pos.x;
-		int y = aBullet2.pos.y+2*alien_bullet_height;
-		// Check if y is even at bunkers
-		if(y >= BUNKERSTARTY){
-			// If bullet is at the ground or hit & eroded a bunker
-			if ((aBullet2.pos.y > green_line_y - (2 * alien_bullet_height))
-				|| (getPixelColor(x,y,6,14,false) && determineBunkerErosion(x+3,y+7))) {
-				// Remove the bullet
-				eraseBullet(aBullet2.pos, aBullet2.type);
-				aBullet2.pos.x = bullet_offscreen;
-				aBullet2.pos.y = bullet_offscreen;
-				aBullet2.isFree = true;
-			}
-		}
-		aBullet2.pos.y += aBullet_pixel_adjustment;
-	}
-	if (!aBullet3.isFree) {
+//	}
+//	if (!aBullet3.isFree) {
+//		//aBullet3.pos.y += aBullet_pixel_adjustment;
+//		int x = aBullet3.pos.x;
+//		int y = aBullet3.pos.y+2*alien_bullet_height;
+//		// Check if y is even at bunkers
+//		if(y >= BUNKERSTARTY){
+//			// If bullet is at the ground or hit & eroded a bunker
+//			if ((aBullet3.pos.y > green_line_y - (2 * alien_bullet_height))
+//				|| (getPixelColor(x,y,6,14,false) && determineBunkerErosion(x+3,y+7))) {
+//				// Remove the bullet
+//				eraseBullet(aBullet3.pos, aBullet3.type);
+//				aBullet3.pos.x = bullet_offscreen;
+//				aBullet3.pos.y = bullet_offscreen;
+//				aBullet3.isFree = true;
+//			}
+//		}
 //		aBullet3.pos.y += aBullet_pixel_adjustment;
-		int x = aBullet3.pos.x;
-		int y = aBullet3.pos.y+2*alien_bullet_height;
-		// Check if y is even at bunkers
-		if(y >= BUNKERSTARTY){
-			// If bullet is at the ground or hit & eroded a bunker
-			if ((aBullet3.pos.y > green_line_y - (2 * alien_bullet_height))
-				|| (getPixelColor(x,y,6,14,false) && determineBunkerErosion(x+3,y+7))) {
-				// Remove the bullet
-				eraseBullet(aBullet3.pos, aBullet3.type);
-				aBullet3.pos.x = bullet_offscreen;
-				aBullet3.pos.y = bullet_offscreen;
-				aBullet3.isFree = true;
-			}
-		}
-		aBullet3.pos.y += aBullet_pixel_adjustment;
-	}
+//	}
 }
 
 bool isSpaceshipHit(){
@@ -534,6 +541,9 @@ void eraseBullet(point_t pos, unsigned short type) {
 }
 
 bool determineBunkerErosion(int x, int y){
+
+	if(x < BUNKERSTARTX || y < BUNKERSTARTY || y > (BUNKERSTARTY+2*BUNKERHEIGHT))
+		return false;
 
 	int left_check_pos = BUNKERSTARTX;
 	int bunker = 0;
@@ -563,28 +573,47 @@ bool determineBunkerErosion(int x, int y){
 	return !off_screen;
 }
 
-int getPixelColor(int x, int y, int w, int h, bool above){
-	// Set color to the color of the first non-black thing it will go over, (if none, then it will be black)
-	int pix_color = BLACK;
-	int op = above ? -1 : 1;
-	// did it hit something?
-	/***********************************************************
-	 * TODO: check every pixel in the rectangle bounded
-	 * by the top left (x,y) pair and width and height args
-	 ***********************************************************
-	 */
-	// Get 4 pixels at corners of bullets and check for color
-	if ((pix_color = activeFramePointer[(y) * SCREENWIDTH + x])
-		|| (pix_color = activeFramePointer[(y) * SCREENWIDTH + x + w])
-		|| (pix_color = activeFramePointer[(y + op*h) * SCREENWIDTH + x])
-		|| (pix_color = activeFramePointer[(y + op*h) * SCREENWIDTH + x + w])) {
-//		xil_printf("We hit something.. Pix_color: %x\n",pix_color);
+/***********************************************************
+ * Check every pixel in the rectangle bounded
+ * by the top left (x,y) pair and width and height args
+ * return the pixel that was not black or 0,0
+ ***********************************************************
+ */
+point_t getHitPixel(int x, int y, int w, int h, bool alienBullet){
+
+	int i;
+	int j;
+	point_t hit_coord = {0,0};
+	if(alienBullet){//Alien bullets
+		for(i=y;i<y+h;i++){
+			for(j=x;j<x+w;j++){
+				// If not black pixel found
+				if(activeFramePointer[i*SCREENWIDTH + j]){
+					// Set coordinates of the pixel
+					hit_coord.x = j;
+					hit_coord.y = i;
+					//break out of loop
+					j = (x+w);
+					i = (y+h);
+				}
+			}
+		}
 	}
-	/************************************************************
-	 * TODO: return the precise point that caused the impact
-	 ************************************************************
-	 */
-	return pix_color;
+	else{// Tank bullets
+		for(i=y;i>y-h;i--){
+			for(j=x;j<x+w;j++){
+				// If not black pixel found
+				if(activeFramePointer[i*SCREENWIDTH + j]){
+					//we found a pixel that is not black
+					hit_coord.x = j;
+					hit_coord.y = i;
+					j = (x+w);
+					i = (y-h);
+				}
+			}
+		}
+	}
+	return hit_coord;
 }
 
 void updateAlienBlock() {

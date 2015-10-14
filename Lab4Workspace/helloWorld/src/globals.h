@@ -134,7 +134,7 @@ void setAlienDeaths(short alien, bool dead);
 void updateBullets();
 void updateAlienBlock();
 bool determineBunkerErosion(int x, int y);
-int getPixelColor(int x, int y, int w, int h, bool above);
+point_t getHitPixel(int x, int y, int w, int h, bool alienBullet);
 void fireTankBullet();
 void fireAlienBullet();
 void updateAlienBulletCounters();
