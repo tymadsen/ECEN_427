@@ -90,6 +90,6 @@ void drawAlienBullet(bool erase, short bullet_number);
 void drawBitmap(const uint32_t* bitmap, point_t pos, int width, int height, bool double_size, int color, bool erase);
 void drawBitmapRepeat(const uint32_t* bitmap, point_t pos, int width, int height, bool double_size, int color, bool erase, int x_space, int times);
 void eraseBitmapRepeat(point_t pos, int width, int height, bool double_size, int color, int direction, int x_space, int times);
-void eraseBitmap(point_t pos, int width, int height, bool double_size, int color, int direction);
+void eraseBitmap(point_t pos, int width, int height, bool double_size, int color, int direction, bool spaceship);
 
 #endif /* RENDER_H_ */

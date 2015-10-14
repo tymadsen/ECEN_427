@@ -100,6 +100,9 @@ void killTankGlobals(){
 	//Decrement the lives
 	setLives(false);
 	//draw the killed tank with death 2 first
+	activeFramePointer = background;
+	drawBitmap(tank_15x8, getTankPosition(), TANKWIDTH, TANKHEIGHT, true, BLACK, false);
+	activeFramePointer = foreground;
 	drawBitmap(tank_15x8, getTankPosition(), TANKWIDTH, TANKHEIGHT, true, BLACK, false);
 	killTank(false, false);
 	return;
@@ -136,7 +139,7 @@ void updateSpaceship() {
 		if (spaceship.direction == LEFT) {
 			//			xil_printf("The direction is left \r\n");
 			//make the saucer go left by pixel_adjustment
-			spaceship.pos.x -= pixel_adjustment;
+			spaceship.pos.x -= spaceship_pixel_adjustment;
 			//Check to see if the saucer is off the screen yet
 			if (spaceship.pos.x <= (0)) {
 				offscreen = true;
@@ -144,7 +147,7 @@ void updateSpaceship() {
 		}
 		else {
 			//			xil_printf("The direction is right\r\n");
-			spaceship.pos.x += pixel_adjustment;
+			spaceship.pos.x += spaceship_pixel_adjustment;
 			if (spaceship.pos.x >= screen_width - spaceship_width * 2) {
 				offscreen = true;
 			}
@@ -345,11 +348,14 @@ uint32_t getBunkerErosion(int bunker) {
 }
 void setBunkerErosion(int bunker, int block) {
 	//Creating a mask to see if the corresponding block is completely eroded
-	if (((bunkerStates[bunker] & (0x7 << (3 * block))) >> (3 * block)) >= 0x4)
-		xil_printf("Bunker %d, Block %d is already completely eroded!!!", bunker, block);
+	if (((bunkerStates[bunker] & (0x7 << (3 * block))) >> (3 * block)) >= 0x4) {}
+//		xil_printf("Bunker %d, Block %d is already completely eroded!!!", bunker, block);
 	else {
 		//If it is not completely eroded, add a 1 to the state of the block
 		bunkerStates[bunker] += (0x1 << (3 * block));
+		// Draw erosion
+		int mask = (bunker == 3) ? bunker_3_render_mask : (bunker == 2) ? bunker_2_render_mask : (bunker == 1) ? bunker_1_render_mask : bunker_0_render_mask;
+		render(false, mask, block, 0);
 	}
 }
 //uint32_t getBunkerErosion0() {
@@ -413,14 +419,19 @@ void updateBullets() {
 		int y = tankBulletPosition.y;
 		int x = tankBulletPosition.x;
 
-		int pix_color = getPixelColor(x,y,1,6,true);
+		point_t pix = getHitPixel(x, y, TANKBULLETWIDTH, tank_bullet_pixel_adjustment, false);
+		int pix_color = activeFramePointer[pix.y*SCREENWIDTH + pix.x];
 		if(pix_color){
 			point_t alien_pos = getAlienBlockPosition();
 			// What did it hit?
 			// Was it a bunker?
 			if (y >= BUNKERSTARTY) {
+
 //				xil_printf("It was below the top of the bunker (bunker or bullet)\n");
-				if(determineBunkerErosion(x,y-6)){//new function name)
+				point_t bunk_blk = determineBunkerErosion(pix.x, pix.y);
+				if(bunk_blk.x != -1 && bunk_blk.y != -1){
+					// Erode bunker bunk_blk.x = bunker, bunk_blk.y = block
+					setBunkerErosion(bunk_blk.x, bunk_blk.y);
 					// Erase bullet
 					render(true, tank_bullet_render_mask, 0, UP);
 					// Move bullet so it will be reset, and made free
@@ -434,21 +445,9 @@ void updateBullets() {
 			else if (y >= alien_pos.y && pix_color != GREEN) {
 //				xil_printf("We hit an alien...Pix_color: %d\n", pix_color);
 
-				//#define ALIENHEIGHT 8
-				//#define ALIENWIDTH 12
-				//#define ALIENXSPACING 2
-				//#define ALIENYSPACING 20
-				//#define ALIENBLOCKSTARTX 167
-				//#define ALIENBLOCKSTARTY 75
-				//#define ALIENSPERROW 11
-				//				left_check_pos = alien_pos.x;
-				//				xil_printf("Params: x:%d\ny:%d\n,alien_blk_x:%d\n,alien_blk_y:%d\nAlienWidth:%d\nAlienHeight:%d\nXspc:%d\nYspc:%d\n",x,y,alien_pos.x,alien_pos.y,ALIENWIDTH,ALIENHEIGHT,ALIENXSPACING,ALIENYSPACING);
 				int alien_col = (x - alien_pos.x) / (2 * (ALIENWIDTH + ALIENXSPACING));
 				int alien_row = (y - alien_pos.y) / (ALIENHEIGHT + ALIENYSPACING);
 				short alien_index = (short) ((alien_row * ALIENSPERROW) + alien_col);
-				//				xil_printf("alien col: %d\n", alien_col);
-				//				xil_printf("alien row: %d\n", alien_row);
-				//				xil_printf("Killing alien: %d\n", alien_index);
 				// Kill alien at alien_index
 				setAlienDeaths(alien_index, true);
 				// Increase score
@@ -473,7 +472,6 @@ void updateBullets() {
 				oldSpaceshipLocation = spaceship.pos;
 				incScore(-1, true);
 				setSpaceshipHit(true);
-				//TODO: Show score with spaceship.pos
 				spaceship.pos.x = bullet_offscreen, spaceship.pos.y = bullet_offscreen;
 				spaceship.isFree = true;
 			} else {
@@ -495,76 +493,116 @@ void updateBullets() {
 	updateAlienBulletCounters();
 	//Will update the position of each bullet
 	if (!aBullet0.isFree) {
-//		aBullet0.pos.y += aBullet_pixel_adjustment;
+		//aBullet0.pos.y += aBullet_pixel_adjustment;
 		int x = aBullet0.pos.x;
 		int y = aBullet0.pos.y+2*alien_bullet_height;
 		// Check if y is even at bunkers
 		if(y >= BUNKERSTARTY){
+			point_t pix = getHitPixel(x, y, 2*BULLETWIDTH, aBullet_pixel_adjustment, true);
+			point_t bunk_blk = determineBunkerErosion(pix.x,pix.y);
+
 			// If bullet is at the ground or hit & eroded a bunker
-			if ((aBullet0.pos.y > green_line_y - (2 * alien_bullet_height))
-				|| (getPixelColor(x,y,6,14,false) && determineBunkerErosion(x+3,y+7))) {
+			if (aBullet0.pos.y > green_line_y - (2 * alien_bullet_height)
+				|| (bunk_blk.x != -1 && bunk_blk.y != -1)
+				|| bulletHitTank(pix.x, pix.y)) {
+				setBunkerErosion(bunk_blk.x, bunk_blk.y);
 				// Remove the bullet
 				eraseBullet(aBullet0.pos, aBullet0.type);
 				aBullet0.pos.x = bullet_offscreen;
 				aBullet0.pos.y = bullet_offscreen;
 				aBullet0.isFree = true;
 			}
+			else{
+				aBullet0.pos.y += aBullet_pixel_adjustment;
+			}
 		}
-		aBullet0.pos.y += aBullet_pixel_adjustment;
+		else{
+			aBullet0.pos.y += aBullet_pixel_adjustment;
+		}
 	}
 	if (!aBullet1.isFree) {
-//		aBullet1.pos.y += aBullet_pixel_adjustment;
+		//aBullet1.pos.y += aBullet_pixel_adjustment;
 		int x = aBullet1.pos.x;
 		int y = aBullet1.pos.y+2*alien_bullet_height;
 		// Check if y is even at bunkers
 		if(y >= BUNKERSTARTY){
+			point_t pix = getHitPixel(x, y, 2*BULLETWIDTH, aBullet_pixel_adjustment, true);
+			point_t bunk_blk = determineBunkerErosion(pix.x,pix.y);
+
 			// If bullet is at the ground or hit & eroded a bunker
-			if ((aBullet1.pos.y > green_line_y - (2 * alien_bullet_height))
-				|| (getPixelColor(x,y,6,14,false) && determineBunkerErosion(x+3,y+7))) {
+			if (aBullet1.pos.y > green_line_y - (2 * alien_bullet_height)
+				|| (bunk_blk.x != -1 && bunk_blk.y != -1)
+				|| bulletHitTank(pix.x, pix.y)) {
+				setBunkerErosion(bunk_blk.x, bunk_blk.y);
 				// Remove the bullet
 				eraseBullet(aBullet1.pos, aBullet1.type);
 				aBullet1.pos.x = bullet_offscreen;
 				aBullet1.pos.y = bullet_offscreen;
 				aBullet1.isFree = true;
 			}
+			else{
+				aBullet1.pos.y += aBullet_pixel_adjustment;
+			}
 		}
-		aBullet1.pos.y += aBullet_pixel_adjustment;
+		else{
+			aBullet1.pos.y += aBullet_pixel_adjustment;
+		}
 	}
 	if (!aBullet2.isFree) {
-//		aBullet2.pos.y += aBullet_pixel_adjustment;
+		//aBullet2.pos.y += aBullet_pixel_adjustment;
 		int x = aBullet2.pos.x;
 		int y = aBullet2.pos.y+2*alien_bullet_height;
 		// Check if y is even at bunkers
 		if(y >= BUNKERSTARTY){
+			point_t pix = getHitPixel(x, y, 2*BULLETWIDTH, aBullet_pixel_adjustment, true);
+			point_t bunk_blk = determineBunkerErosion(pix.x,pix.y);
+
 			// If bullet is at the ground or hit & eroded a bunker
-			if ((aBullet2.pos.y > green_line_y - (2 * alien_bullet_height))
-				|| (getPixelColor(x,y,6,14,false) && determineBunkerErosion(x+3,y+7))) {
+			if (aBullet2.pos.y > green_line_y - (2 * alien_bullet_height)
+				|| (bunk_blk.x != -1 && bunk_blk.y != -1)
+				|| bulletHitTank(pix.x, pix.y)) {
+				setBunkerErosion(bunk_blk.x, bunk_blk.y);
 				// Remove the bullet
 				eraseBullet(aBullet2.pos, aBullet2.type);
 				aBullet2.pos.x = bullet_offscreen;
 				aBullet2.pos.y = bullet_offscreen;
 				aBullet2.isFree = true;
 			}
+			else{
+				aBullet2.pos.y += aBullet_pixel_adjustment;
+			}
 		}
-		aBullet2.pos.y += aBullet_pixel_adjustment;
+		else{
+			aBullet2.pos.y += aBullet_pixel_adjustment;
+		}
 	}
 	if (!aBullet3.isFree) {
-//		aBullet3.pos.y += aBullet_pixel_adjustment;
+		//aBullet3.pos.y += aBullet_pixel_adjustment;
 		int x = aBullet3.pos.x;
 		int y = aBullet3.pos.y+2*alien_bullet_height;
 		// Check if y is even at bunkers
 		if(y >= BUNKERSTARTY){
+			point_t pix = getHitPixel(x, y, 2*BULLETWIDTH, aBullet_pixel_adjustment, true);
+			point_t bunk_blk = determineBunkerErosion(pix.x,pix.y);
+
 			// If bullet is at the ground or hit & eroded a bunker
-			if ((aBullet3.pos.y > green_line_y - (2 * alien_bullet_height))
-				|| (getPixelColor(x,y,6,14,false) && determineBunkerErosion(x+3,y+7))) {
+			if (aBullet3.pos.y > green_line_y - (2 * alien_bullet_height)
+				|| (bunk_blk.x != -1 && bunk_blk.y != -1)
+				|| bulletHitTank(pix.x, pix.y)) {
+				setBunkerErosion(bunk_blk.x, bunk_blk.y);
 				// Remove the bullet
 				eraseBullet(aBullet3.pos, aBullet3.type);
 				aBullet3.pos.x = bullet_offscreen;
 				aBullet3.pos.y = bullet_offscreen;
 				aBullet3.isFree = true;
 			}
+			else{
+				aBullet3.pos.y += aBullet_pixel_adjustment;
+			}
 		}
-		aBullet3.pos.y += aBullet_pixel_adjustment;
+		else{
+			aBullet3.pos.y += aBullet_pixel_adjustment;
+		}
 	}
 }
 
@@ -585,7 +623,24 @@ void eraseBullet(point_t pos, unsigned short type) {
 	drawBitmap(alien_bullet_11_3x7, pos, alien_bullet_width, alien_bullet_height, true, GREEN, true);
 }
 
-bool determineBunkerErosion(int x, int y){
+bool bulletHitTank(int x, int y){
+	point_t tank_pos = getTankPosition();
+	if(x < tank_pos.x || y < TANKSTARTY || y > (2*TANKHEIGHT+TANKSTARTY))
+		return false;
+	else{
+//		xil_printf("dead tank!\n");
+		killTankGlobals();
+		/************
+		 * TODO: set isTankFree = false;
+		 * call killTank()
+		 */
+		return true;
+	}
+}
+point_t determineBunkerErosion(int x, int y){
+	point_t bunker_block = {-1,-1};
+	if(x < BUNKERSTARTX || y < BUNKERSTARTY || y > (BUNKERSTARTY+2*BUNKERHEIGHT))
+		return bunker_block;
 
 	int left_check_pos = BUNKERSTARTX;
 	int bunker = 0;
@@ -607,36 +662,53 @@ bool determineBunkerErosion(int x, int y){
 		// don't use 10 or 11
 		block = (block > 9) ? 9 : block;
 //		xil_printf("Block: %d\n", block);
-		setBunkerErosion(bunker, block);
-		// Draw erosion
-		int mask = (bunker == 3) ? bunker_3_render_mask : (bunker == 2) ? bunker_2_render_mask : (bunker == 1) ? bunker_1_render_mask : bunker_0_render_mask;
-		render(false, mask, block, 0);
+		bunker_block.x = bunker;
+		bunker_block.y = block;
 	}
-	return !off_screen;
+	return bunker_block;
 }
 
-int getPixelColor(int x, int y, int w, int h, bool above){
-	// Set color to the color of the first non-black thing it will go over, (if none, then it will be black)
-	int pix_color = BLACK;
-	int op = above ? -1 : 1;
-	// did it hit something?
-	/***********************************************************
-	 * TODO: check every pixel in the rectangle bounded
-	 * by the top left (x,y) pair and width and height args
-	 ***********************************************************
-	 */
-	// Get 4 pixels at corners of bullets and check for color
-	if ((pix_color = activeFramePointer[(y) * SCREENWIDTH + x])
-		|| (pix_color = activeFramePointer[(y) * SCREENWIDTH + x + w])
-		|| (pix_color = activeFramePointer[(y + op*h) * SCREENWIDTH + x])
-		|| (pix_color = activeFramePointer[(y + op*h) * SCREENWIDTH + x + w])) {
-//		xil_printf("We hit something.. Pix_color: %x\n",pix_color);
+/***********************************************************
+ * Check every pixel in the rectangle bounded
+ * by the top left (x,y) pair and width and height args
+ * return the pixel that was not black or 0,0
+ ***********************************************************
+ */
+point_t getHitPixel(int x, int y, int w, int h, bool alienBullet){
+
+	int i;
+	int j;
+	point_t hit_coord = {0,0};
+	if(alienBullet){//Alien bullets
+		for(i=y;i<y+h;i++){
+			for(j=x;j<x+w;j++){
+				// If not black pixel found
+				if(activeFramePointer[i*SCREENWIDTH + j]){
+					// Set coordinates of the pixel
+					hit_coord.x = j;
+					hit_coord.y = i;
+					//break out of loop
+					j = (x+w);
+					i = (y+h);
+				}
+			}
+		}
 	}
-	/************************************************************
-	 * TODO: return the precise point that caused the impact
-	 ************************************************************
-	 */
-	return pix_color;
+	else{// Tank bullets
+		for(i=y;i>y-h;i--){
+			for(j=x;j<x+w;j++){
+				// If not black pixel found
+				if(activeFramePointer[i*SCREENWIDTH + j]){
+					//we found a pixel that is not black
+					hit_coord.x = j;
+					hit_coord.y = i;
+					j = (x+w);
+					i = (y-h);
+				}
+			}
+		}
+	}
+	return hit_coord;
 }
 
 void updateAlienBlock() {
@@ -797,7 +869,7 @@ bool isGameOver() {
 		return true;
 	}
 	//If the aliens have reached the bottom of the bunker, the game is over
-	while(gameOver != false) {
+	while(gameOver == false) {
 		//Keep going until we find the bottom alien
 		if (alienDeaths[i] == false) {
 			gameOver = true;
@@ -824,8 +896,8 @@ bool isGameOver() {
 	//	xil_printf("This is the row of the last live alien: %d\r\n", row);
 	//If the last live alien reaches the bottom of the bunkers, the game is over
 	if ((alienBlockPosition.y + (row * alien_height * 2) + (row - 1) * (spacing)) >= (BUNKERSTARTY + BUNKERHEIGHT * 2)) {
-		xil_printf("Position: %d, bunker: %d\r\n",(alienBlockPosition.y + (row * alien_height * 2) + (row - 1) * (spacing)),(BUNKERSTARTY + BUNKERHEIGHT * 2));
-		xil_printf("The row is: %d\r\n", row);
+//		xil_printf("Position: %d, bunker: %d\r\n",(alienBlockPosition.y + (row * alien_height * 2) + (row - 1) * (spacing)),(BUNKERSTARTY + BUNKERHEIGHT * 2));
+//		xil_printf("The row is: %d\r\n", row);
 		return true;
 	}
 	return false;
@@ -856,7 +928,7 @@ void incScore(int alienNum, bool isSpaceshipHit) {
 		printSpaceshipValue(spaceshipScore, getOldSpaceshipLoc(), false);
 //		xil_printf("The spaceship score is: %d\r\n", spaceScore);
 		score += spaceshipScore;
-		xil_printf("Score: %d, spaceshipScore: %d\r\n", score, spaceshipScore);
+//		xil_printf("Score: %d, spaceshipScore: %d\r\n", score, spaceshipScore);
 	}
 	int tempScore = score;
 	int index = 0;
@@ -864,11 +936,11 @@ void incScore(int alienNum, bool isSpaceshipHit) {
 	if((oldScore < 100 && tempScore > 99) || (oldScore < 1000 && tempScore > 999)){
 		oldScore = oldScore * 10;
 	}
-	xil_printf("Score: %d, oldScore: %d\r\n", score, oldScore);
+//	xil_printf("Score: %d, oldScore: %d\r\n", score, oldScore);
 	//Update the screen to reflect the new score
 	//Update the first number?
 	if ((score > 999)) {
-		xil_printf("The first number is %d \r\n",tempScore/1000);
+//		xil_printf("The first number is %d \r\n",tempScore/1000);
 		if ((oldScore / 1000 != tempScore / 1000)) {
 			drawScore(index, tempScore / 1000, oldScore/1000);
 		}
@@ -877,7 +949,7 @@ void incScore(int alienNum, bool isSpaceshipHit) {
 	oldScore = oldScore % 1000;
 	tempScore = tempScore % 1000;
 	if ((score > 99)) {
-		xil_printf("The second number is %d \r\n",tempScore/100);
+//		xil_printf("The second number is %d \r\n",tempScore/100);
 		if (oldScore / 100 != tempScore / 100) {
 			drawScore(index, tempScore / 100, oldScore/100);
 		}
@@ -887,7 +959,7 @@ void incScore(int alienNum, bool isSpaceshipHit) {
 	oldScore = oldScore % 100;
 	tempScore = tempScore % 100;
 	if ((score > 9)) {
-		xil_printf("The third number is %d \r\n",tempScore/10);
+//		xil_printf("The third number is %d \r\n",tempScore/10);
 		if ((oldScore / 10 != tempScore / 10)) {
 			drawScore(index, tempScore / 10, oldScore/10);
 		}
@@ -896,7 +968,7 @@ void incScore(int alienNum, bool isSpaceshipHit) {
 	oldScore = oldScore % 10;
 	tempScore = tempScore % 10;
 	//update the third number?
-	xil_printf("The last number is %d \r\n",tempScore);
+//	xil_printf("The last number is %d \r\n",tempScore);
 	drawScore(index, tempScore, oldScore);
 	//Draw the last number of the score
 
@@ -913,9 +985,9 @@ int getScore() {
 int getAlienUpdateTime() {
 
 	if(liveAliens/11 >= 4) {	return 60;	}
-	else if(liveAliens/11 == 3)	{ 	return 55;	}
-	else if(liveAliens/11 == 2)	{	return 50;	}
-	else if(liveAliens/11 == 1)	{	return 40;	}
-	else if(liveAliens/11 == 0)	{	return 30;	}
+	else if(liveAliens/11 == 3)	{ 	return 50;	}
+	else if(liveAliens/11 == 2)	{	return 40;	}
+	else if(liveAliens/11 == 1)	{	return 35;	}
+	else if(liveAliens/11 == 0)	{	return 25;	}
 	else return 0;
 }

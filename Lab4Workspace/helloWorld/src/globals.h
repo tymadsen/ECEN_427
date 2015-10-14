@@ -33,6 +33,7 @@
 #define alien_bullet_width 3
 #define pixel_adjustment 6
 #define aBullet_pixel_adjustment 6
+#define spaceship_pixel_adjustment 3
 #define tank_bullet_pixel_adjustment 12
 #define bullet_offscreen 1000
 #define screen_width 640
@@ -138,8 +139,9 @@ bool* getAlienDeaths();
 void setAlienDeaths(short alien, bool dead);
 void updateBullets();
 void updateAlienBlock();
-bool determineBunkerErosion(int x, int y);
-int getPixelColor(int x, int y, int w, int h, bool above);
+bool bulletHitTank(int x, int y);
+point_t determineBunkerErosion(int x, int y);
+point_t getHitPixel(int x, int y, int w, int h, bool alienBullet);
 void fireTankBullet();
 void fireAlienBullet();
 void updateAlienBulletCounters();

@@ -81,9 +81,6 @@ void updateScreenElements(){
 		if(currentButtonState & CENTERBTN){
 			shootTankBullet();
 		}
-		if(currentButtonState & UPBTN) {
-			killTankGlobals();
-		}
 	}
 	return;
 }
@@ -148,7 +145,7 @@ void timer_interrupt_handler() {
 		}
 	}
 	//Will move the spaceship across the screen
-	if(updateSpaceshipCounter >= 10){
+	if(updateSpaceshipCounter >= 5){
 //		xil_printf("We are updating the saucer position\r\n");
 		if(started && isTankFree())
 			updateSpaceshipHelper();
