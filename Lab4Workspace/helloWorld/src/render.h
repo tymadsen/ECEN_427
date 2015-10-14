@@ -72,7 +72,7 @@ void clearScreen();
 void initScreen();
 void render(bool erase, int render_objects_mask, short index, int direction);
 void drawScoreLabel();
-void drawScore(int index, int number);
+void drawScore(int index, int number, int prevNum);
 const uint32_t* getNumberBitmap(int number);
 void drawLivesLabel();
 void drawLives();

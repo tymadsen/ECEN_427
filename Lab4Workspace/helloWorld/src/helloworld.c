@@ -100,7 +100,7 @@ void timer_interrupt_handler() {
 		fitCounter = 0;
 	}
 	// The screen will update every 5ms
-	if(screenUpdateCounter >= 5) {
+	if(screenUpdateCounter >= 6) {
 		//Call function to update the screen
 		updateScreenElements();
 		screenUpdateCounter = 0;
@@ -110,7 +110,7 @@ void timer_interrupt_handler() {
 //		xil_printf("Fire Alien Bullet\r\n");
 		if(started)
 			fireAlienBulletHelper();
-		randBulletTime = (rand()%10)*25;
+		randBulletTime = (rand()%10)*25 + 50;
 		alienBulletCounter = 0;
 	}
 	//The spaceship will go across the screen at a random time between 1-20 seconds;

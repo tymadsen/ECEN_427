@@ -42,7 +42,7 @@ void initScreen() {
 	// Write the score label on top of the frame
 	drawScoreLabel();
 	// Draw score
-	drawScore(0,0);
+	drawScore(0,0,0);
 	// Draw the lives label
 	drawLivesLabel();
 	// Draw the lives
@@ -51,18 +51,7 @@ void initScreen() {
 	// Draw the bunkers
 	drawNewBunkers();
 
-	// Move to background
-	activeFramePointer = background;
-	// Write the score and label in background
-	drawScoreLabel();
-	drawScore(0,0);
-	// Draw the lives and label in background
-	drawLivesLabel();
-	drawLives();
-	// Draw background bunkers
-	drawNewBunkers();
-	// Switch back to foreground
-	activeFramePointer = foreground;
+
 
 	//set and draw the aliens
 	setTankPositionPoint(TANKSTARTX, TANKSTARTY);
@@ -127,21 +116,28 @@ void render(bool erase, int render_objects_mask, short index, int direction) {
 void drawScoreLabel() {
 	point_t score_label_pos;
 	score_label_pos.x = SCORELABELX, score_label_pos.y = SCORELABELY;
+	activeFramePointer = foreground;
 	drawBitmap(word_score_30x5, score_label_pos, SCORELABELWIDTH, LABELHEIGHT, true, WHITE, false);
+	activeFramePointer = background;
+	drawBitmap(word_score_30x5, score_label_pos, SCORELABELWIDTH, LABELHEIGHT, true, WHITE, false);
+	activeFramePointer = foreground;
 }
 
-void drawScore(int index, int number) {
+void drawScore(int index, int number, int prevNum) {
 	point_t score_pos;
 	//Put the starting position in the right place depending on the index
 	score_pos.x = SCOREX + (index*NUMBERWIDTH*2) + (index*NUMBERSPACING);
 	score_pos.y = SCOREY;
 	//Get the bitmap for the number we are going to show
 	const uint32_t* bitmap = getNumberBitmap(number);
+	const uint32_t* bitmapPrev = getNumberBitmap(prevNum);
 	//Draw it in the background first.
 	activeFramePointer = background;
+	drawBitmap(bitmapPrev, score_pos, NUMBERWIDTH, NUMBERHEIGHT, true, BLACK, false);
 	drawBitmap(bitmap, score_pos, NUMBERWIDTH, NUMBERHEIGHT, true, GREEN, false);
 	//Now draw it in the foreground
 	activeFramePointer = foreground;
+	drawBitmap(bitmapPrev, score_pos, NUMBERWIDTH, NUMBERHEIGHT, true, BLACK, false);
 	drawBitmap(bitmap, score_pos, NUMBERWIDTH, NUMBERHEIGHT, true, GREEN, false);
 }
 
@@ -183,13 +179,21 @@ const uint32_t* getNumberBitmap(int number){
 void drawLivesLabel() { 
 	point_t lives_label_pos;
 	lives_label_pos.x = LIVESLABELX, lives_label_pos.y = LIVESLABELY;
+	activeFramePointer = foreground;
 	drawBitmap(word_lives_24x5, lives_label_pos, LIVESLABELWIDTH, LABELHEIGHT, true, WHITE, false);
+	activeFramePointer = background;
+	drawBitmap(word_lives_24x5, lives_label_pos, LIVESLABELWIDTH, LABELHEIGHT, true, WHITE, false);
+	activeFramePointer = foreground;
 }
 
 void drawLives() {
 	point_t lives_pos;
 	lives_pos.x = LIFESTARTX, lives_pos.y = LIFESTARTY;
-	drawBitmapRepeat(tank_15x8, lives_pos, TANKWIDTH, TANKHEIGHT, true, GREEN, false, LIFEXSPACING, LIVESLEFT);
+	activeFramePointer = foreground;
+	drawBitmapRepeat(tank_15x8, lives_pos, TANKWIDTH, TANKHEIGHT, true, GREEN, false, LIFEXSPACING, getLives());
+	activeFramePointer = background;
+		drawBitmapRepeat(tank_15x8, lives_pos, TANKWIDTH, TANKHEIGHT, true, GREEN, false, LIFEXSPACING, getLives());
+	activeFramePointer = foreground;
 }
 
 void eraseLife(int lives){
@@ -206,8 +210,11 @@ void drawNewBunkers() {
 	point_t bunker_pos;
 	bunker_pos.y = BUNKERSTARTY;
 	bunker_pos.x = BUNKERSTARTX;
-	// TODO: this will need to change to draw each bunker individually
+	activeFramePointer = foreground;
 	drawBitmapRepeat(bunker_24x18, bunker_pos, BUNKERWIDTH, BUNKERHEIGHT, true, GREEN, false, BUNKERXSPACING, 4);
+	activeFramePointer = background;
+	drawBitmapRepeat(bunker_24x18, bunker_pos, BUNKERWIDTH, BUNKERHEIGHT, true, GREEN, false, BUNKERXSPACING, 4);
+	activeFramePointer = foreground;
 }
 
 void drawBunkerErosion(int bunker, int block){
@@ -430,7 +437,6 @@ const uint32_t* determineAlienBulletBitmap(short bulletType, short counter)
 
 void drawBitmap(const uint32_t* bitmap, point_t pos, int width, int height, bool double_size, int color, bool erase) {
 	int sRow, sCol, row, col;
-
 	for(row = 0, sRow=0; row < height; row++, sRow+=2) {
 		for(col = 0, sCol=0; col < width; col++, sCol+=2) {
 			//Will print the right color if we are not erasing
