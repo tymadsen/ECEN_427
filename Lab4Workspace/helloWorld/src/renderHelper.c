@@ -46,6 +46,26 @@ void moveTankRight(){
 	return;
 }
 
+void killTankHelper(bool death1, bool reset){
+	if(!reset){
+		killTank(true,death1);
+		killTank(false, death1);
+	}
+	//If we do want to reset it, draw the tank and reset it back to the starting position
+	else {
+		//Erase the tank before we move it to the beginning
+		killTank(true,death1);
+//		xil_printf("Printing the tank at the beginning\r\n");
+		//Set the tank free so everything on the screen can move again
+		setIsTankFree(true);
+		//Reset the tank back to its starting point
+		setTankPositionPoint(TANKSTARTX, TANKSTARTY);
+		//Draw the tank again
+		drawTank(false, RIGHT);
+	}
+	return;
+}
+
 void shootTankBullet(){
 	fireTankBullet();
 	render(false, tank_bullet_render_mask, 0, UP);

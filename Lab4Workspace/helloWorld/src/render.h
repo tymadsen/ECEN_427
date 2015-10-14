@@ -80,6 +80,7 @@ void eraseLife(int lives);
 void drawNewBunkers();
 void drawBunkerErosion(int bunker, int block);
 void drawTank(bool erase, int direction);
+void killTank(bool erase, bool death1);
 void drawTankBullet(bool erase);
 void drawSpaceship(bool erase, int direction);
 void printSpaceshipValue(int spaceshipValue, point_t position, bool erase);

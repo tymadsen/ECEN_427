@@ -31,9 +31,9 @@
 #define bullet_width 1
 #define alien_bullet_height 7
 #define alien_bullet_width 3
-#define pixel_adjustment 4
-#define aBullet_pixel_adjustment 4
-#define tank_bullet_pixel_adjustment 8
+#define pixel_adjustment 6
+#define aBullet_pixel_adjustment 6
+#define tank_bullet_pixel_adjustment 12
 #define bullet_offscreen 1000
 #define screen_width 640
 #define screen_height 480
@@ -90,6 +90,11 @@ typedef struct { point_t pos; bool isFree; int direction;} saucer;
 point_t getTankPosition();
 void setTankPosition(signed short pixels);
 void setTankPositionPoint(int x, int y);
+bool isTankFree();
+bool isTankHit();
+void setIsTankHit(bool hit);
+void setIsTankFree(bool free);
+void killTankGlobals();
 point_t getTankBulletPosition();
 void setTankBulletPosition(point_t point);
 void setTankBulletPositionXY(int x, int y);

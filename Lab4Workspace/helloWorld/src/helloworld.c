@@ -35,6 +35,7 @@
 #define LEFTBTN 0x8			// Left (Hour) button mask
 #define RIGHTBTN 0x2			// Right (Second) button mask
 #define CENTERBTN 0x1			// Center (Minute) button mask
+#define UPBTN 0x10				//Up btn
 #define TRUE 1
 #define FALSE 0
 void print(char *str);
@@ -62,13 +63,14 @@ int randSpaceshipTime = 0;
 int alienUpdateTime = 60;		//The time that will increase as more and more aliens are killed
 bool started = false;
 int ssValueDisplayCounter = 0;
+int tankKilledCounter = 0;
 
 XGpio gpLED;  // This is a handle for the LED GPIO block.
 XGpio gpPB;   // This is a handle for the push-button GPIO block.
 
 
 void updateScreenElements(){
-	if(started){
+	if(started && isTankFree()){
 		updateAllBullets();
 		if(currentButtonState & LEFTBTN){
 			moveTankLeft();
@@ -78,6 +80,9 @@ void updateScreenElements(){
 		}
 		if(currentButtonState & CENTERBTN){
 			shootTankBullet();
+		}
+		if(currentButtonState & UPBTN) {
+			killTankGlobals();
 		}
 	}
 	return;
@@ -90,10 +95,11 @@ void timer_interrupt_handler() {
 	spaceshipCounter++;
 	updateSpaceshipCounter++;
 	ssValueDisplayCounter++;
+	tankKilledCounter++;
 //	xil_printf("ssCounter: %d\r\n", ssValueDisplayCounter);
 	// The FIT counter that will update the aliens every half second
 	if(fitCounter >= alienUpdateTime) {
-		if(started){
+		if(started && isTankFree()){
 			updateAliens();
 		}
 		alienUpdateTime = getAlienUpdateTime();
@@ -108,7 +114,7 @@ void timer_interrupt_handler() {
 	//An alienBullet will fire at a random time between (1*25 - 10*25)
 	if(alienBulletCounter >= randBulletTime){
 //		xil_printf("Fire Alien Bullet\r\n");
-		if(started)
+		if(started && isTankFree())
 			fireAlienBulletHelper();
 		randBulletTime = (rand()%10)*25 + 50;
 		alienBulletCounter = 0;
@@ -116,7 +122,7 @@ void timer_interrupt_handler() {
 	//The spaceship will go across the screen at a random time between 1-20 seconds;
 	if(spaceshipCounter >= randSpaceshipTime){
 //		xil_printf("Send out the saucer\r\n");
-		if(started){
+		if(started && isTankFree()){
 			flySpaceship();
 //			xil_printf("We are sending out the saucer\r\n");
 		}
@@ -144,9 +150,28 @@ void timer_interrupt_handler() {
 	//Will move the spaceship across the screen
 	if(updateSpaceshipCounter >= 10){
 //		xil_printf("We are updating the saucer position\r\n");
-		if(started)
+		if(started && isTankFree())
 			updateSpaceshipHelper();
 		updateSpaceshipCounter = 0;
+	}
+	//If the tank is not free, it has been hit
+	if(isTankHit()){
+		if(started){
+			tankKilledCounter = 0;
+			setIsTankHit(false);
+		}
+	}
+	if(tankKilledCounter == 25 || tankKilledCounter == 75){
+//		xil_printf("Printing death1\r\n");
+		killTankHelper(true, false);
+	}
+	if(tankKilledCounter == 50 || tankKilledCounter == 100){
+//		xil_printf("Printing death2\r\n");
+		killTankHelper(false, false);
+	}
+	if(tankKilledCounter == 125){
+//		xil_printf("reseting\r\n");
+		killTankHelper(false, true);
 	}
 }
 

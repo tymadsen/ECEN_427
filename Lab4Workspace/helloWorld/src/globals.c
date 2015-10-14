@@ -36,6 +36,8 @@ int score = 0;
 int spaceshipScore = 0;
 point_t oldSpaceshipLocation;
 bool spaceshipHit = false;
+bool tankFree = true;
+bool tankHit = true;
 
 //srand((unsigned)time(NULL));
 
@@ -52,6 +54,56 @@ bool alienDeaths[55] = { false, false, false, false, false, false, false,
 		false, false, false, false, false, false, false, false, false, false,
 		false, false, false, false, false, false, false, false, false, false,
 		false, false, false, false, false, false, false, false };
+
+bool isTankFree(){
+	return tankFree;
+}
+
+void setIsTankFree(bool free){
+	tankFree = free;
+	return;
+}
+
+bool isTankHit(){
+	return tankHit;
+}
+
+void setIsTankHit(bool hit){
+	tankHit = hit;
+}
+
+void killTankGlobals(){
+	//Set everything so we can kill the tank
+	tankFree = false;
+	tankHit = true;
+	tankBulletFree = true;
+	//Erase all of the bullets and spaceship
+	aBullet bullet = getAlienBullet0();
+	eraseBullet(bullet.pos,bullet.type);
+	bullet = getAlienBullet1();
+	eraseBullet(bullet.pos,bullet.type);
+	bullet = getAlienBullet2();
+	eraseBullet(bullet.pos,bullet.type);
+	bullet = getAlienBullet2();
+	eraseBullet(bullet.pos,bullet.type);
+	drawBitmap(saucer_16x7, spaceship.pos, spaceship_width, spaceship_height, true, GREEN, true);
+	drawTankBullet(true);
+	//Take all of the bullets off the screen as well as the spaceship
+	point_t tempOffScreen;
+	tempOffScreen.x = bullet_offscreen; tempOffScreen.y = bullet_offscreen;
+	setTankBulletPositionXY(bullet_offscreen, bullet_offscreen);
+	setAlienBullet0(tempOffScreen, 0, true,0);
+	setAlienBullet1(tempOffScreen, 0, true,0);
+	setAlienBullet2(tempOffScreen, 0, true,0);
+	setAlienBullet3(tempOffScreen, 0, true,0);
+	setInitialSpaceship(tempOffScreen);
+	//Decrement the lives
+	setLives(false);
+	//draw the killed tank with death 2 first
+	drawBitmap(tank_15x8, getTankPosition(), TANKWIDTH, TANKHEIGHT, true, BLACK, false);
+	killTank(false, false);
+	return;
+}
 
 void setSpaceship(int direction) {
 	if (spaceship.isFree) {
@@ -367,7 +419,7 @@ void updateBullets() {
 			// What did it hit?
 			// Was it a bunker?
 			if (y >= BUNKERSTARTY) {
-				xil_printf("It was below the top of the bunker (bunker or bullet)\n");
+//				xil_printf("It was below the top of the bunker (bunker or bullet)\n");
 				if(determineBunkerErosion(x,y-6)){//new function name)
 					// Erase bullet
 					render(true, tank_bullet_render_mask, 0, UP);
@@ -375,12 +427,12 @@ void updateBullets() {
 					tankBulletPosition.y = -(tank_bullet_height + 1);
 				} else {
 					tankBulletPosition.y -= tank_bullet_pixel_adjustment;
-					xil_printf("It was offscreen (or a bullet)\n");
+//					xil_printf("It was offscreen (or a bullet)\n");
 				}
 
 			}// Was it an alien?! If the pix_color was not green then its not a bullet
 			else if (y >= alien_pos.y && pix_color != GREEN) {
-				xil_printf("We hit an alien...Pix_color: %d\n", pix_color);
+//				xil_printf("We hit an alien...Pix_color: %d\n", pix_color);
 
 				//#define ALIENHEIGHT 8
 				//#define ALIENWIDTH 12
@@ -412,7 +464,7 @@ void updateBullets() {
 				// Move bullet so it will be reset, and made free
 				tankBulletPosition.y = -(tank_bullet_height + 1);
 			} else if (pix_color == RED) {
-				xil_printf("You hit the spaceship!!!\n");
+//				xil_printf("You hit the spaceship!!!\n");
 				// Erase tank bullet
 				render(true, tank_bullet_render_mask, 0, UP);
 				tankBulletPosition.y = -(tank_bullet_height + 1);
@@ -425,7 +477,7 @@ void updateBullets() {
 				spaceship.pos.x = bullet_offscreen, spaceship.pos.y = bullet_offscreen;
 				spaceship.isFree = true;
 			} else {
-				xil_printf("It was above the alien block, and not green...\n");
+//				xil_printf("It was above the alien block, and not green...\n");
 				tankBulletPosition.y -= tank_bullet_pixel_adjustment;
 			}
 
@@ -547,14 +599,14 @@ bool determineBunkerErosion(int x, int y){
 	}
 	// Now find which block it was
 	if (!off_screen) {
-		xil_printf("It is not offscreen, Bunker: %d\n", bunker);
+//		xil_printf("It is not offscreen, Bunker: %d\n", bunker);
 		int block_col = (x - left_check_pos) / (2 * BLOCKWIDTH);
 		int block_row = (y - BUNKERSTARTY) / (2 * BLOCKHEIGHT);
 		int block = (block_row * 4) + block_col;
 		// Set to block 9 if it was greater than 9, since we
 		// don't use 10 or 11
 		block = (block > 9) ? 9 : block;
-		xil_printf("Block: %d\n", block);
+//		xil_printf("Block: %d\n", block);
 		setBunkerErosion(bunker, block);
 		// Draw erosion
 		int mask = (bunker == 3) ? bunker_3_render_mask : (bunker == 2) ? bunker_2_render_mask : (bunker == 1) ? bunker_1_render_mask : bunker_0_render_mask;
@@ -696,14 +748,14 @@ void updateAlienBlock() {
 		//call the render function
 		render(true, alien_block_render_mask, 0, DOWN);
 		alienBlockPosition.x = 640 - alien_block_width + rightOffset;
-		alienBlockPosition.y += alien_height;
+		alienBlockPosition.y += (alien_height*3)/2;
 		//Make the aliens go left instead of right
 		alienRight = false;
 	}
 	//Will move the alien block down a row
 	else if (alienOnLeftScreen) {
 		alienBlockPosition.x = -leftOffset;
-		alienBlockPosition.y += alien_height;
+		alienBlockPosition.y += (alien_height*3)/2;
 		alienOnLeftScreen = false;
 		alienDown = true;
 	}
@@ -733,7 +785,7 @@ int getLives() {
 }
 
 bool isGameOver() {
-	int i;
+	int i = 54;
 	int row = 0;
 	bool gameOver = false;
 	//If the player has no lives left, the game is over
@@ -741,12 +793,22 @@ bool isGameOver() {
 		return true;
 	}
 	//If all of the aliens are dead, the game is over
-	for (i = 55; i < 0; i--) {
-		if (alienDeaths[i - 1] == false) {
-			gameOver = false;
+	if(liveAliens == 0){
+		return true;
+	}
+	//If the aliens have reached the bottom of the bunker, the game is over
+	while(gameOver != false) {
+		//Keep going until we find the bottom alien
+		if (alienDeaths[i] == false) {
+			gameOver = true;
+		}
+		if(i == 0){
+			break;
+		}
+		else {
+			i--;
 		}
 	}
-	i--;
 	if ((i >= 44)) {
 		row = 5;
 	} else if ((i < 44) && (i >= 33)) {
@@ -758,16 +820,18 @@ bool isGameOver() {
 	} else {
 		row = 1;
 	}
+	int spacing = alien_y_spacing - alien_height;
 	//	xil_printf("This is the row of the last live alien: %d\r\n", row);
 	//If the last live alien reaches the bottom of the bunkers, the game is over
-	if ((alienBlockPosition.y + (row * alien_height * 2) + (row - 1) * (alienSpacing)) >= (BUNKERSTARTY + BUNKERHEIGHT * 2)) {
-		gameOver = true;
+	if ((alienBlockPosition.y + (row * alien_height * 2) + (row - 1) * (spacing)) >= (BUNKERSTARTY + BUNKERHEIGHT * 2)) {
+		xil_printf("Position: %d, bunker: %d\r\n",(alienBlockPosition.y + (row * alien_height * 2) + (row - 1) * (spacing)),(BUNKERSTARTY + BUNKERHEIGHT * 2));
+		xil_printf("The row is: %d\r\n", row);
+		return true;
 	}
-	return gameOver;
+	return false;
 }
 
 void incScore(int alienNum, bool isSpaceshipHit) {
-	//alienNum of -1 means just the spaceship is hit
 	int oldScore = score;
 	if(alienNum != -1){
 		//Increment the score to reflect the value of the alien just killed
@@ -792,13 +856,19 @@ void incScore(int alienNum, bool isSpaceshipHit) {
 		printSpaceshipValue(spaceshipScore, getOldSpaceshipLoc(), false);
 //		xil_printf("The spaceship score is: %d\r\n", spaceScore);
 		score += spaceshipScore;
+		xil_printf("Score: %d, spaceshipScore: %d\r\n", score, spaceshipScore);
 	}
 	int tempScore = score;
 	int index = 0;
+	//See if the score is going from 2 digits to 3 digits or 3 to 4 digits
+	if((oldScore < 100 && tempScore > 99) || (oldScore < 1000 && tempScore > 999)){
+		oldScore = oldScore * 10;
+	}
+	xil_printf("Score: %d, oldScore: %d\r\n", score, oldScore);
 	//Update the screen to reflect the new score
 	//Update the first number?
 	if ((score > 999)) {
-//		xil_printf("The first number is %d \r\n",tempScore/1000);
+		xil_printf("The first number is %d \r\n",tempScore/1000);
 		if ((oldScore / 1000 != tempScore / 1000)) {
 			drawScore(index, tempScore / 1000, oldScore/1000);
 		}
@@ -807,7 +877,7 @@ void incScore(int alienNum, bool isSpaceshipHit) {
 	oldScore = oldScore % 1000;
 	tempScore = tempScore % 1000;
 	if ((score > 99)) {
-//		xil_printf("The second number is %d \r\n",tempScore/100);
+		xil_printf("The second number is %d \r\n",tempScore/100);
 		if (oldScore / 100 != tempScore / 100) {
 			drawScore(index, tempScore / 100, oldScore/100);
 		}
@@ -817,7 +887,7 @@ void incScore(int alienNum, bool isSpaceshipHit) {
 	oldScore = oldScore % 100;
 	tempScore = tempScore % 100;
 	if ((score > 9)) {
-//		xil_printf("The third number is %d \r\n",tempScore/10);
+		xil_printf("The third number is %d \r\n",tempScore/10);
 		if ((oldScore / 10 != tempScore / 10)) {
 			drawScore(index, tempScore / 10, oldScore/10);
 		}
@@ -826,7 +896,7 @@ void incScore(int alienNum, bool isSpaceshipHit) {
 	oldScore = oldScore % 10;
 	tempScore = tempScore % 10;
 	//update the third number?
-//	xil_printf("The last number is %d \r\n",tempScore);
+	xil_printf("The last number is %d \r\n",tempScore);
 	drawScore(index, tempScore, oldScore);
 	//Draw the last number of the score
 
