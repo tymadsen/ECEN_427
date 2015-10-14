@@ -298,6 +298,9 @@ void setBunkerErosion(int bunker, int block) {
 	else {
 		//If it is not completely eroded, add a 1 to the state of the block
 		bunkerStates[bunker] += (0x1 << (3 * block));
+		// Draw erosion
+		int mask = (bunker == 3) ? bunker_3_render_mask : (bunker == 2) ? bunker_2_render_mask : (bunker == 1) ? bunker_1_render_mask : bunker_0_render_mask;
+		render(false, mask, block, 0);
 	}
 }
 //uint32_t getBunkerErosion0() {
@@ -444,15 +447,19 @@ void updateBullets() {
 	updateAlienBulletCounters();
 	//Will update the position of each bullet
 	if (!aBullet0.isFree) {
-//		aBullet0.pos.y += aBullet_pixel_adjustment;
+		//aBullet0.pos.y += aBullet_pixel_adjustment;
 		int x = aBullet0.pos.x;
 		int y = aBullet0.pos.y+2*alien_bullet_height;
 		// Check if y is even at bunkers
 		if(y >= BUNKERSTARTY){
 			point_t pix = getHitPixel(x,y,2*BULLETWIDTH,2*BULLETHEIGHT,true);
+			point_t bunk_blk = determineBunkerErosion(pix.x,pix.y);
+
 			// If bullet is at the ground or hit & eroded a bunker
 			if (aBullet0.pos.y > green_line_y - (2 * alien_bullet_height)
-				|| determineBunkerErosion(pix.x,pix.y)) {
+				|| (bunk_blk.x != -1 && bunk_blk.y != -1)
+				|| tankHit(pix.x, pix.y)) {
+				setBunkerErosion(bunk_blk.x, bunk_blk.y);
 				// Remove the bullet
 				eraseBullet(aBullet0.pos, aBullet0.type);
 				aBullet0.pos.x = bullet_offscreen;
@@ -467,60 +474,90 @@ void updateBullets() {
 			aBullet0.pos.y += aBullet_pixel_adjustment;
 		}
 	}
-//	if (!aBullet1.isFree) {
-//		//aBullet1.pos.y += aBullet_pixel_adjustment;
-//		int x = aBullet1.pos.x;
-//		int y = aBullet1.pos.y+2*alien_bullet_height;
-//		// Check if y is even at bunkers
-//		if(y >= BUNKERSTARTY){
-//			// If bullet is at the ground or hit & eroded a bunker
-//			if ((aBullet1.pos.y > green_line_y - (2 * alien_bullet_height))
-//				|| (getPixelColor(x,y,6,14,false) && determineBunkerErosion(x+3,y+7))) {
-//				// Remove the bullet
-//				eraseBullet(aBullet1.pos, aBullet1.type);
-//				aBullet1.pos.x = bullet_offscreen;
-//				aBullet1.pos.y = bullet_offscreen;
-//				aBullet1.isFree = true;
-//			}
-//		}
-//		aBullet1.pos.y += aBullet_pixel_adjustment;
-//	}
-//	if (!aBullet2.isFree) {
-//		//aBullet2.pos.y += aBullet_pixel_adjustment;
-//		int x = aBullet2.pos.x;
-//		int y = aBullet2.pos.y+2*alien_bullet_height;
-//		// Check if y is even at bunkers
-//		if(y >= BUNKERSTARTY){
-//			// If bullet is at the ground or hit & eroded a bunker
-//			if ((aBullet2.pos.y > green_line_y - (2 * alien_bullet_height))
-//				|| (getPixelColor(x,y,6,14,false) && determineBunkerErosion(x+3,y+7))) {
-//				// Remove the bullet
-//				eraseBullet(aBullet2.pos, aBullet2.type);
-//				aBullet2.pos.x = bullet_offscreen;
-//				aBullet2.pos.y = bullet_offscreen;
-//				aBullet2.isFree = true;
-//			}
-//		}
-//		aBullet2.pos.y += aBullet_pixel_adjustment;
-//	}
-//	if (!aBullet3.isFree) {
-//		//aBullet3.pos.y += aBullet_pixel_adjustment;
-//		int x = aBullet3.pos.x;
-//		int y = aBullet3.pos.y+2*alien_bullet_height;
-//		// Check if y is even at bunkers
-//		if(y >= BUNKERSTARTY){
-//			// If bullet is at the ground or hit & eroded a bunker
-//			if ((aBullet3.pos.y > green_line_y - (2 * alien_bullet_height))
-//				|| (getPixelColor(x,y,6,14,false) && determineBunkerErosion(x+3,y+7))) {
-//				// Remove the bullet
-//				eraseBullet(aBullet3.pos, aBullet3.type);
-//				aBullet3.pos.x = bullet_offscreen;
-//				aBullet3.pos.y = bullet_offscreen;
-//				aBullet3.isFree = true;
-//			}
-//		}
-//		aBullet3.pos.y += aBullet_pixel_adjustment;
-//	}
+	if (!aBullet1.isFree) {
+		//aBullet1.pos.y += aBullet_pixel_adjustment;
+		int x = aBullet1.pos.x;
+		int y = aBullet1.pos.y+2*alien_bullet_height;
+		// Check if y is even at bunkers
+		if(y >= BUNKERSTARTY){
+			point_t pix = getHitPixel(x,y,2*BULLETWIDTH,2*BULLETHEIGHT,true);
+			point_t bunk_blk = determineBunkerErosion(pix.x,pix.y);
+
+			// If bullet is at the ground or hit & eroded a bunker
+			if (aBullet1.pos.y > green_line_y - (2 * alien_bullet_height)
+				|| (bunk_blk.x != -1 && bunk_blk.y != -1)
+				|| tankHit(pix.x, pix.y)) {
+				setBunkerErosion(bunk_blk.x, bunk_blk.y);
+				// Remove the bullet
+				eraseBullet(aBullet1.pos, aBullet1.type);
+				aBullet1.pos.x = bullet_offscreen;
+				aBullet1.pos.y = bullet_offscreen;
+				aBullet1.isFree = true;
+			}
+			else{
+				aBullet1.pos.y += aBullet_pixel_adjustment;
+			}
+		}
+		else{
+			aBullet1.pos.y += aBullet_pixel_adjustment;
+		}
+	}
+	if (!aBullet2.isFree) {
+		//aBullet2.pos.y += aBullet_pixel_adjustment;
+		int x = aBullet2.pos.x;
+		int y = aBullet2.pos.y+2*alien_bullet_height;
+		// Check if y is even at bunkers
+		if(y >= BUNKERSTARTY){
+			point_t pix = getHitPixel(x,y,2*BULLETWIDTH,2*BULLETHEIGHT,true);
+			point_t bunk_blk = determineBunkerErosion(pix.x,pix.y);
+
+			// If bullet is at the ground or hit & eroded a bunker
+			if (aBullet2.pos.y > green_line_y - (2 * alien_bullet_height)
+				|| (bunk_blk.x != -1 && bunk_blk.y != -1)
+				|| tankHit(pix.x, pix.y)) {
+				setBunkerErosion(bunk_blk.x, bunk_blk.y);
+				// Remove the bullet
+				eraseBullet(aBullet2.pos, aBullet2.type);
+				aBullet2.pos.x = bullet_offscreen;
+				aBullet2.pos.y = bullet_offscreen;
+				aBullet2.isFree = true;
+			}
+			else{
+				aBullet2.pos.y += aBullet_pixel_adjustment;
+			}
+		}
+		else{
+			aBullet2.pos.y += aBullet_pixel_adjustment;
+		}
+	}
+	if (!aBullet3.isFree) {
+		//aBullet3.pos.y += aBullet_pixel_adjustment;
+		int x = aBullet3.pos.x;
+		int y = aBullet3.pos.y+2*alien_bullet_height;
+		// Check if y is even at bunkers
+		if(y >= BUNKERSTARTY){
+			point_t pix = getHitPixel(x,y,2*BULLETWIDTH,2*BULLETHEIGHT,true);
+			point_t bunk_blk = determineBunkerErosion(pix.x,pix.y);
+
+			// If bullet is at the ground or hit & eroded a bunker
+			if (aBullet3.pos.y > green_line_y - (2 * alien_bullet_height)
+				|| (bunk_blk.x != -1 && bunk_blk.y != -1)
+				|| tankHit(pix.x, pix.y)) {
+				setBunkerErosion(bunk_blk.x, bunk_blk.y);
+				// Remove the bullet
+				eraseBullet(aBullet3.pos, aBullet3.type);
+				aBullet3.pos.x = bullet_offscreen;
+				aBullet3.pos.y = bullet_offscreen;
+				aBullet3.isFree = true;
+			}
+			else{
+				aBullet3.pos.y += aBullet_pixel_adjustment;
+			}
+		}
+		else{
+			aBullet3.pos.y += aBullet_pixel_adjustment;
+		}
+	}
 }
 
 bool isSpaceshipHit(){
@@ -540,10 +577,23 @@ void eraseBullet(point_t pos, unsigned short type) {
 	drawBitmap(alien_bullet_11_3x7, pos, alien_bullet_width, alien_bullet_height, true, GREEN, true);
 }
 
-bool determineBunkerErosion(int x, int y){
-
-	if(x < BUNKERSTARTX || y < BUNKERSTARTY || y > (BUNKERSTARTY+2*BUNKERHEIGHT))
+bool tankHit(int x, int y){
+	point_t tank_pos = getTankPosition();
+	if(x < tank_pos.x || y < TANKSTARTY || y > (2*TANKHEIGHT+TANKSTARTY))
 		return false;
+	else{
+		xil_printf("dead tank!\n");
+		/************
+		 * TODO: set isTankFree = false;
+		 * call killTank()
+		 */
+		return true;
+	}
+}
+point_t determineBunkerErosion(int x, int y){
+	point_t bunker_block = {-1,-1};
+	if(x < BUNKERSTARTX || y < BUNKERSTARTY || y > (BUNKERSTARTY+2*BUNKERHEIGHT))
+		return bunker_block;
 
 	int left_check_pos = BUNKERSTARTX;
 	int bunker = 0;
@@ -565,12 +615,10 @@ bool determineBunkerErosion(int x, int y){
 		// don't use 10 or 11
 		block = (block > 9) ? 9 : block;
 		xil_printf("Block: %d\n", block);
-		setBunkerErosion(bunker, block);
-		// Draw erosion
-		int mask = (bunker == 3) ? bunker_3_render_mask : (bunker == 2) ? bunker_2_render_mask : (bunker == 1) ? bunker_1_render_mask : bunker_0_render_mask;
-		render(false, mask, block, 0);
+		bunker_block.x = bunker;
+		bunker_block.y = block;
 	}
-	return !off_screen;
+	return bunker_block;
 }
 
 /***********************************************************
