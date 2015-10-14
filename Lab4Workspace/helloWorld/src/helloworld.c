@@ -59,7 +59,9 @@ int alienBulletCounter = 0;		//Contains the count until the random time an alien
 int spaceshipCounter = 0;		//Counts to the next time a spaceship will appear
 int randBulletTime = 0;
 int randSpaceshipTime = 0;
+int alienUpdateTime = 60;		//The time that will increase as more and more aliens are killed
 bool started = false;
+int ssValueDisplayCounter = 0;
 
 XGpio gpLED;  // This is a handle for the LED GPIO block.
 XGpio gpPB;   // This is a handle for the push-button GPIO block.
@@ -87,10 +89,14 @@ void timer_interrupt_handler() {
 	alienBulletCounter++;
 	spaceshipCounter++;
 	updateSpaceshipCounter++;
+	ssValueDisplayCounter++;
+//	xil_printf("ssCounter: %d\r\n", ssValueDisplayCounter);
 	// The FIT counter that will update the aliens every half second
-	if(fitCounter >= 50) {
-		if(started)
+	if(fitCounter >= alienUpdateTime) {
+		if(started){
 			updateAliens();
+		}
+		alienUpdateTime = getAlienUpdateTime();
 		fitCounter = 0;
 	}
 	// The screen will update every 5ms
@@ -114,8 +120,26 @@ void timer_interrupt_handler() {
 			flySpaceship();
 //			xil_printf("We are sending out the saucer\r\n");
 		}
-		randSpaceshipTime = (rand()%25)*100 + 1000;
+		randSpaceshipTime = (rand()%25)*100 + 2000;
 		spaceshipCounter = 0;
+	}
+	if(isSpaceshipHitHelper()){
+//		xil_printf("We are reseting the value counter\r\n");
+		ssValueDisplayCounter = 0;
+		setSpaceshipHitHelper(false);
+	}
+	if(ssValueDisplayCounter == 50 || ssValueDisplayCounter == 150 || ssValueDisplayCounter == 250){
+		//If the score has been on for 1/2 second, erase it
+//		xil_printf("We are going to erase the spaceship value\r\n");
+		if(getSpaceship().isFree){
+			eraseSpaceshipScore(true);
+		}
+	}
+	if(ssValueDisplayCounter == 100 || ssValueDisplayCounter == 200){
+//		xil_printf("We are going to draw the spaceship value\r\n");
+		if(getSpaceship().isFree){
+			eraseSpaceshipScore(false);
+		}
 	}
 	//Will move the spaceship across the screen
 	if(updateSpaceshipCounter >= 10){
@@ -249,7 +273,7 @@ int main()
 		xil_printf("vdma parking failed\n\r");
 	}
 	initScreen();
-	randBulletTime = (rand()%10)*50;
+	randBulletTime = (rand()%10)*50 + 100;
 	randSpaceshipTime = (rand()%25)*100 + 1000;
 	//setvbuf(stdin, NULL, _IONBF, 0)
 	while(!isGameOver()) {

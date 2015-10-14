@@ -9,7 +9,6 @@
 #define GLOBALS_H_
 #include <stdio.h>
 #include <stdlib.h>
-//#include "time.h"
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -33,7 +32,7 @@
 #define alien_bullet_height 7
 #define alien_bullet_width 3
 #define pixel_adjustment 4
-#define tank_bullet_pixel_adjustment pixel_adjustment
+#define tank_bullet_pixel_adjustment pixel_adjustment*2
 #define bullet_offscreen 1000
 #define screen_width 640
 #define screen_height 480
@@ -106,6 +105,7 @@ aBullet getAlienBullet3();
 void setAlienBullet3(point_t point, unsigned short type, bool isFree, short counter);
 bool getAlienRight();
 bool getAlienDown();
+int getAlienUpdateTime();
 
 uint32_t getBunkerErosion();
 void setBunkerErosion(int bunker, int block);
@@ -122,6 +122,10 @@ void setSpaceship(int direction);
 void setInitialSpaceship(point_t pos);
 saucer getSpaceship();
 void updateSpaceship();
+int getSpaceshipValue();
+point_t getOldSpaceshipLoc();
+bool isSpaceshipHit();
+void setSpaceshipHit(bool hit);
 void eraseBullet(point_t pos, unsigned short type);
 
 bool* getAlienDeaths();

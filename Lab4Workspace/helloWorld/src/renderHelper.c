@@ -81,3 +81,17 @@ void updateSpaceshipHelper(){
 		render(false, spaceship_render_mask, 0, getSpaceship().direction);
 	}
 }
+
+void eraseSpaceshipScore(bool erase){
+	printSpaceshipValue(getSpaceshipValue(), getOldSpaceshipLoc(), erase);
+	return;
+}
+
+bool isSpaceshipHitHelper(){
+	return isSpaceshipHit();
+}
+
+void setSpaceshipHitHelper(bool hit){
+	setSpaceshipHit(hit);
+	return;
+}

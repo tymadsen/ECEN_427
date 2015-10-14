@@ -137,26 +137,33 @@ void drawScore(int index, int number) {
 	score_pos.y = SCOREY;
 	//Get the bitmap for the number we are going to show
 	const uint32_t* bitmap = getNumberBitmap(number);
-	drawBitmap(bitmap, score_pos, NUMBERWIDTH, LABELHEIGHT, true, GREEN, false);
+	//Draw it in the background first.
+	activeFramePointer = background;
+	drawBitmap(bitmap, score_pos, NUMBERWIDTH, NUMBERHEIGHT, true, GREEN, false);
+	//Now draw it in the foreground
+	activeFramePointer = foreground;
+	drawBitmap(bitmap, score_pos, NUMBERWIDTH, NUMBERHEIGHT, true, GREEN, false);
 }
 
-void printSpaceshipValue(int spaceshipValue){
-	point_t position = getSpaceship().pos;
-	int index = 0;
+void printSpaceshipValue(int spaceshipValue, point_t position, bool erase){
+//	xil_printf("We are printing the score at %d, %d\r\n", position.x, position.y);
+	int index = spaceshipValue;
 	const uint32_t* bitmap;
 	//Draw the 100s digit if our value is over 99
-	if(spaceshipValue > 99){
+	if(index > 99){
 		bitmap = getNumberBitmap(index/100);
-		drawBitmap(bitmap, position, NUMBERWIDTH, LABELHEIGHT, false, RED, false);
-		index = spaceshipValue%100;
+//		xil_printf("We are printing %d at %d, %d\r\n", index/100, position.x, position.y);
+		drawBitmap(bitmap, position, NUMBERWIDTH, NUMBERHEIGHT, true, RED, erase);
+		index = index%100;
 		position.x += NUMBERWIDTH + NUMBERSPACING;
 	}
 	//Draw the 10s digit
 	bitmap = getNumberBitmap(index/10);
-	drawBitmap(bitmap, position, NUMBERWIDTH, LABELHEIGHT, false, RED, false);
+//	xil_printf("We are printing %d at %d, %d\r\n", index/10, position.x, position.y);
+	drawBitmap(bitmap, position, NUMBERWIDTH, NUMBERHEIGHT, true, RED, erase);
 	position.x += NUMBERSPACING + NUMBERWIDTH;
 	//Draw the 1s digit which will always be 0
-	drawBitmap(number_0_5x5, position, NUMBERWIDTH, LABELHEIGHT, false, RED, false);
+	drawBitmap(number_0_5x5, position, NUMBERWIDTH, NUMBERHEIGHT, true, RED, erase);
 	return;
 }
 

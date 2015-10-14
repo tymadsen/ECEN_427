@@ -17,5 +17,8 @@ void updateAllBullets();
 void fireAlienBulletHelper();
 void flySpaceship();
 void updateSpaceshipHelper();
+void eraseSpaceshipScore(bool erase);
+bool isSpaceshipHitHelper();
+void setSpaceshipHitHelper(bool hit);
 
 #endif /* RENDERHELPER_H_ */
