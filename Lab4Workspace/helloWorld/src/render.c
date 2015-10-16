@@ -47,13 +47,12 @@ void initScreen() {
 	drawLivesLabel();
 	// Draw the lives
 	drawLives();
+	//Set the initial spaceship
 	setInitialSpaceship(tempOffScreen);
 	// Draw the bunkers
 	drawNewBunkers();
 
-
-
-	//set and draw the aliens
+	//set and draw the aliens, tank, and all bullets
 	setTankPositionPoint(TANKSTARTX, TANKSTARTY);
 	drawTank(false, RIGHT);
 	setTankBulletPositionXY(bullet_offscreen, bullet_offscreen);
@@ -61,14 +60,6 @@ void initScreen() {
 	setAlienBullet1(tempOffScreen, 0, true,0);
 	setAlienBullet2(tempOffScreen, 0, true,0);
 	setAlienBullet3(tempOffScreen, 0, true,0);
-//	aBullet temp = getAlienBullet0();
-////	xil_printf("bullet1: x:%d, y:%d, type:%d, isFree:%d\r\n", temp.pos.x, temp.pos.y, temp.type, temp.isFree);
-//	temp = getAlienBullet1();
-////	xil_printf("bullet2: x:%d, y:%d, type:%d, isFree:%d\r\n", temp.pos.x, temp.pos.y, temp.type, temp.isFree);
-//	temp = getAlienBullet2();
-////	xil_printf("bullet3: x:%d, y:%d, type:%d, isFree:%d\r\n", temp.pos.x, temp.pos.y, temp.type, temp.isFree);
-//	temp = getAlienBullet3();
-////	xil_printf("bullet4: x:%d, y:%d, type:%d, isFree:%d\r\n", temp.pos.x, temp.pos.y, temp.type, temp.isFree);
 	point_t aBP;
 	aBP.x = ALIENBLOCKSTARTX, aBP.y = ALIENBLOCKSTARTY;
 	setAlienBlockPosition(aBP);
@@ -116,8 +107,10 @@ void render(bool erase, int render_objects_mask, short index, int direction) {
 void drawScoreLabel() {
 	point_t score_label_pos;
 	score_label_pos.x = SCORELABELX, score_label_pos.y = SCORELABELY;
+	//Draw the score label in the foreground so we can see it
 	activeFramePointer = foreground;
 	drawBitmap(word_score_30x5, score_label_pos, SCORELABELWIDTH, LABELHEIGHT, true, WHITE, false);
+	//Draw the score label in the background so the bullets wont affect it when its going over
 	activeFramePointer = background;
 	drawBitmap(word_score_30x5, score_label_pos, SCORELABELWIDTH, LABELHEIGHT, true, WHITE, false);
 	activeFramePointer = foreground;
@@ -165,6 +158,7 @@ void printSpaceshipValue(int spaceshipValue, point_t position, bool erase){
 }
 
 const uint32_t* getNumberBitmap(int number){
+	//Return the bitmap for the right number
 	if(number == 0) { return number_0_5x5;	}
 	else if(number == 1) {	return number_1_5x5;	}
 	else if(number == 2) {	return number_2_5x5;	}
@@ -180,6 +174,7 @@ const uint32_t* getNumberBitmap(int number){
 void drawLivesLabel() { 
 	point_t lives_label_pos;
 	lives_label_pos.x = LIVESLABELX, lives_label_pos.y = LIVESLABELY;
+	//Draw the lives label in the foreground to see it and background so it stays the same
 	activeFramePointer = foreground;
 	drawBitmap(word_lives_24x5, lives_label_pos, LIVESLABELWIDTH, LABELHEIGHT, true, WHITE, false);
 	activeFramePointer = background;
@@ -190,6 +185,7 @@ void drawLivesLabel() {
 void drawLives() {
 	point_t lives_pos;
 	lives_pos.x = LIFESTARTX, lives_pos.y = LIFESTARTY;
+	//draw the lives in the foreground to see it and background to keep it the same
 	activeFramePointer = foreground;
 	drawBitmapRepeat(tank_15x8, lives_pos, TANKWIDTH, TANKHEIGHT, true, GREEN, false, LIFEXSPACING, getLives());
 	activeFramePointer = background;
@@ -202,7 +198,7 @@ void eraseLife(int lives){
 	point_t lifePos;
 	lifePos.x = LIFESTARTX, lifePos.y = LIFESTARTY;
 	lifePos.x += ((lives)*LIFEXSPACING*2) + (2*(lives)*TANKWIDTH);
-	//erase the bitmap of the life.
+	//erase the bitmap of the life in the bacckground and foreground
 	activeFramePointer = background;
 	drawBitmap(tank_15x8, lifePos, TANKWIDTH, TANKHEIGHT, true, BLACK, false);
 	activeFramePointer = foreground;
@@ -214,6 +210,7 @@ void drawNewBunkers() {
 	point_t bunker_pos;
 	bunker_pos.y = BUNKERSTARTY;
 	bunker_pos.x = BUNKERSTARTX;
+	//Draw the bunkers in the foreground and background
 	activeFramePointer = foreground;
 	drawBitmapRepeat(bunker_24x18, bunker_pos, BUNKERWIDTH, BUNKERHEIGHT, true, GREEN, false, BUNKERXSPACING, 4);
 	activeFramePointer = background;
@@ -252,9 +249,11 @@ void drawBunkerErosion(int bunker, int block){
 	}
 //	xil_printf("erosion state: 0x%08x\r\n", erosionState);
 //	short erosion_block = 1;
+	//Determine the erosion block
 	uint32_t erosion_block = ((erosionState & (0x7 << (3*block))) >> (3*block));
 //	xil_printf("erosion_block: 0x%03x \r\n", erosion_block);
 	// Draw bunker erosion using (erase = true) flag
+	//Update the picture to reflect the erosion in the foreground and background
 	if(erosion_block == 0x0){
 		//do nothing
 	}
@@ -292,9 +291,11 @@ void drawBunkerErosion(int bunker, int block){
 }
 
 void drawSpaceship(bool erase, int direction){
+	//erase the square behind the spaceship
 	if(erase){
 		eraseBitmap(getSpaceship().pos, spaceship_width, spaceship_height, true, RED, direction, true);
 	}
+	//Draw the spaceship
 	else {
 		drawBitmap(saucer_16x7, getSpaceship().pos, spaceship_width, spaceship_height, true, RED, false);
 	}
@@ -304,12 +305,15 @@ void drawSpaceship(bool erase, int direction){
 void drawTank(bool erase, int direction) {
 	point_t tank_pos = getTankPosition();
 	if(erase == true){
+		//Completely erase the background tank completely, or it will show up after the tank moves
 		activeFramePointer = background;
 		drawBitmap(tank_15x8, tank_pos, TANKWIDTH, TANKHEIGHT, true, BLACK, false);
+		//Only erase the rectangle behind the tank in the foreground
 		activeFramePointer = foreground;
 		eraseBitmap(tank_pos, TANKWIDTH, TANKHEIGHT, true, GREEN, direction, false);
 	}
 	else {
+		//Draw the tank
 		activeFramePointer = background;
 		drawBitmap(tank_15x8, tank_pos, TANKWIDTH, TANKHEIGHT, true, GREEN, false);
 		activeFramePointer = foreground;
@@ -322,15 +326,15 @@ void killTank(bool erase, bool death1){
 	if(death1){
 //		xil_printf("killTank: drawing death1\r\n");
 //		xil_printf("tank Position: %d, %d\r\n", getTankPosition().x, getTankPosition().y);
+		//Draw the first death bitmap
 		drawBitmap(tank_death_1_16x8, getTankPosition(), 16, 8, true, GREEN, erase);
 	}
 	else {
+		//Draw the second death bitmap
 //		xil_printf("KillTank: drawing death2\r\n");
 //		xil_printf("tank Position: %d, %d\r\n", getTankPosition().x, getTankPosition().y);
 		drawBitmap(tank_death_2_16x8, getTankPosition(), 16, 8, true, GREEN, erase);
 	}
-//	//Decrement the lives
-//	setLives(true);
 	return;
 }
 
@@ -425,6 +429,7 @@ void drawAlienBullet(bool erase, short bullet_number) {
 		bitmap = determineAlienBulletBitmap(tempBullet.type, tempBullet.counter);
 		drawBitmap(bitmap, tempBullet.pos, BULLETWIDTH, BULLETHEIGHT, true, GREEN, erase);
 	}
+	//erase the bullet
 	else if(erase){
 		drawBitmap(bitmap, tempBullet.pos, BULLETWIDTH, BULLETHEIGHT, true, GREEN, true);
 	}
@@ -433,8 +438,9 @@ void drawAlienBullet(bool erase, short bullet_number) {
 
 const uint32_t* determineAlienBulletBitmap(short bulletType, short counter)
 {
-	//Return the correct bitmap for the bulletType
+	//Return the correct bitmap for the bulletType based on the counter
 	if(bulletType == 1){
+		//the squiggly bullet
 		if(counter == 0){
 			return alien_bullet_21_3x7;
 		}
@@ -447,6 +453,7 @@ const uint32_t* determineAlienBulletBitmap(short bulletType, short counter)
 		else {}
 	}
 	else if(bulletType == 0) {
+		//The cross bullet
 		if(counter == 0){
 			return alien_bullet_11_3x7;
 		}

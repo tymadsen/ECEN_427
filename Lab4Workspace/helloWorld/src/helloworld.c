@@ -158,6 +158,7 @@ void timer_interrupt_handler() {
 			setIsTankHit(false);
 		}
 	}
+	//Start switching the animations, switching every 1/4 second
 	if(tankKilledCounter == 25 || tankKilledCounter == 75){
 //		xil_printf("Printing death1\r\n");
 		killTankHelper(true, false);

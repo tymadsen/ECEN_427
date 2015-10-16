@@ -16,6 +16,7 @@
 #define RIGHT 3
 
 void updateAliens(){
+	//Erase the aliens, update the block, and redraw
 	render(true, alien_block_render_mask, 0, DOWN);
 	updateAlienBlock();
 	render(false,alien_block_render_mask, 0, DOWN);
@@ -23,6 +24,7 @@ void updateAliens(){
 }
 
 void fireAlienBulletHelper(){
+	//Fire the alien bullet and draw the bullet
 	fireAlienBullet();
 	render(false, alien_bullet_render_mask,0, DOWN);
 	return;
@@ -67,12 +69,14 @@ void killTankHelper(bool death1, bool reset){
 }
 
 void shootTankBullet(){
+	//Fire the tank bullet and then draw it
 	fireTankBullet();
 	render(false, tank_bullet_render_mask, 0, UP);
 	return;
 }
 
 void updateAllBullets(){
+	//Erase all bullets, update their positions, and redraw them
 	render(true, all_bullet_render_mask, 0, UP);
 	updateBullets();
 	render(false, all_bullet_render_mask, 0, UP);
@@ -80,9 +84,11 @@ void updateAllBullets(){
 }
 
 void flySpaceship(){
+	//Determine the direction, left or right
 	int direction = rand()%2;
 	if(getSpaceship().isFree){
 //		xil_printf("we are adding a saucer\r\n");
+		//Set the spaceship and draw it
 		if(direction == 0){
 			setSpaceship(LEFT);
 			render(false, spaceship_render_mask, 0, LEFT);
@@ -95,6 +101,7 @@ void flySpaceship(){
 }
 
 void updateSpaceshipHelper(){
+	//If the spaceship is not free, move it across the screen
 	if(!getSpaceship().isFree){
 		render(true, spaceship_render_mask, 0, getSpaceship().direction);
 		updateSpaceship();
@@ -103,6 +110,7 @@ void updateSpaceshipHelper(){
 }
 
 void eraseSpaceshipScore(bool erase){
+	//Erase or draw the spaceship score
 	printSpaceshipValue(getSpaceshipValue(), getOldSpaceshipLoc(), erase);
 	return;
 }
@@ -112,6 +120,7 @@ bool isSpaceshipHitHelper(){
 }
 
 void setSpaceshipHitHelper(bool hit){
+	//Used to start the timer for displaying the flashing spaceship score
 	setSpaceshipHit(hit);
 	return;
 }

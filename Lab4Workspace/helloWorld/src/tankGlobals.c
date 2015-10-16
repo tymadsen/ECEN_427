@@ -1,0 +1,115 @@
+#include "globals.h"
+#include "render.h"
+#include "bitmaps.h"
+#include "tankGlobals.h"
+
+point_t tankPosition;
+point_t tankBulletPosition;
+bool tankBulletFree = true;
+bool tankFree = true;
+bool tankHit = true;
+
+
+bool isTankFree(){
+	return tankFree;
+}
+
+void setIsTankFree(bool free){
+	tankFree = free;
+	return;
+}
+
+bool isTankHit(){
+	return tankHit;
+}
+
+void setIsTankHit(bool hit){
+	tankHit = hit;
+}
+
+void killTankGlobals(){
+	//Set everything so we can kill the tank
+	tankFree = false;
+	tankHit = true;
+	tankBulletFree = true;
+	//Erase all of the bullets and spaceship
+	aBullet bullet = getAlienBullet0();
+	eraseBullet(bullet.pos,bullet.type);
+	bullet = getAlienBullet1();
+	eraseBullet(bullet.pos,bullet.type);
+	bullet = getAlienBullet2();
+	eraseBullet(bullet.pos,bullet.type);
+	bullet = getAlienBullet2();
+	eraseBullet(bullet.pos,bullet.type);
+	drawBitmap(saucer_16x7, spaceship.pos, spaceship_width, spaceship_height, true, GREEN, true);
+	drawTankBullet(true);
+	//Take all of the bullets off the screen as well as the spaceship
+	point_t tempOffScreen;
+	tempOffScreen.x = bullet_offscreen; tempOffScreen.y = bullet_offscreen;
+	setTankBulletPositionXY(bullet_offscreen, bullet_offscreen);
+	setAlienBullet0(tempOffScreen, 0, true,0);
+	setAlienBullet1(tempOffScreen, 0, true,0);
+	setAlienBullet2(tempOffScreen, 0, true,0);
+	setAlienBullet3(tempOffScreen, 0, true,0);
+	setInitialSpaceship(tempOffScreen);
+	//Decrement the lives
+	setLives(false);
+	//draw the killed tank with death 2 first
+	activeFramePointer = background;
+	drawBitmap(tank_15x8, getTankPosition(), TANKWIDTH, TANKHEIGHT, true, BLACK, false);
+	activeFramePointer = foreground;
+	drawBitmap(tank_15x8, getTankPosition(), TANKWIDTH, TANKHEIGHT, true, BLACK, false);
+	killTank(false, false);
+	return;
+}
+
+point_t getTankPosition() {
+	return tankPosition;
+}
+
+void setTankPosition(signed short pixels) {
+	//Will move the tank left or right
+	tankPosition.x += pixels;
+	//These if statements will keep the tank on the screen
+	if (tankPosition.x < 0) {
+		tankPosition.x = 0;
+	}
+	if (tankPosition.x + (tank_width * 2) > 640) {
+		tankPosition.x = 640 - (tank_width * 2);
+	}
+	return;
+}
+
+void setTankPositionPoint(int x, int y) {
+	tankPosition.x = x;
+	tankPosition.y = y;
+	return;
+}
+
+point_t getTankBulletPosition() {
+	return tankBulletPosition;
+}
+
+void setTankBulletPositionXY(int x, int y) {
+	tankBulletPosition.x = x;
+	tankBulletPosition.y = y;
+	return;
+}
+
+void setTankBulletPosition(point_t point) {
+	tankBulletPosition = point;
+	return;
+}
+
+void fireTankBullet() {
+	point_t temp;
+	//Determine where the tank bullet should appear
+	//Will appear in the center top of the tank
+	if (tankBulletFree) {
+		temp.y = tankPosition.y - tank_bullet_height * 2;
+		temp.x = tankPosition.x + tank_width - 1;
+		tankBulletFree = false;
+		setTankBulletPosition(temp);
+	}
+	return;
+}
