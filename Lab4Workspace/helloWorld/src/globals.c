@@ -8,6 +8,9 @@
 #include "globals.h"
 #include "render.h"
 #include "bitmaps.h"
+#include "tankGlobals.h"
+#include "alienGlobals.h"
+#include "spaceshipGlobals.h"
 
 // point_t tankPosition;
 // point_t tankBulletPosition;
@@ -25,6 +28,8 @@
 // int alienSpacing = alien_width * 2 + alien_x_spacing*2;
 int lives = 3;
 int score = 0;
+point_t oldSpaceshipLocation;
+int spaceshipScore = 0;
 // int spaceshipScore = 0;
 // point_t oldSpaceshipLocation;
 // bool spaceshipHit = false;
@@ -417,12 +422,13 @@ void updateBullets() {
 				render(true, tank_bullet_render_mask, 0, UP);
 				tankBulletPosition.y = -(tank_bullet_height + 1);
 				// Erase Spaceship
-				drawBitmap(saucer_16x7, getSpaceship().pos, spaceship_width, spaceship_height, true, RED, true);
-				oldSpaceshipLocation = spaceship.pos;
+				saucer *spcShp = getSpaceship();
+				drawBitmap(saucer_16x7, spcShp->pos, spaceship_width, spaceship_height, true, RED, true);
+				oldSpaceshipLocation = spcShp->pos;
 				incScore(-1, true);
 				setSpaceshipHit(true);
-				spaceship.pos.x = bullet_offscreen, spaceship.pos.y = bullet_offscreen;
-				spaceship.isFree = true;
+				spcShp->pos.x = bullet_offscreen, spcShp->pos.y = bullet_offscreen;
+				spcShp->isFree = true;
 			} else {
 //				xil_printf("It was above the alien block, and not green...\n");
 				tankBulletPosition.y -= tank_bullet_pixel_adjustment;
@@ -442,73 +448,42 @@ void updateBullets() {
 	//Will change the bitmap used for each of them
 	updateAlienBulletCounters();
 	//Will update the position of each bullet
-	if (!aBullet0.isFree) {
-		//aBullet0.pos.y += aBullet_pixel_adjustment;
-		int x = aBullet0.pos.x;
-		int y = aBullet0.pos.y+2*alien_bullet_height;
-		// Check if y is even at bunkers
-		if(y >= BUNKERSTARTY){
-			ifBulletHitBunkers(aBullet0);
-		}
-		else{
-			aBullet0.pos.y += aBullet_pixel_adjustment;
-		}
-	}
-	if (!aBullet1.isFree) {
-		//aBullet1.pos.y += aBullet_pixel_adjustment;
-		int x = aBullet1.pos.x;
-		int y = aBullet1.pos.y+2*alien_bullet_height;
-		// Check if y is even at bunkers
-		if(y >= BUNKERSTARTY){
-			ifBulletHitBunkers(aBullet1);
-		}
-		else{
-			aBullet1.pos.y += aBullet_pixel_adjustment;
-		}
-	}
-	if (!aBullet2.isFree) {
-		//aBullet2.pos.y += aBullet_pixel_adjustment;
-		int x = aBullet2.pos.x;
-		int y = aBullet2.pos.y+2*alien_bullet_height;
-		// Check if y is even at bunkers
-		if(y >= BUNKERSTARTY){
-			ifBulletHitBunkers(aBullet2);
-		}
-		else{
-			aBullet2.pos.y += aBullet_pixel_adjustment;
-		}
-	}
-	if (!aBullet3.isFree) {
-		//aBullet3.pos.y += aBullet_pixel_adjustment;
-		int x = aBullet3.pos.x;
-		int y = aBullet3.pos.y+2*alien_bullet_height;
-		// Check if y is even at bunkers
-		if(y >= BUNKERSTARTY){
-			ifBulletHitBunkers(aBullet3);
-		}
-		else{
-			aBullet3.pos.y += aBullet_pixel_adjustment;
+	int i;
+	aBullet* bullet;
+	for(i = 0; i < 4; i++){
+		bullet = getAlienBullet(i);
+		if (!bullet->isFree) {
+			//aBullet0.pos.y += aBullet_pixel_adjustment;
+			int x = bullet->pos.x;
+			int y = bullet->pos.y+2*alien_bullet_height;
+			// Check if y is even at bunkers
+			if(y >= BUNKERSTARTY){
+				ifBulletHitBunkers(bullet, x, y);
+			}
+			else{
+				bullet->pos.y += aBullet_pixel_adjustment;
+			}
 		}
 	}
 }
 
-void ifBulletHitBunkers(aBullet bullet){
+void ifBulletHitBunkers(aBullet* bullet, int x, int y){
 	point_t pix = getHitPixel(x, y, 2*BULLETWIDTH, aBullet_pixel_adjustment, true);
 	point_t bunk_blk = determineBunkerErosion(pix.x,pix.y);
 	// If bullet is at the ground or hit & eroded a bunker
-	if (bullet.pos.y > green_line_y - (2 * alien_bullet_height)
+	if (bullet->pos.y > green_line_y - (2 * alien_bullet_height)
 		|| (bunk_blk.x != -1 && bunk_blk.y != -1)
 		|| bulletHitTank(pix.x, pix.y)) {
 		setBunkerErosion(bunk_blk.x, bunk_blk.y);
 		// Remove the bullet
-		eraseBullet(bullet.pos, bullet.type);
-		bullet.pos.x = bullet_offscreen;
-		bullet.pos.y = bullet_offscreen;
-		bullet.isFree = true;
+		eraseBullet(bullet->pos, bullet->type);
+		bullet->pos.x = bullet_offscreen;
+		bullet->pos.y = bullet_offscreen;
+		bullet->isFree = true;
 	}
 	else{
 		//Just increase the bullet position
-		bullet.pos.y += aBullet_pixel_adjustment;
+		bullet->pos.y += aBullet_pixel_adjustment;
 	}
 	return;
 }
@@ -522,9 +497,9 @@ void ifBulletHitBunkers(aBullet bullet){
 // 	return;
 // }
 
-// point_t getOldSpaceshipLoc(){
-// 	return oldSpaceshipLocation;
-// }
+ point_t getOldSpaceshipLoc(){
+ 	return oldSpaceshipLocation;
+ }
 
 // void eraseBullet(point_t pos, unsigned short type) {
 // 	drawBitmap(alien_bullet_11_3x7, pos, alien_bullet_width, alien_bullet_height, true, GREEN, true);
@@ -771,13 +746,14 @@ bool isGameOver() {
 		return true;
 	}
 	//If all of the aliens are dead, the game is over
-	if(liveAliens == 0){
+	if(getLiveAliens() == 0){
 		return true;
 	}
 	//If the aliens have reached the bottom of the bunker, the game is over
+	bool* aDeaths = getAlienDeaths();
 	while(gameOver == false) {
 		//Keep going until we find the bottom alien
-		if (alienDeaths[i] == false) {
+		if (aDeaths[i] == false) {
 			gameOver = true;
 		}
 		if(i == 0){
@@ -801,7 +777,7 @@ bool isGameOver() {
 	int spacing = alien_y_spacing - alien_height;
 	//	xil_printf("This is the row of the last live alien: %d\r\n", row);
 	//If the last live alien reaches the bottom of the bunkers, the game is over
-	if ((alienBlockPosition.y + (row * alien_height * 2) + (row - 1) * (spacing)) >= (BUNKERSTARTY + BUNKERHEIGHT * 2)) {
+	if ((getAlienBlockPosition().y + (row * alien_height * 2) + (row - 1) * (spacing)) >= (BUNKERSTARTY + BUNKERHEIGHT * 2)) {
 //		xil_printf("Position: %d, bunker: %d\r\n",(alienBlockPosition.y + (row * alien_height * 2) + (row - 1) * (spacing)),(BUNKERSTARTY + BUNKERHEIGHT * 2));
 //		xil_printf("The row is: %d\r\n", row);
 		return true;
@@ -880,9 +856,9 @@ void incScore(int alienNum, bool isSpaceshipHit) {
 
 }
 
-// int getSpaceshipValue(){
-// 	return spaceshipScore;
-// }
+int getSpaceshipValue(){
+ 	return spaceshipScore;
+ }
 
 int getScore() {
 	return score;
@@ -890,6 +866,7 @@ int getScore() {
 
 int getAlienUpdateTime() {
 	//Return the alien update time based on how many aliens are still alive
+	int liveAliens = getLiveAliens();
 	if(liveAliens/11 >= 4) {	return 60;	}
 	else if(liveAliens/11 == 3)	{ 	return 50;	}
 	else if(liveAliens/11 == 2)	{	return 40;	}

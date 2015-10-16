@@ -7,6 +7,9 @@
 
 #include "globals.h"
 #include "render.h"
+#include "tankGlobals.h"
+#include "alienGlobals.h"
+#include "spaceshipGlobals.h"
 
 
 //Erase directions
@@ -86,7 +89,7 @@ void updateAllBullets(){
 void flySpaceship(){
 	//Determine the direction, left or right
 	int direction = rand()%2;
-	if(getSpaceship().isFree){
+	if(getSpaceship()->isFree){
 //		xil_printf("we are adding a saucer\r\n");
 		//Set the spaceship and draw it
 		if(direction == 0){
@@ -102,10 +105,11 @@ void flySpaceship(){
 
 void updateSpaceshipHelper(){
 	//If the spaceship is not free, move it across the screen
-	if(!getSpaceship().isFree){
-		render(true, spaceship_render_mask, 0, getSpaceship().direction);
+	saucer *ship = getSpaceship();
+	if(!ship->isFree){
+		render(true, spaceship_render_mask, 0,ship->direction);
 		updateSpaceship();
-		render(false, spaceship_render_mask, 0, getSpaceship().direction);
+		render(false, spaceship_render_mask, 0, ship->direction);
 	}
 }
 

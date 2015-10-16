@@ -27,4 +27,10 @@ void setTankBulletPositionXY(int x, int y);
 
 void fireTankBullet();
 
+extern point_t tankPosition;
+extern point_t tankBulletPosition;
+extern bool tankBulletFree;
+extern bool tankFree;
+extern bool tankHit;
+
 #endif /* TANKGLOBALS_H_ */

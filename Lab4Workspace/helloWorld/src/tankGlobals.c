@@ -2,6 +2,8 @@
 #include "render.h"
 #include "bitmaps.h"
 #include "tankGlobals.h"
+#include "alienGlobals.h"
+#include "spaceshipGlobals.h"
 
 point_t tankPosition;
 point_t tankBulletPosition;
@@ -33,15 +35,13 @@ void killTankGlobals(){
 	tankHit = true;
 	tankBulletFree = true;
 	//Erase all of the bullets and spaceship
-	aBullet bullet = getAlienBullet0();
-	eraseBullet(bullet.pos,bullet.type);
-	bullet = getAlienBullet1();
-	eraseBullet(bullet.pos,bullet.type);
-	bullet = getAlienBullet2();
-	eraseBullet(bullet.pos,bullet.type);
-	bullet = getAlienBullet2();
-	eraseBullet(bullet.pos,bullet.type);
-	drawBitmap(saucer_16x7, spaceship.pos, spaceship_width, spaceship_height, true, GREEN, true);
+	int i;
+	aBullet* bullet;
+	for(i = 0; i < 4; i++){
+		bullet = getAlienBullet(i);
+		eraseBullet(bullet->pos, bullet->type);
+	}
+	drawBitmap(saucer_16x7, getSpaceship()->pos, spaceship_width, spaceship_height, true, GREEN, true);
 	drawTankBullet(true);
 	//Take all of the bullets off the screen as well as the spaceship
 	point_t tempOffScreen;

@@ -6,8 +6,7 @@
 #include "spaceshipGlobals.h"
 
 saucer spaceship;
-int spaceshipScore = 0;
-point_t oldSpaceshipLocation;
+
 bool spaceshipHit = false;
 
 void setSpaceship(int direction) {
@@ -33,8 +32,8 @@ void setInitialSpaceship(point_t pos) {
 	return;
 }
 
-saucer getSpaceship() {
-	return spaceship;
+saucer* getSpaceship() {
+	return &spaceship;
 }
 
 void updateSpaceship() {
@@ -76,11 +75,4 @@ void setSpaceshipHit(bool hit){
 	return;
 }
 
-point_t getOldSpaceshipLoc(){
-	return oldSpaceshipLocation;
-}
-
-int getSpaceshipValue(){
-	return spaceshipScore;
-}
 

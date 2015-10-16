@@ -8,6 +8,9 @@
 #include "render.h"
 #include "bitMaps.h"
 #include "globals.h"
+#include "tankGlobals.h"
+#include "alienGlobals.h"
+#include "spaceshipGlobals.h"
 
 unsigned int * foreground = (unsigned int *) FRAME_BUFFER_0_ADDR;
 unsigned int * background = ((unsigned int *) FRAME_BUFFER_0_ADDR) + SCREENWIDTH*SCREENHEIGHT;
@@ -293,11 +296,11 @@ void drawBunkerErosion(int bunker, int block){
 void drawSpaceship(bool erase, int direction){
 	//erase the square behind the spaceship
 	if(erase){
-		eraseBitmap(getSpaceship().pos, spaceship_width, spaceship_height, true, RED, direction, true);
+		eraseBitmap(getSpaceship()->pos, spaceship_width, spaceship_height, true, RED, direction, true);
 	}
 	//Draw the spaceship
 	else {
-		drawBitmap(saucer_16x7, getSpaceship().pos, spaceship_width, spaceship_height, true, RED, false);
+		drawBitmap(saucer_16x7, getSpaceship()->pos, spaceship_width, spaceship_height, true, RED, false);
 	}
 	return;
 }
@@ -406,32 +409,17 @@ void drawAliens(bool erase, bool in_pose) {
 
 void drawAlienBullet(bool erase, short bullet_number) {
 //	xil_printf("We are printing bullet #%d\r\n", bullet_number);
-	aBullet tempBullet;
-	const uint32_t* bitmap;
-	//Determine which bullet to use
-	if(bullet_number == 0) {
-		tempBullet = getAlienBullet0();
-	}
-	else if(bullet_number == 1){
-		tempBullet = getAlienBullet1();
-	}
-	else if(bullet_number == 2) {
-		tempBullet = getAlienBullet2();
-	}
-	else if(bullet_number == 3) {
-		tempBullet = getAlienBullet3();
-	}
-	else //Invalide bullet number
-	{}
+	aBullet* tempBullet = getAlienBullet(bullet_number);
 	//Assign the bitmap
+	const uint32_t* bitmap;
 	//Draw the bullet
-	if(!erase && (!tempBullet.isFree)){
-		bitmap = determineAlienBulletBitmap(tempBullet.type, tempBullet.counter);
-		drawBitmap(bitmap, tempBullet.pos, BULLETWIDTH, BULLETHEIGHT, true, GREEN, erase);
+	if(!erase && (!tempBullet->isFree)){
+		bitmap = determineAlienBulletBitmap(tempBullet->type, tempBullet->counter);
+		drawBitmap(bitmap, tempBullet->pos, BULLETWIDTH, BULLETHEIGHT, true, GREEN, erase);
 	}
 	//erase the bullet
 	else if(erase){
-		drawBitmap(bitmap, tempBullet.pos, BULLETWIDTH, BULLETHEIGHT, true, GREEN, true);
+		drawBitmap(bitmap, tempBullet->pos, BULLETWIDTH, BULLETHEIGHT, true, GREEN, true);
 	}
 	return;
 }

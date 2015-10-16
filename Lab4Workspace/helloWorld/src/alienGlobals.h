@@ -5,8 +5,8 @@
  *      Author: superman
  */
 
-#ifndef TANKGLOBALS_H_
-#define TANKGLOBALS_H_
+#ifndef ALIENGLOBALS_H_
+#define ALIENGLOBALS_H_
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -15,14 +15,12 @@
 point_t getAlienBlockPosition();
 void setAlienBlockPosition(point_t point);
 
-aBullet getAlienBullet0();
 void setAlienBullet0(point_t point, unsigned short type, bool isFree, short counter);
-aBullet getAlienBullet1();
 void setAlienBullet1(point_t point, unsigned short type, bool isFree, short counter);
-aBullet getAlienBullet2();
 void setAlienBullet2(point_t point, unsigned short type, bool isFree, short counter);
-aBullet getAlienBullet3();
 void setAlienBullet3(point_t point, unsigned short type, bool isFree, short counter);
+
+aBullet* getAlienBullet(int bullet);
 
 bool getAlienRight();
 bool getAlienDown();
@@ -34,5 +32,7 @@ void setAlienDeaths(short alien, bool dead);
 void updateAlienBlock();
 void fireAlienBullet();
 void updateAlienBulletCounters();
+
+int getLiveAliens();
 
 #endif /* TANKGLOBALS_H_ */

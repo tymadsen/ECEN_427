@@ -25,6 +25,10 @@ bool getAlienDown() {
 	return alienDown;
 }
 
+int getLiveAliens(){
+	return liveAliens;
+}
+
 bool getAlienRight() {
 	return alienRight;
 }
@@ -37,17 +41,11 @@ void setAlienBlockPosition(point_t point) {
 	alienBlockPosition = point;
 }
 
-aBullet getAlienBullet0() {
-	return aBullet0;
-}
 void setAlienBullet0(point_t point, unsigned short type, bool isFree, short counter) {
 	aBullet0.pos = point;
 	aBullet0.type = type;
 	aBullet0.isFree = isFree;
 	aBullet0.counter = counter;
-}
-aBullet getAlienBullet1() {
-	return aBullet1;
 }
 void setAlienBullet1(point_t point, unsigned short type, bool isFree, short counter) {
 	aBullet1.pos = point;
@@ -55,23 +53,32 @@ void setAlienBullet1(point_t point, unsigned short type, bool isFree, short coun
 	aBullet1.isFree = isFree;
 	aBullet1.counter = counter;
 }
-aBullet getAlienBullet2() {
-	return aBullet2;
-}
 void setAlienBullet2(point_t point, unsigned short type, bool isFree, short counter) {
 	aBullet2.pos = point;
 	aBullet2.type = type;
 	aBullet2.isFree = isFree;
 	aBullet2.counter = counter;
 }
-aBullet getAlienBullet3() {
-	return aBullet3;
-}
 void setAlienBullet3(point_t point, unsigned short type, bool isFree, short counter) {
 	aBullet3.pos = point;
 	aBullet3.type = type;
 	aBullet3.isFree = isFree;
 	aBullet3.counter = counter;
+}
+
+aBullet* getAlienBullet(int bullet){
+	if(bullet == 0){
+		return &aBullet0;
+	}
+	else if(bullet == 1){
+		return &aBullet1;
+	}
+	else if(bullet == 2){
+		return &aBullet2;
+	}
+	else if(bullet == 3){
+		return &aBullet3;
+	}
 }
 
 void fireAlienBullet() {

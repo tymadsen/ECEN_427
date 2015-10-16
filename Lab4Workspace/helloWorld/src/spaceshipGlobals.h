@@ -14,7 +14,7 @@
 
 void setSpaceship(int direction);
 void setInitialSpaceship(point_t pos);
-saucer getSpaceship();
+saucer* getSpaceship();
 void updateSpaceship();
 int getSpaceshipValue();
 point_t getOldSpaceshipLoc();

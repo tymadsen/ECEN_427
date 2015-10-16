@@ -31,6 +31,9 @@
 #include "xintc_l.h"        // Provides handy macros for the interrupt controller.
 #include "render.h"
 #include "renderHelper.h"
+#include "tankGlobals.h"
+#include "alienGlobals.h"
+#include "spaceshipGlobals.h"
 #define DEBUG
 #define LEFTBTN 0x8			// Left (Hour) button mask
 #define RIGHTBTN 0x2			// Right (Second) button mask
@@ -134,13 +137,13 @@ void timer_interrupt_handler() {
 	if(ssValueDisplayCounter == 50 || ssValueDisplayCounter == 150 || ssValueDisplayCounter == 250){
 		//If the score has been on for 1/2 second, erase it
 //		xil_printf("We are going to erase the spaceship value\r\n");
-		if(getSpaceship().isFree){
+		if(getSpaceship()->isFree){
 			eraseSpaceshipScore(true);
 		}
 	}
 	if(ssValueDisplayCounter == 100 || ssValueDisplayCounter == 200){
 //		xil_printf("We are going to draw the spaceship value\r\n");
-		if(getSpaceship().isFree){
+		if(getSpaceship()->isFree){
 			eraseSpaceshipScore(false);
 		}
 	}
