@@ -134,14 +134,14 @@ void timer_interrupt_handler() {
 		ssValueDisplayCounter = 0;
 		setSpaceshipHitHelper(false);
 	}
-	if(ssValueDisplayCounter == 50 || ssValueDisplayCounter == 150 || ssValueDisplayCounter == 250){
+	if(ssValueDisplayCounter == 50 || ssValueDisplayCounter == 150){
 		//If the score has been on for 1/2 second, erase it
 //		xil_printf("We are going to erase the spaceship value\r\n");
 		if(getSpaceship()->isFree){
 			eraseSpaceshipScore(true);
 		}
 	}
-	if(ssValueDisplayCounter == 100 || ssValueDisplayCounter == 200){
+	if(ssValueDisplayCounter == 100){
 //		xil_printf("We are going to draw the spaceship value\r\n");
 		if(getSpaceship()->isFree){
 			eraseSpaceshipScore(false);

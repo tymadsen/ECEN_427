@@ -76,7 +76,7 @@ aBullet* getAlienBullet(int bullet){
 	else if(bullet == 2){
 		return &aBullet2;
 	}
-	else if(bullet == 3){
+	else {
 		return &aBullet3;
 	}
 }

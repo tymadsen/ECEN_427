@@ -488,22 +488,9 @@ void ifBulletHitBunkers(aBullet* bullet, int x, int y){
 	return;
 }
 
-// bool isSpaceshipHit(){
-// 	return spaceshipHit;
-// }
-
-// void setSpaceshipHit(bool hit){
-// 	spaceshipHit = hit;
-// 	return;
-// }
-
  point_t getOldSpaceshipLoc(){
  	return oldSpaceshipLocation;
  }
-
-// void eraseBullet(point_t pos, unsigned short type) {
-// 	drawBitmap(alien_bullet_11_3x7, pos, alien_bullet_width, alien_bullet_height, true, GREEN, true);
-// }
 
 bool bulletHitTank(int x, int y){
 	point_t tank_pos = getTankPosition();

@@ -326,6 +326,9 @@ void drawTank(bool erase, int direction) {
 }
 
 void killTank(bool erase, bool death1){
+	activeFramePointer = background;
+	drawBitmap(tank_15x8, getTankPosition(), TANKWIDTH, TANKHEIGHT, true, BLACK, false);
+	activeFramePointer = foreground;
 	if(death1){
 //		xil_printf("killTank: drawing death1\r\n");
 //		xil_printf("tank Position: %d, %d\r\n", getTankPosition().x, getTankPosition().y);
@@ -412,9 +415,9 @@ void drawAlienBullet(bool erase, short bullet_number) {
 	aBullet* tempBullet = getAlienBullet(bullet_number);
 	//Assign the bitmap
 	const uint32_t* bitmap;
+	bitmap = determineAlienBulletBitmap(tempBullet->type, tempBullet->counter);
 	//Draw the bullet
 	if(!erase && (!tempBullet->isFree)){
-		bitmap = determineAlienBulletBitmap(tempBullet->type, tempBullet->counter);
 		drawBitmap(bitmap, tempBullet->pos, BULLETWIDTH, BULLETHEIGHT, true, GREEN, erase);
 	}
 	//erase the bullet

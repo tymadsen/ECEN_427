@@ -30,10 +30,11 @@ void setIsTankHit(bool hit){
 }
 
 void killTankGlobals(){
-	//Set everything so we can kill the tank
-	tankFree = false;
-	tankHit = true;
-	tankBulletFree = true;
+	//draw the killed tank with death 2 first
+	activeFramePointer = background;
+	drawBitmap(tank_15x8, getTankPosition(), TANKWIDTH, TANKHEIGHT, true, BLACK, false);
+	activeFramePointer = foreground;
+	drawBitmap(tank_15x8, getTankPosition(), TANKWIDTH, TANKHEIGHT, true, BLACK, false);
 	//Erase all of the bullets and spaceship
 	int i;
 	aBullet* bullet;
@@ -53,13 +54,12 @@ void killTankGlobals(){
 	setAlienBullet3(tempOffScreen, 0, true,0);
 	setInitialSpaceship(tempOffScreen);
 	//Decrement the lives
-	setLives(false);
-	//draw the killed tank with death 2 first
-	activeFramePointer = background;
-	drawBitmap(tank_15x8, getTankPosition(), TANKWIDTH, TANKHEIGHT, true, BLACK, false);
-	activeFramePointer = foreground;
-	drawBitmap(tank_15x8, getTankPosition(), TANKWIDTH, TANKHEIGHT, true, BLACK, false);
 	killTank(false, false);
+	//Set everything so we can kill the tank
+	tankFree = false;
+	tankHit = true;
+	tankBulletFree = true;
+	setLives(false);
 	return;
 }
 
