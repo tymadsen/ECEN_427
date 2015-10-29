@@ -17,12 +17,12 @@ def outfile(name):
 	outfile.write("int "+name+"_soundData[] = {");
 
 	(nchannels, sampwidth, framerate, nframes, comptype, compname) = infile.getparams ()
-	print sampwidth
-	for x in xrange(1,nframes):
-		outfile.write(str(ord(infile.readframes(1))))
-		if x < nframes:
-			outfile.write(", ")
 	
+	for x in range(0,nframes):
+		outfile.write(str(ord(infile.readframes(1))))
+		if x < nframes-1:
+			outfile.write(", ")
+
 	outfile.write('};\n')
 
 	# Write num samples
