@@ -14,7 +14,7 @@ def main():
 
 	(nchannels, sampwidth, framerate, nframes, comptype, compname) = infile.getparams ()
 
-	for x in xrange(1,nframes):
+	for x in xrange(0,nframes):
 		# print frames
 		outfile.write(str(ord(infile.readframes(1))))
 		if x < nframes:
