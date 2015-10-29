@@ -11,6 +11,7 @@
 #include "tankGlobals.h"
 #include "alienGlobals.h"
 #include "spaceshipGlobals.h"
+#include "playSound.h"
 
 // point_t tankPosition;
 // point_t tankBulletPosition;
@@ -427,6 +428,7 @@ void updateBullets() {
 				oldSpaceshipLocation = spcShp->pos;
 				incScore(-1, true);
 				setSpaceshipHit(true);
+				playExplosionSound();
 				spcShp->pos.x = bullet_offscreen, spcShp->pos.y = bullet_offscreen;
 				spcShp->isFree = true;
 			} else {

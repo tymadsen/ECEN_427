@@ -10,6 +10,7 @@
 #include "tankGlobals.h"
 #include "alienGlobals.h"
 #include "spaceshipGlobals.h"
+#include "playSound.h"
 
 
 //Erase directions
@@ -22,6 +23,7 @@ void updateAliens(){
 	//Erase the aliens, update the block, and redraw
 	render(true, alien_block_render_mask, 0, DOWN);
 	updateAlienBlock();
+	playAlienSound();
 	render(false,alien_block_render_mask, 0, DOWN);
 	return;
 }
@@ -110,7 +112,9 @@ void updateSpaceshipHelper(){
 		render(true, spaceship_render_mask, 0,ship->direction);
 		updateSpaceship();
 		render(false, spaceship_render_mask, 0, ship->direction);
+		playSpaceshipSound();
 	}
+	setSpaceshipSoundPlaying(ship->isFree);
 }
 
 void eraseSpaceshipScore(bool erase){

@@ -18,6 +18,7 @@ void setTankPosition(signed short pixels);
 void setTankPositionPoint(int x, int y);
 bool isTankFree();
 bool isTankHit();
+bool isTankBulletFree();
 void setIsTankHit(bool hit);
 void setIsTankFree(bool free);
 void killTankGlobals();

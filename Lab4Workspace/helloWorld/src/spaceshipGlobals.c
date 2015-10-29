@@ -62,6 +62,7 @@ void updateSpaceship() {
 			spaceship.pos.x = bullet_offscreen;
 			spaceship.pos.y = bullet_offscreen;
 			spaceship.isFree = true;
+			setSpaceshipSoundPlaying(false);
 		}
 	}
 }

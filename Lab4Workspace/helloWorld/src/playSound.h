@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdint.h>
+
 extern int explosion_numberOfSamples;
 extern int explosion_soundData[];
 extern int explosion_sampleRate;
@@ -51,6 +52,13 @@ extern int fastinvader4_soundData[];
 extern int fastinvader4_numberOfSamples;
 extern int fastinvader4_sampleRate;
 
+
+
 uint32_t getCurrentSample();
+void playAlienSound();
+void playTankBullet();
+void playExplosionSound();
+void playSpaceshipSound();
+void setSpaceshipSoundPlaying(bool isFree);
 
 #endif /* PLAYSOUND_H_ */

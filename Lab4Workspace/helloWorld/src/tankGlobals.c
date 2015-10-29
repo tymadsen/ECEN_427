@@ -4,6 +4,7 @@
 #include "tankGlobals.h"
 #include "alienGlobals.h"
 #include "spaceshipGlobals.h"
+#include "playSound.h"
 
 point_t tankPosition;
 point_t tankBulletPosition;
@@ -11,6 +12,9 @@ bool tankBulletFree = true;
 bool tankFree = true;
 bool tankHit = true;
 
+bool isTankBulletFree(){
+	return tankBulletFree;
+}
 
 bool isTankFree(){
 	return tankFree;
@@ -110,6 +114,7 @@ void fireTankBullet() {
 		temp.x = tankPosition.x + tank_width - 1;
 		tankBulletFree = false;
 		setTankBulletPosition(temp);
+		playTankBullet();
 	}
 	return;
 }

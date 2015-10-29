@@ -74,11 +74,9 @@ int tankKilledCounter = 0;
 int fifoCount = 0;
 int currentSound = 0;
 int maxSamples = 0;
-static uint32_t currentSampleNum = 0;
 
 XGpio gpLED;  // This is a handle for the LED GPIO block.
 XGpio gpPB;   // This is a handle for the push-button GPIO block.
-XGpio gpAC97;
 
 void fifo_interrupt_handler(){
 	int i = 0;
