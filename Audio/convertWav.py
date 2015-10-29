@@ -11,8 +11,8 @@ def outfile(name):
 	# print 'hello there'
 	# name = sys.argv[2]
 	
-	infile = wave.open('../Wavs/AudioFiles/'+name+'.wav', 'rb')
-	outfile = codecs.open(name+'.c', 'w')
+	infile = wave.open('./wavs/'+name+'.wav', 'rb')
+	outfile = codecs.open('./data/'+name+'.c', 'w')
 
 	outfile.write("int "+name+"_soundData[] = {");
 
