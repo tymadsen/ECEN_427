@@ -8,31 +8,36 @@
 #include "playSound.h"
 #include "tankGlobals.h"
 
-#define explosion_sound 0
-#define ufo_low_sound 1
-#define ufo_high_sound 2
-#define shoot_sound 3
-#define invader_death_sound 4
-#define invader1_sound 5
-#define invader2_sound 6
-#define invader3_sound 7
-#define invader4_sound 8
+#define alien_explosion_sound 0
+#define saucer_explosion_sound 1
+#define saucer_sound 2
+#define tank_explosion_sound 3
+#define tank_fire_sound 4
+#define alien1_sound 5
+#define alien2_sound 6
+#define alien3_sound 7
+#define alien4_sound 8
+#define nothing_sound 9
 
 bool spaceshipSoundPlaying = false;
-
+int nothing_soundData[] = {0};
+int nothing_numberOfSamples = 1;
 static uint32_t currentSampleNum = 0;
-int* soundData[] = {explosion_soundData, ufo_lowpitch_soundData, ufo_highpitch_soundData, shoot_soundData,
-					invaderkilled_soundData,fastinvader1_soundData,fastinvader2_soundData, fastinvader3_soundData,fastinvader4_soundData};
-int* numSamples[] = {&explosion_numberOfSamples, &ufo_lowpitch_numberOfSamples, &ufo_highpitch_numberOfSamples, &shoot_numberOfSamples,
-					&invaderkilled_numberOfSamples, &fastinvader1_numberOfSamples, &fastinvader2_numberOfSamples,
-					&fastinvader3_numberOfSamples, &fastinvader4_numberOfSamples};
+int* soundData[] = {alien_explosion_soundData, saucer_explosion_soundData, saucer_soundData, tank_explosion_soundData,
+					tank_fire_soundData,alien1_soundData,alien2_soundData, alien3_soundData,alien4_soundData, nothing_soundData};
+int* numSamples[] = {&alien_explosion_numberOfSamples, &saucer_explosion_numberOfSamples, &saucer_numberOfSamples, &tank_explosion_numberOfSamples,
+					&tank_fire_numberOfSamples, &alien1_numberOfSamples, &alien2_numberOfSamples,
+					&alien3_numberOfSamples, &alien4_numberOfSamples, &nothing_numberOfSamples };
 int soundIndex = 0;
 
 short alienCounter = 0;
 short spaceshipSoundCounter = 0;
 
 uint32_t getCurrentSample(){
-	if (currentSampleNum >= *numSamples[soundIndex]) {
+	if (currentSampleNum == *numSamples[soundIndex]) {
+		if(spaceshipSoundPlaying == true){
+			currentSampleNum = 0;
+		}
 		return 0;
 	}
 
@@ -41,32 +46,40 @@ uint32_t getCurrentSample(){
 	return sample;
 }
 
+void playNothing() {
+	soundIndex = nothing_sound;
+	return;
+}
+
 void playAlienSound(){
-	//if(spaceshipSoundPlaying == false){
+	if(spaceshipSoundPlaying == false){
 		switch(alienCounter){
-		case 0: soundIndex = invader1_sound;
-		case 1: soundIndex = invader2_sound;
-		case 2: soundIndex = invader3_sound;
-		case 3: soundIndex = invader4_sound;
+		case 0: soundIndex = alien1_sound; break;
+		case 1: soundIndex = alien2_sound; break;
+		case 2: soundIndex = alien3_sound; break;
+		case 3: soundIndex = alien4_sound; break;
+		default : soundIndex = tank_explosion_sound;
 		}
 		currentSampleNum = 0;
 		alienCounter++;
 		if(alienCounter > 3){
 			alienCounter = 0;
 		}
-	//}
+	}
 	return;
 }
 
 void playTankBullet(){
-	soundIndex = shoot_sound;
-	currentSampleNum = 0;
+	if(spaceshipSoundPlaying == false){
+		soundIndex = tank_fire_sound;
+		currentSampleNum = 0;
+	}
 	return;
 }
 
 void playExplosionSound(){
 	spaceshipSoundPlaying = false;
-	soundIndex = explosion_sound;
+	soundIndex = saucer_explosion_sound;
 	currentSampleNum = 0;
 	return;
 }
@@ -74,20 +87,22 @@ void playExplosionSound(){
 //Called when the spaceship goes off the screen
 void setSpaceshipSoundPlaying(bool isFree){
 	spaceshipSoundPlaying = !isFree;
+	if(spaceshipSoundPlaying == false)
+		currentSampleNum = 0;
 	return;
 }
 
 void playSpaceshipSound(){
-	if(spaceshipSoundCounter == 0){
-		soundIndex = ufo_low_sound;
-	} else {
-		soundIndex = ufo_high_sound;
-	}
+//	if(spaceshipSoundCounter == 0){
+//		soundIndex = ufo_low_sound;
+//	} else {
+//		soundIndex = ufo_high_sound;
+//	}
+	soundIndex = saucer_sound;
 	spaceshipSoundPlaying = true;
-	spaceshipSoundCounter++;
-	currentSampleNum = 0;
-	if(spaceshipSoundCounter > 1){
-		spaceshipSoundCounter = 0;
-	}
+//	spaceshipSoundCounter++;
+//	if(spaceshipSoundCounter > 1){
+//		spaceshipSoundCounter = 0;
+//	}
 	return;
 }
