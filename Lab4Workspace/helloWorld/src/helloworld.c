@@ -19,33 +19,25 @@
 /*
  * helloworld.c: simple test application
  */
-#include "xgpio.h"          	// Provides access to PB GPIO driver.
-#include <stdio.h>
-#include "platform.h"
-#include "xparameters.h"
-#include "xaxivdma.h"
-#include "xio.h"
-#include "time.h"
-#include "unistd.h"
+#include <xgpio.h>          	// Provides access to PB GPIO driver.
+#include <xaxivdma.h>
+#include <xio.h>
+#include <unistd.h>
 #include "mb_interface.h"   	// provides the microblaze interrupt enables, etc.
 #include "xintc_l.h"        	// Provides handy macros for the interrupt controller.
+#include "xac97_l.h"					// xac97 sound
+#include "platform.h"
+#include "xparameters.h"
+#include "time.h"
 #include "render.h"
 #include "renderHelper.h"
-#include "tankGlobals.h"
-#include "alienGlobals.h"
-#include "spaceshipGlobals.h"
-#include "xintc_l.h"        	// Provides handy macros for the interrupt controller.
-#include "xac97_l.h"					// xac97 sound
-#include "playSound.h"				
 
-#define LEFTBTN 0x8						// Left (Hour) button mask
-#define RIGHTBTN 0x2					// Right (Second) button mask
-#define CENTERBTN 0x1					// Center (Minute) button mask
-#define UPBTN 0x10						// Up btn
-#define DOWNBTN 0x4						// Down btn
-
-#define FRAME_BUFFER_0_ADDR 0xC1000000  // Starting location in DDR where we will store the images that we display.
-#define FIFOSIZE 512										// Size of AC97 Fifo
+#define LEFTBTN 		0x8					// Left (Hour) button mask
+#define RIGHTBTN 		0x2					// Right (Second) button mask
+#define CENTERBTN 	0x1					// Center (Minute) button mask
+#define UPBTN 			0x10				// Up btn
+#define DOWNBTN 		0x4					// Down btn
+#define FIFOSIZE 		512					// Size of AC97 Fifo
 
 // startLevel function prototype
 void startLevel(bool first);
@@ -76,7 +68,7 @@ void fifo_interrupt_handler(){
 	// And make sure we are no overfilling the FIFO
 	int i = 0;
 	while(i < (FIFOSIZE/4) && !XAC97_isInFIFOFull(XPAR_AXI_AC97_0_BASEADDR)){
-		//Call getCurrentSample from playSound.h
+		// Call getCurrentSample from playSound.h
 		uint32_t sample = getCurrentSample();
 		XAC97_mSetInFifoData(XPAR_AXI_AC97_0_BASEADDR, sample);
 		i++;
@@ -97,7 +89,7 @@ void updateScreenElements(){
 			shootTankBullet();
 		}
 	}
-	return;
+	
 }
 
 void updateKillTankAnimation() {
@@ -149,7 +141,7 @@ void timer_interrupt_handler() {
 		}
 		// The screen will update every 5ms
 		if(screenUpdateCounter >= 6) {
-			//Call function to update the screen
+			// Call function to update the screen
 			updateScreenElements();
 			screenUpdateCounter = 0;
 		}
@@ -192,14 +184,14 @@ void timer_interrupt_handler() {
 	if(volumeUpdateCounter >= 20){
 		// Up button is pushed
 		if(currentButtonState & UPBTN){
-			//Increase volume
+			// Increase volume
 			currentVolume -= AC97_VOL_ATTN_1_5_DB;
 			// If volume is at max, make max the limit
 			if(currentVolume < AC97_VOL_MAX)
 				currentVolume = AC97_VOL_MAX;
 		// Else if down is pushed
 		}else if(currentButtonState & DOWNBTN){
-			//Decrease volume
+			// Decrease volume
 			currentVolume += AC97_VOL_ATTN_1_5_DB;
 			// If volume is at min, make min the limit
 			if(currentVolume > AC97_VOL_MIN)
@@ -223,7 +215,8 @@ void pb_interrupt_handler() {
 		if(gameIsOver){
 			startLevel(true);
 			gameIsOver = false;
-		}else{
+		}
+		else {
 			startLevel(false);
 		}
 		levelIsOver = false;
@@ -245,7 +238,7 @@ void interrupt_handler_dispatcher(void* ptr) {
 		XIntc_AckIntr(XPAR_INTC_0_BASEADDR, XPAR_PUSH_BUTTONS_5BITS_IP2INTC_IRPT_MASK);
 		pb_interrupt_handler();
 	}
-	//Check the sound interrupt
+	// Check the sound interrupt
 	if(intc_status & XPAR_AXI_AC97_0_INTERRUPT_MASK){
 		fifo_interrupt_handler();
 		XIntc_AckIntr(XPAR_INTC_0_BASEADDR, XPAR_AXI_AC97_0_INTERRUPT_MASK);
@@ -368,7 +361,7 @@ int main()
 		xil_printf("vdma parking failed\n\r");
 	}
 
-	//Start the game
+	// Start the game
 	startLevel(true);
 
 	while(1) {

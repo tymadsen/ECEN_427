@@ -1,6 +1,5 @@
-#include "globals.h"
-#include "render.h"
-#include "bitmaps.h"
+
+#include "alienGlobals.h"
 
 point_t alienBlockPosition;
 aBullet aBullet0;
@@ -27,12 +26,12 @@ bool getAlienDown() {
 	return alienDown;
 }
 
-int getLiveAliens(){
-	return liveAliens;
-}
-
 bool getAlienRight() {
 	return alienRight;
+}
+
+int getLiveAliens(){
+	return liveAliens;
 }
 
 point_t getAlienBlockPosition() {
@@ -86,10 +85,10 @@ aBullet* getAlienBullet(int bullet){
 void fireAlienBullet() {
 	point_t temp;
 	int idx;
-	//Pick which column we are firing from
+	// Pick which column we are firing from
 	int col = rand() % 11;
 	bool emptyCol = true;
-	//Determine which alien it is coming from
+	// Determine which alien it is coming from
 	while (emptyCol) {
 		idx = col + 44;
 		if (!alienDeaths[idx] || !alienDeaths[idx -= 11] || !alienDeaths[idx-= 11] || !alienDeaths[idx -= 11] || !alienDeaths[idx -= 11]) {
@@ -99,9 +98,9 @@ void fireAlienBullet() {
 			col = rand() % 11;
 		}
 	}
-	//Set the right coordinates
+	// Set the right coordinates
 	int row = 0;
-	//Determine which row the alien is in
+	// Determine which row the alien is in
 	if ((idx >= 0) && (idx < 11)) {
 		row = 0;
 	} else if ((idx >= 11) && (idx < 22)) {
@@ -113,12 +112,12 @@ void fireAlienBullet() {
 	} else {
 		row = 4;
 	}
-	//Calculate the coordinates based on the row and col
+	// Calculate the coordinates based on the row and col
 	temp.x = alienBlockPosition.x + (col * (2 * alien_width)) + (col * 2 * alien_x_spacing) + (alien_width - alien_x_spacing - 1);
 	temp.y = alienBlockPosition.y + (row * (2 * (alien_height))) + ((row)*alien_y_actual_spacing) + (alien_height * 2);
-	//Choose what type the bullet will be. 1 = squiggly, 0 = cross
+	// Choose what type the bullet will be. 1 = squiggly, 0 = cross
 	unsigned short bulletType = rand() % 2;
-	//Choose which bullet to place
+	// Choose which bullet to place
 	if (aBullet0.isFree) {
 		setAlienBullet0(temp, bulletType, false, 0);
 		drawAlienBullet(false, 0);
@@ -132,13 +131,13 @@ void fireAlienBullet() {
 		setAlienBullet3(temp, bulletType, false, 0);
 		drawAlienBullet(false, 3);
 	} else {
-		//Do nothing because the maximum number of bullets are on the screen
+		// Do nothing because the maximum number of bullets are on the screen
 	}
-	return;
+	
 }
 
 void updateAlienBulletCounters() {
-	//Increment each bullet counter, If the counter is equal to three (Maximum bitmaps), reset to 0
+	// Increment each bullet counter, If the counter is equal to three (Maximum bitmaps), reset to 0
 	aBullet0.counter += 1;
 	if (aBullet0.counter >= 3) {
 		aBullet0.counter = 0;
@@ -155,14 +154,14 @@ void updateAlienBulletCounters() {
 	if (aBullet3.counter >= 3) {
 		aBullet3.counter = 0;
 	}
-	return;
+	
 }
 bool* getAlienDeaths() {
 	return alienDeaths;
 }
 
 void setAlienDeaths(short alien, bool dead) {
-	//If there is a valid alien in the block, set the corresponding value in the array to true (passed in)
+	// If there is a valid alien in the block, set the corresponding value in the array to true (passed in)
 	if (alien >= 0 && alien < 55) {
 		alienDeaths[alien] = dead;
 		liveAliens --;
@@ -175,24 +174,24 @@ void updateAlienBlock() {
 	int row, col;
 	int colWithLiveAlien = 0;
 	bool alienAlive = false;
-	//Determine how far the alien block can go left or right depending on which aliens are dead
-	//Go through each column to check if the alien is dead
+	// Determine how far the alien block can go left or right depending on which aliens are dead
+	// Go through each column to check if the alien is dead
 	for (col = 0; col < 11; col++) {
 		for (row = 0; row < 5; row++) {
 			if (alienDeaths[(row * 11) + col] == false) {
-				//If the alien is alive, set a flag
+				// If the alien is alive, set a flag
 				alienAlive = true;
 			}
 		}
-		//If there was a live alien, mark with a one in that bit
+		// If there was a live alien, mark with a one in that bit
 		if (alienAlive == true) {
 			colWithLiveAlien = colWithLiveAlien | (1 << (10 - col));
 		}
-		//Reset for the next column
+		// Reset for the next column
 		alienAlive = false;
 	}
-	//Determine the right side first
-	//If the number anded with 1 is 0, there is no live alien in the column
+	// Determine the right side first
+	// If the number anded with 1 is 0, there is no live alien in the column
 	if ((colWithLiveAlien & col11_mask) == 0) {
 		leftOffset += alienSpacing;
 		if ((colWithLiveAlien & col10_mask) == 0) {
@@ -226,7 +225,7 @@ void updateAlienBlock() {
 			}
 		}
 	}
-	//Now determine the right side
+	// Now determine the right side
 	if ((colWithLiveAlien & col1_mask) == 0) {
 		rightOffset += alienSpacing;
 		if ((colWithLiveAlien & col2_mask) == 0) {
@@ -260,38 +259,38 @@ void updateAlienBlock() {
 			}
 		}
 	}
-	//If the alien is moving right, add pixels
+	// If the alien is moving right, add pixels
 	if (alienRight == true) {
 		alienDown = false;
 		alienBlockPosition.x += pixel_adjustment;
 	}
-	//If the block is moving left, detract the pixels
+	// If the block is moving left, detract the pixels
 	else {
 		alienDown = false;
 		alienBlockPosition.x -= pixel_adjustment;
 	}
-	//If the block has hit the right side of the screen, set them equal to the screen and move them down
+	// If the block has hit the right side of the screen, set them equal to the screen and move them down
 	if ((alienBlockPosition.x + alien_block_width - rightOffset) > 640) {
 		alienDown = true;
-		//call the render function
+		// call the render function
 		render(true, alien_block_render_mask, 0, DOWN);
 		alienBlockPosition.x = 640 - alien_block_width + rightOffset;
 		alienBlockPosition.y += (alien_height*3)/2;
-		//Make the aliens go left instead of right
+		// Make the aliens go left instead of right
 		alienRight = false;
 	}
-	//Will move the alien block down a row
+	// Will move the alien block down a row
 	else if (alienOnLeftScreen) {
 		alienBlockPosition.x = -leftOffset;
 		alienBlockPosition.y += (alien_height*3)/2;
 		alienOnLeftScreen = false;
 		alienDown = true;
 	}
-	//If the block hits the left side of the string, set x equal to 0 and move the aliens down
+	// If the block hits the left side of the string, set x equal to 0 and move the aliens down
 	else if (alienBlockPosition.x + leftOffset <= 0) {
 		alienBlockPosition.x = -leftOffset;
 		alienOnLeftScreen = true;
-		//Make the aliens go right instead of left
+		// Make the aliens go right instead of left
 		alienRight = true;
 		alienDown = true;
 	}

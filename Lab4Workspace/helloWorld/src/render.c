@@ -4,13 +4,7 @@
  *  Created on: Sep 25, 2015
  *      Author: superman
  */
-#include <stdio.h>
 #include "render.h"
-#include "bitMaps.h"
-#include "globals.h"
-#include "tankGlobals.h"
-#include "alienGlobals.h"
-#include "spaceshipGlobals.h"
 
 unsigned int * foreground = (unsigned int *) FRAME_BUFFER_0_ADDR;
 unsigned int * background = ((unsigned int *) FRAME_BUFFER_0_ADDR) + SCREENWIDTH*SCREENHEIGHT;
@@ -18,14 +12,14 @@ unsigned int * activeFramePointer = (unsigned int *) FRAME_BUFFER_0_ADDR;
 bool alien_in = true;
 void clearScreen() {
 	int row, col;
-	//Clear the screen by initializing every pixel to black (0)
+	// Clear the screen by initializing every pixel to black (0)
 	for(row=0; row<SCREENHEIGHT; row++) {
 		 for(col=0; col<SCREENWIDTH; col++) {
 			 foreground[row*SCREENWIDTH+col] = 0;
 			 background[row*SCREENWIDTH+col] = 0;
 		 }
 	}
-	return;
+	
 }
 
 void initScreen(bool newLevel) {
@@ -76,7 +70,7 @@ void initScreen(bool newLevel) {
 	setAlienBlockPosition(aBP);
 	drawAliens(false, true);
 
-	return;
+	
 }
 
 void render(bool erase, int render_objects_mask, short index, int direction) {
@@ -158,7 +152,7 @@ void printSpaceshipValue(int spaceshipValue, point_t position, bool erase){
 	position.x += NUMBERSPACING + NUMBERWIDTH;
 	// Draw the 1s digit which will always be 0
 	drawBitmap(number_0_5x5, position, NUMBERWIDTH, NUMBERHEIGHT, true, RED, erase);
-	return;
+	
 }
 
 const uint32_t* getNumberBitmap(int number){
@@ -207,7 +201,7 @@ void eraseLife(int lives){
 	drawBitmap(tank_15x8, lifePos, TANKWIDTH, TANKHEIGHT, true, BLACK, false);
 	activeFramePointer = foreground;
 	drawBitmap(tank_15x8, lifePos, TANKWIDTH, TANKHEIGHT, true, BLACK, false);
-	return;
+	
 }
 
 void drawNewBunkers() {
@@ -255,7 +249,7 @@ void drawBunkerErosion(int bunker, int block){
 	// Ensure we are drawing on foreground
 	activeFramePointer = foreground;
 	if(erosion_block == 0x0){
-		//do nothing
+		// do nothing
 	}
 	else if(erosion_block == 0x1){
 		drawBitmap(bunkerDamage0_6x6, block_pos, BLOCKWIDTH, BLOCKHEIGHT, true, BLACK, false);
@@ -272,7 +266,7 @@ void drawBunkerErosion(int bunker, int block){
 	// Update the picture to reflect the erosion in the background
 	activeFramePointer = background;
 	if(erosion_block == 0x0){
-		//do nothing
+		// do nothing
 	}
 	else if(erosion_block == 0x1){
 		drawBitmap(bunkerDamage0_6x6, block_pos, BLOCKWIDTH, BLOCKHEIGHT, true, BLACK, false);
@@ -288,40 +282,38 @@ void drawBunkerErosion(int bunker, int block){
 	}
 	// Reset to draw to foreground
 	activeFramePointer = foreground;
-	return;
-
 }
 
 void drawSpaceship(bool erase, int direction){
-	//erase the square behind the spaceship
+	// erase the square behind the spaceship
 	if(erase){
 		eraseBitmap(getSpaceship()->pos, spaceship_width, spaceship_height, true, RED, direction, true);
 	}
-	//Draw the spaceship
+	// Draw the spaceship
 	else {
 		drawBitmap(saucer_16x7, getSpaceship()->pos, spaceship_width, spaceship_height, true, RED, false);
 	}
-	return;
+	
 }
 
 void drawTank(bool erase, int direction) {
 	point_t tank_pos = getTankPosition();
 	if(erase == true){
-		//Completely erase the background tank completely, or it will show up after the tank moves
+		// Completely erase the background tank completely, or it will show up after the tank moves
 		activeFramePointer = background;
 		drawBitmap(tank_15x8, tank_pos, TANKWIDTH, TANKHEIGHT, true, BLACK, false);
-		//Only erase the rectangle behind the tank in the foreground
+		// Only erase the rectangle behind the tank in the foreground
 		activeFramePointer = foreground;
 		eraseBitmap(tank_pos, TANKWIDTH, TANKHEIGHT, true, GREEN, direction, false);
 	}
 	else {
-		//Draw the tank
+		// Draw the tank
 		activeFramePointer = background;
 		drawBitmap(tank_15x8, tank_pos, TANKWIDTH, TANKHEIGHT, true, GREEN, false);
 		activeFramePointer = foreground;
 		drawBitmap(tank_15x8, tank_pos, TANKWIDTH, TANKHEIGHT, true, GREEN, false);
 	}
-	return;
+	
 }
 
 void killTank(bool erase, bool death1){
@@ -329,47 +321,40 @@ void killTank(bool erase, bool death1){
 	drawBitmap(tank_15x8, getTankPosition(), TANKWIDTH, TANKHEIGHT, true, BLACK, false);
 	activeFramePointer = foreground;
 	if(death1){
-//		xil_printf("killTank: drawing death1\r\n");
-//		xil_printf("tank Position: %d, %d\r\n", getTankPosition().x, getTankPosition().y);
-		//Draw the first death bitmap
+		// Draw the first death bitmap
 		drawBitmap(tank_death_1_16x8, getTankPosition(), 16, 8, true, GREEN, erase);
 	}
 	else {
-		//Draw the second death bitmap
-//		xil_printf("KillTank: drawing death2\r\n");
-//		xil_printf("tank Position: %d, %d\r\n", getTankPosition().x, getTankPosition().y);
+		// Draw the second death bitmap
 		drawBitmap(tank_death_2_16x8, getTankPosition(), 16, 8, true, GREEN, erase);
 	}
-	return;
+	
 }
 
 void drawTankBullet(bool erase) {
 	point_t tankBulletPosition = getTankBulletPosition();
 	drawBitmap(tank_bullet_1x3, tankBulletPosition, TANKBULLETWIDTH, TANKBULLETHEIGHT, true, GREEN, erase);
-	return;
+	
 }
 
 void drawAliens(bool erase, bool in_pose) {
-	//Use row and col to traverse the bit map of each alien
-	//xil_printf("We are in the drawAliens Function %d\r\n", in_pose);
+	// Use row and col to traverse the bit map of each alien
 	int  alienRow, color;
 	point_t pos = getAlienBlockPosition();
 	bool* deaths = getAlienDeaths();
-//	const uint32_t* bitmap;
 	for(alienRow = 0; alienRow < 5; alienRow++){
 		color = WHITE;
-		//Will print the right color if we are not erasing
+		// Will print the right color if we are not erasing
 		int col;
 		point_t new_pos = pos;
-		//offset is the distance between the x position of each new alien
+		// Offset is the distance between the x position of each new alien
 		int offset = ALIENWIDTH+ALIENXSPACING;
-		//Go through each alien in the row and drawing them. Will draw if its not dead
+		// Go through each alien in the row and drawing them. Will draw if its not dead
 		for(col = 0; col < ALIENSPERROW; col++){
-			//Will only apply the offset to every alien but the first one
+			// Will only apply the offset to every alien but the first one
 			if(col > 0){
 				new_pos.x += 2*offset;
 			}
-			// drawBitmap(bitmap, pos, width, height, double_size, color, erase);
 			bool eraseDead = deaths[col+(ALIENSPERROW*alienRow)];
 			if(erase){
 				if(getAlienRight() == true){
@@ -379,7 +364,7 @@ void drawAliens(bool erase, bool in_pose) {
 				if(getAlienDown() == true) {
 					eraseBitmap(new_pos, ALIENWIDTH,ALIENHEIGHT, true, color, DOWN, false); }
 			}
-			else{
+			else {
 				if(alienRow == 0){
 					if(in_pose)
 						drawBitmap(alien_top_in_12x8, new_pos, ALIENWIDTH, ALIENHEIGHT, true, color, eraseDead);
@@ -392,7 +377,7 @@ void drawAliens(bool erase, bool in_pose) {
 					else
 						drawBitmap(alien_middle_out_12x8, new_pos, ALIENWIDTH, ALIENHEIGHT, true, color, eraseDead);
 				}
-				else{
+				else {
 					if(in_pose)
 						drawBitmap(alien_bottom_in_12x8, new_pos, ALIENWIDTH, ALIENHEIGHT, true, color, eraseDead);
 					else
@@ -400,37 +385,34 @@ void drawAliens(bool erase, bool in_pose) {
 				}
 			}
 		}
-			// drawBitmapRepeat(bitmap, pos, ALIENWIDTH, ALIENHEIGHT, true, color, erase, ALIENXSPACING, ALIENSPERROW, true);
-			// drawBitmapRepeat(bitmap, pos, ALIENWIDTH, ALIENHEIGHT, true, color, erase, ALIENXSPACING, ALIENSPERROW, true);
-		//Update the position by putting x back at the starting point and moving y down to the next row
+		// Update the position by putting x back at the starting point and moving y down to the next row
 		new_pos.x = pos.x;
 		pos.y += (ALIENHEIGHT+ALIENYSPACING);
 	}
-	return;
+	
 }
 
 void drawAlienBullet(bool erase, short bullet_number) {
-//	xil_printf("We are printing bullet #%d\r\n", bullet_number);
 	aBullet* tempBullet = getAlienBullet(bullet_number);
-	//Assign the bitmap
+	// Assign the bitmap
 	const uint32_t* bitmap;
 	bitmap = determineAlienBulletBitmap(tempBullet->type, tempBullet->counter);
-	//Draw the bullet
+	// Draw the bullet
 	if(!erase && (!tempBullet->isFree)){
 		drawBitmap(bitmap, tempBullet->pos, BULLETWIDTH, BULLETHEIGHT, true, GREEN, erase);
 	}
-	//erase the bullet
+	// Erase the bullet
 	else if(erase){
 		drawBitmap(bitmap, tempBullet->pos, BULLETWIDTH, BULLETHEIGHT, true, GREEN, true);
 	}
-	return;
+	
 }
 
 const uint32_t* determineAlienBulletBitmap(short bulletType, short counter)
 {
-	//Return the correct bitmap for the bulletType based on the counter
+	// Return the correct bitmap for the bulletType based on the counter
 	if(bulletType == 1){
-		//the squiggly bullet
+		// The squiggly bullet
 		if(counter == 0){
 			return alien_bullet_21_3x7;
 		}
@@ -440,10 +422,9 @@ const uint32_t* determineAlienBulletBitmap(short bulletType, short counter)
 		else if(counter == 2){
 			return alien_bullet_23_3x7;
 		}
-		else {}
 	}
 	else if(bulletType == 0) {
-		//The cross bullet
+		// The cross bullet
 		if(counter == 0){
 			return alien_bullet_11_3x7;
 		}
@@ -453,9 +434,7 @@ const uint32_t* determineAlienBulletBitmap(short bulletType, short counter)
 		else if(counter == 2){
 			return alien_bullet_13_3x7;
 		}
-		else {}
 	}
-	else {}
 	return 0;
 }
 
@@ -476,23 +455,23 @@ void drawBitmap(const uint32_t* bitmap, point_t pos, int width, int height, bool
 	int sRow, sCol, row, col;
 	for(row = 0, sRow=0; row < height; row++, sRow+=2) {
 		for(col = 0, sCol=0; col < width; col++, sCol+=2) {
-			//Will print the right color if we are not erasing
+			// Will print the right color if we are not erasing
 			if ((bitmap[row] & (1<<(width-1-col))) && !erase) {
-				if(!double_size)//Only print the bitmap to size
+				if(!double_size)// Only print the bitmap to size
 					activeFramePointer[(pos.y*SCREENWIDTH + pos.x)] = color;
-				else{
-					//Expand each pixel to 4 pixels
+				else {
+					// Expand each pixel to 4 pixels
 					activeFramePointer[(sRow+pos.y)*SCREENWIDTH + (sCol+pos.x)] = color;
 					activeFramePointer[(sRow+pos.y)*SCREENWIDTH + (sCol+pos.x+1)] = color;
 					activeFramePointer[(sRow+pos.y+1)*SCREENWIDTH + (sCol+pos.x)] = color;
 					activeFramePointer[(sRow+pos.y+1)*SCREENWIDTH + (sCol+pos.x+1)] = color;
 				}
 			}
-			else if(activeFramePointer != background){//ignore the color
+			else if(activeFramePointer != background){// ignore the color
 				int index = (pos.y*SCREENWIDTH + pos.x);
 				if(!double_size)
 					activeFramePointer[index] = background[index];
-				else{
+				else {
 					index = (sRow+pos.y)*SCREENWIDTH + (sCol+pos.x);
 					activeFramePointer[index] = background[index];
 					activeFramePointer[index+1] = background[index+1];
@@ -506,9 +485,8 @@ void drawBitmap(const uint32_t* bitmap, point_t pos, int width, int height, bool
 }
 
 void eraseBitmap(point_t pos, int width, int height, bool double_size, int color, int direction, bool spaceship){
-	//Very similar to the draw function.
-	//It will set pixel of color(param) to background 4 pixels behind the direction it is going
-//	xil_printf("We are in the erase bitmap function\r\n");
+	// Very similar to the draw function.
+	// It will set pixel of color(param) to background 4 pixels behind the direction it is going
 	int sRow, sCol, row, col, rowLimit, colLimit, newHeight, newWidth;
 	point_t startingPoint;
 	int pixAdjust;
@@ -524,47 +502,40 @@ void eraseBitmap(point_t pos, int width, int height, bool double_size, int color
 		newHeight = height;
 		newWidth = width;
 	}
-	//Figure out the starting position and row and col limits.
+	// Figure out the starting position and row and col limits.
 	if(direction == RIGHT){
-//		xil_printf("We are going right\r\n");
 		startingPoint.x = pos.x;
 		startingPoint.y = pos.y;
 		rowLimit = newHeight;
 		colLimit = pixAdjust;
 	}
 	else if(direction == LEFT){
-//		xil_printf("We are going left\r\n");
 		startingPoint.y = pos.y;
 		startingPoint.x = pos.x+newWidth-pixAdjust;
 		rowLimit = newHeight;
 		colLimit = pixAdjust;
 	}
 	else if(direction == DOWN){
-//		xil_printf("We are going down\r\n");
 		startingPoint.x = pos.x;
 		startingPoint.y = pos.y;
 		rowLimit = pixAdjust;
 		colLimit = newWidth;
 	}
-	else {//If direction is up
-//		xil_printf("We are going up\r\n");
+	else {// If direction is up
 		startingPoint.y = pos.y+newHeight-pixAdjust;
 		startingPoint.x = pos.x;
 		rowLimit = pixAdjust;
 		colLimit = newWidth;
 	}
-//	xil_printf("Starting point x: %d, y: %d, rowLimit: %d, colLimit: %d\r\n", startingPoint.x, startingPoint.y, rowLimit, colLimit);
-	//Now go through and turn all of the ones that are color to black
+	// Now go through and turn all of the ones that are color to black
 	for(row = 0, sRow=0; row < rowLimit; row++, sRow+=2) {
 		for(col = 0, sCol=0; col < colLimit; col++, sCol+=2) {
 			if(activeFramePointer != background){
 				if(activeFramePointer[(startingPoint.y+sRow)*SCREENWIDTH + sCol +startingPoint.x] == color){
-	//				xil_printf("We are going to set something to black\r\n");
 					if(!double_size){
 						activeFramePointer[(startingPoint.y*SCREENWIDTH + startingPoint.x)] = background[(startingPoint.y*SCREENWIDTH + startingPoint.x)];
 					}
-					else{
-	//					xil_printf("We should be setting them to black\r\n");
+					else {
 						activeFramePointer[(sRow+startingPoint.y)*SCREENWIDTH + (sCol+startingPoint.x)] = background[(sRow+startingPoint.y)*SCREENWIDTH + (sCol+startingPoint.x)];
 						activeFramePointer[(sRow+startingPoint.y)*SCREENWIDTH + (sCol+startingPoint.x+1)] = background[(sRow+startingPoint.y)*SCREENWIDTH + (sCol+startingPoint.x+1)];
 						activeFramePointer[(sRow+startingPoint.y+1)*SCREENWIDTH + (sCol+startingPoint.x)] = background[(sRow+startingPoint.y+1)*SCREENWIDTH + (sCol+startingPoint.x)];
@@ -574,10 +545,10 @@ void eraseBitmap(point_t pos, int width, int height, bool double_size, int color
 			}
 			else {
 				if(activeFramePointer[(startingPoint.y+sRow)*SCREENWIDTH + sCol +startingPoint.x] == color){
-					if(!double_size)//Only print the bitmap to size
+					if(!double_size)// Only print the bitmap to size
 						activeFramePointer[(startingPoint.y)*SCREENWIDTH + (startingPoint.x)] = BLACK;
-					else{
-						//Expand each pixel to 4 pixels
+					else {
+						// Expand each pixel to 4 pixels
 						activeFramePointer[(sRow+startingPoint.y)*SCREENWIDTH + (sCol+startingPoint.x)] = BLACK;
 						activeFramePointer[(sRow+startingPoint.y)*SCREENWIDTH + (sCol+startingPoint.x+1)] = BLACK;
 						activeFramePointer[(sRow+startingPoint.y+1)*SCREENWIDTH + (sCol+startingPoint.x)] = BLACK;
@@ -587,7 +558,7 @@ void eraseBitmap(point_t pos, int width, int height, bool double_size, int color
 			}
 		}
 	}
-	return;
+	
 }
 
 void drawBitmapRepeat(const uint32_t* bitmap, point_t pos, int width, int height, bool double_size, int color, bool erase, int x_space, int times) {
@@ -614,5 +585,5 @@ void eraseBitmapRepeat(point_t pos, int width, int height, bool double_size, int
 		}
 		eraseBitmap(pos, width, height, double_size, color, direction, false);
 	}
-	return;
+	
 }

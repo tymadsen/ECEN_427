@@ -6,12 +6,6 @@
  */
 
 #include "globals.h"
-#include "render.h"
-#include "bitmaps.h"
-#include "tankGlobals.h"
-#include "alienGlobals.h"
-#include "spaceshipGlobals.h"
-#include "playSound.h"
 
 int lives = 3;
 int score = 0;
@@ -20,13 +14,12 @@ int spaceshipScore = 0;
 
 uint32_t bunkerStates[] = { 0, 0, 0, 0 };
 
-
 void resetGlobals(bool newLevel){
 
 	if(newLevel){
 		lives++;
 	}
-	else{
+	else {
 		int i;
 		for(i=0; i<4;i++)
 			bunkerStates[i] = 0;
@@ -40,9 +33,9 @@ uint32_t getBunkerErosion(int bunker) {
 }
 
 void setBunkerErosion(int bunker, int block) {
-	//Creating a mask to see if the corresponding block is completely eroded
+	// Creating a mask to see if the corresponding block is completely eroded
 	if (((bunkerStates[bunker] & (0x7 << (3 * block))) >> (3 * block)) < 0x4) {
-		//If it is not completely eroded, add a 1 to the state of the block
+		// If it is not completely eroded, add a 1 to the state of the block
 		bunkerStates[bunker] += (0x1 << (3 * block));
 		// Draw erosion
 		int mask = (bunker == 3) ? bunker_3_render_mask : (bunker == 2) ? bunker_2_render_mask : (bunker == 1) ? bunker_1_render_mask : bunker_0_render_mask;
@@ -143,7 +136,7 @@ void updateBullets() {
 			if(y >= BUNKERSTARTY){
 				ifBulletHitBunkers(bullet, x, y);
 			}
-			else{
+			else {
 				bullet->pos.y += aBullet_pixel_adjustment;
 			}
 		}
@@ -164,11 +157,11 @@ void ifBulletHitBunkers(aBullet* bullet, int x, int y){
 		bullet->pos.y = bullet_offscreen;
 		bullet->isFree = true;
 	}
-	else{
-		//Just increase the bullet position
+	else {
+		// Just increase the bullet position
 		bullet->pos.y += aBullet_pixel_adjustment;
 	}
-	return;
+	
 }
 
  point_t getOldSpaceshipLoc(){
@@ -179,7 +172,7 @@ bool bulletHitTank(int x, int y){
 	point_t tank_pos = getTankPosition();
 	if(x < tank_pos.x || y < TANKSTARTY || y > (2*TANKHEIGHT+TANKSTARTY))
 		return false;
-	else{
+	else {
 		// The tank has been hit, call killTank Globals to kill the tank and start animations
 		killTankGlobals();
 		setSpaceshipSoundPlaying(false);
@@ -230,7 +223,7 @@ point_t getHitPixel(int x, int y, int w, int h, bool alienBullet){
 	int i;
 	int j;
 	point_t hit_coord = {0,0};
-	if(alienBullet){//Alien bullets
+	if(alienBullet){// Alien bullets
 		for(i=y;i<y+h;i++){
 			for(j=x;j<x+w;j++){
 				// If not black pixel found
@@ -245,7 +238,7 @@ point_t getHitPixel(int x, int y, int w, int h, bool alienBullet){
 			}
 		}
 	}
-	else{// Tank bullets
+	else {// Tank bullets
 		for(i=y;i>y-h;i--){
 			for(j=x;j<x+w;j++){
 				// If not black pixel found
@@ -297,7 +290,7 @@ bool isLevelOver() {
 	// If the aliens have reached the bottom of the bunker, the game is over
 	bool* aDeaths = getAlienDeaths();
 	while(gameOver == false) {
-		//Keep going until we find the bottom alien
+		// Keep going until we find the bottom alien
 		if (aDeaths[i] == false) {
 			gameOver = true;
 		}
@@ -355,7 +348,7 @@ void incScore(int alienNum, bool isSpaceshipHit) {
 		oldScore = oldScore * 10;
 	}
 	// Update the screen to reflect the new score
-	// Update the first number?
+	// update the third number?
 	if ((score > 999)) {
 		if ((oldScore / 1000 != tempScore / 1000)) {
 			drawScore(index, tempScore / 1000, oldScore/1000);
@@ -364,14 +357,16 @@ void incScore(int alienNum, bool isSpaceshipHit) {
 	}
 	oldScore = oldScore % 1000;
 	tempScore = tempScore % 1000;
+	// Update the second number?
 	if ((score > 99)) {
 		if (oldScore / 100 != tempScore / 100) {
 			drawScore(index, tempScore / 100, oldScore/100);
 		}
 		index++;
-	} // Update the second number?
+	}
 	oldScore = oldScore % 100;
 	tempScore = tempScore % 100;
+	// Update the first number?
 	if ((score > 9)) {
 		if ((oldScore / 10 != tempScore / 10)) {
 			drawScore(index, tempScore / 10, oldScore/10);
@@ -380,7 +375,6 @@ void incScore(int alienNum, bool isSpaceshipHit) {
 	}
 	oldScore = oldScore % 10;
 	tempScore = tempScore % 10;
-	// update the third number?
 	drawScore(index, tempScore, oldScore);
 	// Draw the last number of the score
 
