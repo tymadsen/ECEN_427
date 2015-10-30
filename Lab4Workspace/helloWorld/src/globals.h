@@ -73,24 +73,6 @@
 #define col10_mask 	0x200
 #define col11_mask 	0x400
 
-// Colors
-#define WHITE 		0x00FFFFFF
-#define RED 			0x00FF0000
-#define GREEN 		0x0000FF00
-#define BLUE 			0x000000FF
-#define MAGENT 		0x00CC00FF
-#define TUR 			0x0000FFFF
-#define YELLOW 		0x00FFFF00
-#define ORANGE 		0x00FF6600
-#define PINK 			0x00FF99CC
-#define BLACK 		0x00000000
-
-// Erase directions
-#define DOWN 			0
-#define UP 				1
-#define LEFT 			2
-#define RIGHT 		3
-
 typedef struct { signed short x; signed short y;} point_t;
 typedef struct { point_t pos; unsigned short type; bool isFree; short counter;} aBullet;
 typedef struct { point_t pos; bool isFree; int direction;} saucer;
