@@ -12,6 +12,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+void resetAliens();
 point_t getAlienBlockPosition();
 void setAlienBlockPosition(point_t point);
 

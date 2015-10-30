@@ -28,9 +28,11 @@ void clearScreen() {
 	return;
 }
 
-void initScreen() {
+void initScreen(bool newLevel) {
 	clearScreen();
 	xil_printf("Screen cleared.\r\n");
+	resetAliens();
+	resetGlobals(newLevel);
 	int row;
 	int col;
 	//Draws the green line at the bottom of the frame
@@ -45,7 +47,8 @@ void initScreen() {
 	// Write the score label on top of the frame
 	drawScoreLabel();
 	// Draw score
-	drawScore(0,0,0);
+	if(!newLevel)
+		drawScore(0,0,0);
 	// Draw the lives label
 	drawLivesLabel();
 	// Draw the lives
@@ -53,7 +56,8 @@ void initScreen() {
 	//Set the initial spaceship
 	setInitialSpaceship(tempOffScreen);
 	// Draw the bunkers
-	drawNewBunkers();
+	if(!newLevel)
+		drawNewBunkers();
 
 	//set and draw the aliens, tank, and all bullets
 	setTankPositionPoint(TANKSTARTX, TANKSTARTY);
@@ -192,7 +196,7 @@ void drawLives() {
 	activeFramePointer = foreground;
 	drawBitmapRepeat(tank_15x8, lives_pos, TANKWIDTH, TANKHEIGHT, true, GREEN, false, LIFEXSPACING, getLives());
 	activeFramePointer = background;
-		drawBitmapRepeat(tank_15x8, lives_pos, TANKWIDTH, TANKHEIGHT, true, GREEN, false, LIFEXSPACING, getLives());
+	drawBitmapRepeat(tank_15x8, lives_pos, TANKWIDTH, TANKHEIGHT, true, GREEN, false, LIFEXSPACING, getLives());
 	activeFramePointer = foreground;
 }
 
@@ -458,6 +462,19 @@ const uint32_t* determineAlienBulletBitmap(short bulletType, short counter)
 	}
 	else {}
 	return 0;
+}
+
+void drawGameOver(){
+	point_t pos;
+	pos.x = SCREENWIDTH/2-96;
+	pos.y = SCREENHEIGHT/2-20;
+	drawBitmap(word_ga_24x10, pos, 24, 10, true, RED, false);
+	pos.x += 48;
+	drawBitmap(word_me_24x10, pos, 24, 10, true, RED, false);
+	pos.x += 48;
+	drawBitmap(word_ov_24x10, pos, 24, 10, true, RED, false);
+	pos.x += 48;
+	drawBitmap(word_er_24x10, pos, 24, 10, true, RED, false);
 }
 
 void drawBitmap(const uint32_t* bitmap, point_t pos, int width, int height, bool double_size, int color, bool erase) {

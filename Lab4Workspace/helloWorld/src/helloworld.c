@@ -39,10 +39,11 @@
 #include "playSound.h"
 
 #define DEBUG
-#define LEFTBTN 0x8			// Left (Hour) button mask
+#define LEFTBTN 0x8				// Left (Hour) button mask
 #define RIGHTBTN 0x2			// Right (Second) button mask
 #define CENTERBTN 0x1			// Center (Minute) button mask
-#define UPBTN 0x10				//Up btn
+#define UPBTN 0x10				// Up btn
+#define DOWNBTN 0x4				// Down btn
 #define TRUE 1
 #define FALSE 0
 void print(char *str);
@@ -59,6 +60,11 @@ void print(char *str);
 #define BLUE 	0x000000FF
 #define BLACK 	0x00000000
 
+void startLevel(bool first);
+
+bool gameIsOver = false;
+bool levelIsOver = false;
+
 int fitCounter = 0;			// Counter for fit interrupts, goes up to 100 and resets
 int screenUpdateCounter = 0;		// Counter for updating the time, goes up to 20 and resets
 int updateSpaceshipCounter = 0;
@@ -71,19 +77,24 @@ int alienUpdateTime = 60;		//The time that will increase as more and more aliens
 bool started = false;
 int ssValueDisplayCounter = 0;
 int tankKilledCounter = 0;
+int volumeUpdateCounter = 0;
 int fifoCount = 0;
 int currentSound = 0;
 int maxSamples = 0;
+int currentVolume = AC97_VOL_MID;
+int fifoSize = 512;
 
 XGpio gpLED;  // This is a handle for the LED GPIO block.
 XGpio gpPB;   // This is a handle for the push-button GPIO block.
 
 void fifo_interrupt_handler(){
+//	xil_printf("fifo interrupt\n");
 	int i = 0;
-	while(i < 100 && !XAC97_isInFIFOFull(XPAR_AXI_AC97_0_BASEADDR)){
+	while(i < (fifoSize/4) && !XAC97_isInFIFOFull(XPAR_AXI_AC97_0_BASEADDR)){
 		//Call getCurrentSample from playSound.h
 		uint32_t sample = getCurrentSample();
 		XAC97_mSetInFifoData(XPAR_AXI_AC97_0_BASEADDR, sample);
+		i++;
 	}
 }
 
@@ -143,50 +154,53 @@ void timer_interrupt_handler() {
 	updateSpaceshipCounter++;
 	ssValueDisplayCounter++;
 	tankKilledCounter++;
+	volumeUpdateCounter++;
 //	xil_printf("ssCounter: %d\r\n", ssValueDisplayCounter);
-	// The FIT counter that will update the aliens every half second
-	if(fitCounter >= alienUpdateTime) {
-		if(started && isTankFree()){
-			updateAliens();
+	if(!gameIsOver){
+		// The FIT counter that will update the aliens every half second
+		if(fitCounter >= alienUpdateTime) {
+			if(started && isTankFree()){
+				updateAliens();
+			}
+			alienUpdateTime = getAlienUpdateTime();
+			fitCounter = 0;
 		}
-		alienUpdateTime = getAlienUpdateTime();
-		fitCounter = 0;
-	}
-	// The screen will update every 5ms
-	if(screenUpdateCounter >= 6) {
-		//Call function to update the screen
-		updateScreenElements();
-		screenUpdateCounter = 0;
-	}
-	//An alienBullet will fire at a random time between (1*25 - 10*25)
-	if(alienBulletCounter >= randBulletTime){
-//		xil_printf("Fire Alien Bullet\r\n");
-		if(started && isTankFree())
-			fireAlienBulletHelper();
-		randBulletTime = (rand()%10)*25 + 50;
-		alienBulletCounter = 0;
-	}
-	//The spaceship will go across the screen at a random time between 1-20 seconds;
-	if(spaceshipCounter >= randSpaceshipTime){
-//		xil_printf("Send out the saucer\r\n");
-		if(started && isTankFree()){
-			flySpaceship();
-//			xil_printf("We are sending out the saucer\r\n");
+		// The screen will update every 5ms
+		if(screenUpdateCounter >= 6) {
+			//Call function to update the screen
+			updateScreenElements();
+			screenUpdateCounter = 0;
 		}
-		randSpaceshipTime = (rand()%25)*100 + 2000;
-		spaceshipCounter = 0;
-	}
-	if(isSpaceshipHitHelper()){
-//		xil_printf("We are reseting the value counter\r\n");
-		ssValueDisplayCounter = 0;
-		setSpaceshipHitHelper(false);
-	}
-	//Will move the spaceship across the screen
-	if(updateSpaceshipCounter >= 5){
-//		xil_printf("We are updating the saucer position\r\n");
-		if(started && isTankFree())
-			updateSpaceshipHelper();
-		updateSpaceshipCounter = 0;
+		//An alienBullet will fire at a random time between (1*25 - 10*25)
+		if(alienBulletCounter >= randBulletTime){
+	//		xil_printf("Fire Alien Bullet\r\n");
+			if(started && isTankFree())
+				fireAlienBulletHelper();
+			randBulletTime = (rand()%10)*25 + 50;
+			alienBulletCounter = 0;
+		}
+		//The spaceship will go across the screen at a random time between 1-20 seconds;
+		if(spaceshipCounter >= randSpaceshipTime){
+	//		xil_printf("Send out the saucer\r\n");
+			if(started && isTankFree()){
+				flySpaceship();
+	//			xil_printf("We are sending out the saucer\r\n");
+			}
+			randSpaceshipTime = (rand()%25)*100 + 2000;
+			spaceshipCounter = 0;
+		}
+		if(isSpaceshipHitHelper()){
+	//		xil_printf("We are reseting the value counter\r\n");
+			ssValueDisplayCounter = 0;
+			setSpaceshipHitHelper(false);
+		}
+		//Will move the spaceship across the screen
+		if(updateSpaceshipCounter >= 5){
+	//		xil_printf("We are updating the saucer position\r\n");
+			if(started && isTankFree())
+				updateSpaceshipHelper();
+			updateSpaceshipCounter = 0;
+		}
 	}
 	updateKillTankAnimation();
 	updateSpaceshipScore();
@@ -197,24 +211,56 @@ void timer_interrupt_handler() {
 			setIsTankHit(false);
 		}
 	}
+
+	if(volumeUpdateCounter >= 20){
+
+		if(currentButtonState & UPBTN){
+			//Increase volume
+			currentVolume -= AC97_VOL_ATTN_1_5_DB;
+			if(currentVolume < AC97_VOL_MAX)
+				currentVolume = AC97_VOL_MAX;
+		}else if(currentButtonState & DOWNBTN){
+			//Decrease volume
+			currentVolume += AC97_VOL_ATTN_1_5_DB;
+			if(currentVolume > AC97_VOL_MIN)
+				currentVolume = AC97_VOL_MIN;
+		}
+		// Write to volume registers to update the new volume
+		XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_MasterVol, currentVolume);
+		XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol, currentVolume);
+		volumeUpdateCounter = 0;
+	}
 }
 
 // This is invoked each time there is a change in the button state (result of a push or a bounce).
 void pb_interrupt_handler() {
-  // Clear the GPIO interrupt.
-  XGpio_InterruptGlobalDisable(&gpPB);                // Turn off all PB interrupts for now.
-  currentButtonState = XGpio_DiscreteRead(&gpPB, 1);  // Get the current state of the buttons.
+	// Clear the GPIO interrupt.
+	XGpio_InterruptGlobalDisable(&gpPB);                // Turn off all PB interrupts for now.
+	currentButtonState = XGpio_DiscreteRead(&gpPB, 1);  // Get the current state of the buttons.
 
-  XGpio_InterruptClear(&gpPB, 0xFFFFFFFF);            // Ack the PB interrupt.
-  XGpio_InterruptGlobalEnable(&gpPB);                 // Re-enable PB interrupts.
+	if(levelIsOver){
+
+		levelIsOver = false;
+		xil_printf("level: %d\ngame: %d\n", levelIsOver, gameIsOver);
+		if(gameIsOver){
+			startLevel(true);
+			gameIsOver = false;
+		}else{
+			startLevel(false);
+		}
+		levelIsOver = false;
+	}
+
+	XGpio_InterruptClear(&gpPB, 0xFFFFFFFF);            // Ack the PB interrupt.
+	XGpio_InterruptGlobalEnable(&gpPB);                 // Re-enable PB interrupts.
 }
 
 void interrupt_handler_dispatcher(void* ptr) {
 	int intc_status = XIntc_GetIntrStatus(XPAR_INTC_0_BASEADDR);
 	// Check the FIT interrupt first.
 	if (intc_status & XPAR_FIT_TIMER_0_INTERRUPT_MASK){
-		XIntc_AckIntr(XPAR_INTC_0_BASEADDR, XPAR_FIT_TIMER_0_INTERRUPT_MASK);
 		timer_interrupt_handler();
+		XIntc_AckIntr(XPAR_INTC_0_BASEADDR, XPAR_FIT_TIMER_0_INTERRUPT_MASK);
 	}
 	// Check the push buttons.
 	if (intc_status & XPAR_PUSH_BUTTONS_5BITS_IP2INTC_IRPT_MASK){
@@ -226,6 +272,12 @@ void interrupt_handler_dispatcher(void* ptr) {
 		fifo_interrupt_handler();
 		XIntc_AckIntr(XPAR_INTC_0_BASEADDR, XPAR_AXI_AC97_0_INTERRUPT_MASK);
 	}
+}
+
+void startLevel(bool first){
+	initScreen(!first);
+	randBulletTime = (rand()%10)*50 + 100;
+	randSpaceshipTime = (rand()%25)*100 + 1000;
 }
 
 int main()
@@ -332,14 +384,24 @@ int main()
 	if (XST_FAILURE == XAxiVdma_StartParking(&videoDMAController, frameIndex,  XAXIVDMA_READ)) {
 		xil_printf("vdma parking failed\n\r");
 	}
-	initScreen();
-	randBulletTime = (rand()%10)*50 + 100;
-	randSpaceshipTime = (rand()%25)*100 + 1000;
+	startLevel(true);
+
 	//setvbuf(stdin, NULL, _IONBF, 0)
-	while(!isGameOver()) {
+	while(1) {
+		if(!levelIsOver && isLevelOver()){
+			if(!gameIsOver && isGameOver()){
+				xil_printf("game over...\n");
+				// Draw GameOver
+				drawGameOver();
+				gameIsOver = true;
+			}
+			levelIsOver = true;
+		}
+
 		started = true;
 		// Mput = getchar();
 	}
+
 	cleanup_platform();
 
 	return 0;

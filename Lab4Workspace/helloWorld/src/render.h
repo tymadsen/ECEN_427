@@ -69,7 +69,7 @@ extern unsigned int * background;// = ((unsigned int *) FRAME_BUFFER_0_ADDR) + S
 extern unsigned int * activeFramePointer;// = (unsigned int *) FRAME_BUFFER_0_ADDR;
 
 void clearScreen();
-void initScreen();
+void initScreen(bool newLevel);
 void render(bool erase, int render_objects_mask, short index, int direction);
 void drawScoreLabel();
 void drawScore(int index, int number, int prevNum);
@@ -87,6 +87,7 @@ void printSpaceshipValue(int spaceshipValue, point_t position, bool erase);
 void drawAliens(bool erase, bool in_pose);
 const uint32_t* determineAlienBulletBitmap(short bulletType, short counter);
 void drawAlienBullet(bool erase, short bullet_number);
+void drawGameOver();
 void drawBitmap(const uint32_t* bitmap, point_t pos, int width, int height, bool double_size, int color, bool erase);
 void drawBitmapRepeat(const uint32_t* bitmap, point_t pos, int width, int height, bool double_size, int color, bool erase, int x_space, int times);
 void eraseBitmapRepeat(point_t pos, int width, int height, bool double_size, int color, int direction, int x_space, int times);

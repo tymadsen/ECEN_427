@@ -88,68 +88,20 @@ typedef struct { signed short x; signed short y;} point_t;
 typedef struct { point_t pos; unsigned short type; bool isFree; short counter;} aBullet;
 typedef struct { point_t pos; bool isFree; int direction;} saucer;
 
-// point_t getTankPosition();
-// void setTankPosition(signed short pixels);
-// void setTankPositionPoint(int x, int y);
-// bool isTankFree();
-// bool isTankHit();
-// void setIsTankHit(bool hit);
-// void setIsTankFree(bool free);
-// void killTankGlobals();
-// point_t getTankBulletPosition();
-// void setTankBulletPosition(point_t point);
-// void setTankBulletPositionXY(int x, int y);
-// point_t getAlienBlockPosition();
-// void setAlienBlockPosition(point_t point);
-
-// aBullet getAlienBullet0();
-// void setAlienBullet0(point_t point, unsigned short type, bool isFree, short counter);
-// aBullet getAlienBullet1();
-// void setAlienBullet1(point_t point, unsigned short type, bool isFree, short counter);
-// aBullet getAlienBullet2();
-// void setAlienBullet2(point_t point, unsigned short type, bool isFree, short counter);
-// aBullet getAlienBullet3();
-// void setAlienBullet3(point_t point, unsigned short type, bool isFree, short counter);
-// bool getAlienRight();
-// bool getAlienDown();
-// int getAlienUpdateTime();
-
+void resetGlobals(bool newLevel);
 uint32_t getBunkerErosion();
 void setBunkerErosion(int bunker, int block);
-//uint32_t getBunkerErosion0();
-//void setBunkerErosion0(short block);
-//uint32_t getBunkerErosion1();
-//void setBunkerErosion1(short block);
-//uint32_t getBunkerErosion2();
-//void setBunkerErosion2(short block);
-//uint32_t getBunkerErosion3();
-//void setBunkerErosion3(short block);
-
-//void setSpaceship(int direction);
-//void setInitialSpaceship(point_t pos);
-//saucer getSpaceship();
-//void updateSpaceship();
 int getSpaceshipValue();
-//point_t getOldSpaceshipLoc();
-//bool isSpaceshipHit();
-//void setSpaceshipHit(bool hit);
-// void eraseBullet(point_t pos, unsigned short type);
-
-// bool* getAlienDeaths();
-// void setAlienDeaths(short alien, bool dead);
 void updateBullets();
-// void updateAlienBlock();
 bool bulletHitTank(int x, int y);
 point_t determineBunkerErosion(int x, int y);
 point_t getHitPixel(int x, int y, int w, int h, bool alienBullet);
 void ifBulletHitBunkers(aBullet* bullet, int x, int y);
-// void fireTankBullet();
-// void fireAlienBullet();
-// void updateAlienBulletCounters();
 
 void setLives(bool increment);
 int getLives();
 bool isGameOver();
+bool isLevelOver();
 
 void incScore(int alienNum, bool spaceshipHit);
 int getScore();

@@ -51,9 +51,10 @@ extern int tank_fire_sampleRate;
 uint32_t getCurrentSample();
 void playAlienSound();
 void playTankBullet();
-void playExplosionSound();
+void playSaucerExplosionSound();
+void playAlienExplosionSound();
+void playTankExplosionSound();
 void playSpaceshipSound();
 void setSpaceshipSoundPlaying(bool isFree);
-void playNothing();
 
 #endif /* PLAYSOUND_H_ */

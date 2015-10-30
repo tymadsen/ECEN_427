@@ -17,17 +17,15 @@
 #define alien2_sound 6
 #define alien3_sound 7
 #define alien4_sound 8
-#define nothing_sound 9
 
 bool spaceshipSoundPlaying = false;
-int nothing_soundData[] = {0};
-int nothing_numberOfSamples = 1;
+
 static uint32_t currentSampleNum = 0;
 int* soundData[] = {alien_explosion_soundData, saucer_explosion_soundData, saucer_soundData, tank_explosion_soundData,
-					tank_fire_soundData,alien1_soundData,alien2_soundData, alien3_soundData,alien4_soundData, nothing_soundData};
+					tank_fire_soundData,alien1_soundData,alien2_soundData, alien3_soundData,alien4_soundData};
 int* numSamples[] = {&alien_explosion_numberOfSamples, &saucer_explosion_numberOfSamples, &saucer_numberOfSamples, &tank_explosion_numberOfSamples,
 					&tank_fire_numberOfSamples, &alien1_numberOfSamples, &alien2_numberOfSamples,
-					&alien3_numberOfSamples, &alien4_numberOfSamples, &nothing_numberOfSamples };
+					&alien3_numberOfSamples, &alien4_numberOfSamples };
 int soundIndex = 0;
 
 short alienCounter = 0;
@@ -44,11 +42,6 @@ uint32_t getCurrentSample(){
 	uint32_t sample = (soundData[soundIndex][currentSampleNum]<<16)|soundData[soundIndex][currentSampleNum];
 	currentSampleNum++;
 	return sample;
-}
-
-void playNothing() {
-	soundIndex = nothing_sound;
-	return;
 }
 
 void playAlienSound(){
@@ -77,27 +70,39 @@ void playTankBullet(){
 	return;
 }
 
-void playExplosionSound(){
+void playSaucerExplosionSound(){
 	spaceshipSoundPlaying = false;
 	soundIndex = saucer_explosion_sound;
 	currentSampleNum = 0;
 	return;
 }
 
+void playAlienExplosionSound(){
+	if(spaceshipSoundPlaying == false){
+		soundIndex = alien_explosion_sound;
+		currentSampleNum = 0;
+	}
+	return;
+}
+
+void playTankExplosionSound(){
+	if(spaceshipSoundPlaying == false){
+		soundIndex = tank_explosion_sound;
+		currentSampleNum = 0;
+	}
+	return;
+}
+
 //Called when the spaceship goes off the screen
 void setSpaceshipSoundPlaying(bool isFree){
-	spaceshipSoundPlaying = !isFree;
+	spaceshipSoundPlaying = isFree;
 	if(spaceshipSoundPlaying == false)
 		currentSampleNum = 0;
 	return;
 }
 
 void playSpaceshipSound(){
-//	if(spaceshipSoundCounter == 0){
-//		soundIndex = ufo_low_sound;
-//	} else {
-//		soundIndex = ufo_high_sound;
-//	}
+
 	soundIndex = saucer_sound;
 	spaceshipSoundPlaying = true;
 //	spaceshipSoundCounter++;

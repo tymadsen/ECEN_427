@@ -12,14 +12,16 @@ bool alienDown = false;
 bool alienOnLeftScreen = false;
 int alien_block_width = 4 * 10 + 11 * alien_width * 2;
 int alienSpacing = alien_width * 2 + alien_x_spacing*2;
-int liveAliens = 55;
-bool alienDeaths[55] = { false, false, false, false, false, false, false,
-		false, false, false, false, false, false, false, false, false, false,
-		false, false, false, false, false, false, false, false, false, false,
-		false, false, false, false, false, false, false, false, false, false,
-		false, false, false, false, false, false, false, false, false, false,
-		false, false, false, false, false, false, false, false };
+int liveAliens;
+bool alienDeaths[55];
 
+void resetAliens(){
+	liveAliens = 55;
+	int i;
+	for(i = 0;i<liveAliens; i++){
+		alienDeaths[i] = false;
+	}
+}
 
 bool getAlienDown() {
 	return alienDown;

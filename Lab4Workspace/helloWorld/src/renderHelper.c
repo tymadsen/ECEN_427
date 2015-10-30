@@ -102,6 +102,7 @@ void flySpaceship(){
 			setSpaceship(RIGHT);
 			render(false, spaceship_render_mask, 0, RIGHT);
 		}
+		setSpaceshipSoundPlaying(true);
 		playSpaceshipSound();
 	}
 }
@@ -114,7 +115,7 @@ void updateSpaceshipHelper(){
 		updateSpaceship();
 		render(false, spaceship_render_mask, 0, ship->direction);
 	}
-	setSpaceshipSoundPlaying(ship->isFree);
+//	setSpaceshipSoundPlaying(ship->isFree);
 }
 
 void eraseSpaceshipScore(bool erase){
