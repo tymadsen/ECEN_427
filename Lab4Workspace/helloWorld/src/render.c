@@ -31,11 +31,15 @@ void clearScreen() {
 void initScreen(bool newLevel) {
 	clearScreen();
 	xil_printf("Screen cleared.\r\n");
+	// Resurrect the aliens
 	resetAliens();
+	// Reset score and lives if its a new game, 
+	// otherwise keep score and increment lives
 	resetGlobals(newLevel);
+
 	int row;
 	int col;
-	//Draws the green line at the bottom of the frame
+	// Draws the green line at the bottom of the frame
 	for(row = SCREENHEIGHT-30; row < SCREENHEIGHT-28; row++) {
 		for(col = 0; col < SCREENWIDTH; col++){
 			foreground[row*SCREENWIDTH + col] = GREEN;
@@ -53,13 +57,13 @@ void initScreen(bool newLevel) {
 	drawLivesLabel();
 	// Draw the lives
 	drawLives();
-	//Set the initial spaceship
+	// Set the initial spaceship
 	setInitialSpaceship(tempOffScreen);
 	// Draw the bunkers
 	if(!newLevel)
 		drawNewBunkers();
 
-	//set and draw the aliens, tank, and all bullets
+	// Set and draw the aliens, tank, and all bullets
 	setTankPositionPoint(TANKSTARTX, TANKSTARTY);
 	drawTank(false, RIGHT);
 	setTankBulletPositionXY(bullet_offscreen, bullet_offscreen);
@@ -76,9 +80,7 @@ void initScreen(bool newLevel) {
 }
 
 void render(bool erase, int render_objects_mask, short index, int direction) {
-//	xil_printf("Objects mask: %d\r\n", render_objects_mask);
-//	xil_printf("anded: %d\r\n",(render_objects_mask & alien_block_render_mask));
-	//If a certain mask is set, render that object
+	// If a certain mask is set, render that object
 	if((render_objects_mask & tank_render_mask) != 0)
 		drawTank(erase, direction);
 	if((render_objects_mask & all_bullet_render_mask) != 0) {
@@ -96,7 +98,6 @@ void render(bool erase, int render_objects_mask, short index, int direction) {
 			alien_in = !alien_in; }
 	}
 	if((render_objects_mask & alien_bullet_render_mask) != 0){
-//		xil_printf("We are drawing an alien bullet\r\n");
 		drawAlienBullet(erase, index);
 	}
 	if((render_objects_mask & bunker_0_render_mask) != 0)
@@ -114,10 +115,10 @@ void render(bool erase, int render_objects_mask, short index, int direction) {
 void drawScoreLabel() {
 	point_t score_label_pos;
 	score_label_pos.x = SCORELABELX, score_label_pos.y = SCORELABELY;
-	//Draw the score label in the foreground so we can see it
+	// Draw the score label in the foreground so we can see it
 	activeFramePointer = foreground;
 	drawBitmap(word_score_30x5, score_label_pos, SCORELABELWIDTH, LABELHEIGHT, true, WHITE, false);
-	//Draw the score label in the background so the bullets wont affect it when its going over
+	// Draw the score label in the background so the bullets wont affect it when its going over
 	activeFramePointer = background;
 	drawBitmap(word_score_30x5, score_label_pos, SCORELABELWIDTH, LABELHEIGHT, true, WHITE, false);
 	activeFramePointer = foreground;
@@ -125,47 +126,43 @@ void drawScoreLabel() {
 
 void drawScore(int index, int number, int prevNum) {
 	point_t score_pos;
-	//Put the starting position in the right place depending on the index
+	// Put the starting position in the right place depending on the index
 	score_pos.x = SCOREX + (index*NUMBERWIDTH*2) + (index*NUMBERSPACING);
 	score_pos.y = SCOREY;
-	//Get the bitmap for the number we are going to show
+	// Get the bitmap for the number we are going to show
 	const uint32_t* bitmap = getNumberBitmap(number);
 	const uint32_t* bitmapPrev = getNumberBitmap(prevNum);
-//	xil_printf("New Num: %d, prevNum: %d\r\n", number, prevNum);
-	//Draw it in the background first.
+	// Draw it in the background first.
 	activeFramePointer = background;
 	drawBitmap(bitmapPrev, score_pos, NUMBERWIDTH, NUMBERHEIGHT, true, BLACK, false);
 	drawBitmap(bitmap, score_pos, NUMBERWIDTH, NUMBERHEIGHT, true, GREEN, false);
-	//Now draw it in the foreground
+	// Now draw it in the foreground
 	activeFramePointer = foreground;
 	drawBitmap(bitmapPrev, score_pos, NUMBERWIDTH, NUMBERHEIGHT, true, BLACK, false);
 	drawBitmap(bitmap, score_pos, NUMBERWIDTH, NUMBERHEIGHT, true, GREEN, false);
 }
 
 void printSpaceshipValue(int spaceshipValue, point_t position, bool erase){
-//	xil_printf("We are printing the score at %d, %d\r\n", position.x, position.y);
 	int index = spaceshipValue;
 	const uint32_t* bitmap;
-	//Draw the 100s digit if our value is over 99
+	// Draw the 100s digit if our value is over 99
 	if(index > 99){
 		bitmap = getNumberBitmap(index/100);
-//		xil_printf("We are printing %d at %d, %d\r\n", index/100, position.x, position.y);
 		drawBitmap(bitmap, position, NUMBERWIDTH, NUMBERHEIGHT, true, RED, erase);
 		index = index%100;
 		position.x += NUMBERWIDTH + NUMBERSPACING;
 	}
-	//Draw the 10s digit
+	// Draw the 10s digit
 	bitmap = getNumberBitmap(index/10);
-//	xil_printf("We are printing %d at %d, %d\r\n", index/10, position.x, position.y);
 	drawBitmap(bitmap, position, NUMBERWIDTH, NUMBERHEIGHT, true, RED, erase);
 	position.x += NUMBERSPACING + NUMBERWIDTH;
-	//Draw the 1s digit which will always be 0
+	// Draw the 1s digit which will always be 0
 	drawBitmap(number_0_5x5, position, NUMBERWIDTH, NUMBERHEIGHT, true, RED, erase);
 	return;
 }
 
 const uint32_t* getNumberBitmap(int number){
-	//Return the bitmap for the right number
+	// Return the bitmap for the right number
 	if(number == 0) { return number_0_5x5;	}
 	else if(number == 1) {	return number_1_5x5;	}
 	else if(number == 2) {	return number_2_5x5;	}
@@ -181,7 +178,7 @@ const uint32_t* getNumberBitmap(int number){
 void drawLivesLabel() { 
 	point_t lives_label_pos;
 	lives_label_pos.x = LIVESLABELX, lives_label_pos.y = LIVESLABELY;
-	//Draw the lives label in the foreground to see it and background so it stays the same
+	// Draw the lives label in the foreground to see it and background so it stays the same
 	activeFramePointer = foreground;
 	drawBitmap(word_lives_24x5, lives_label_pos, LIVESLABELWIDTH, LABELHEIGHT, true, WHITE, false);
 	activeFramePointer = background;
@@ -192,7 +189,7 @@ void drawLivesLabel() {
 void drawLives() {
 	point_t lives_pos;
 	lives_pos.x = LIFESTARTX, lives_pos.y = LIFESTARTY;
-	//draw the lives in the foreground to see it and background to keep it the same
+	// Draw the lives in the foreground to see it and background to keep it the same
 	activeFramePointer = foreground;
 	drawBitmapRepeat(tank_15x8, lives_pos, TANKWIDTH, TANKHEIGHT, true, GREEN, false, LIFEXSPACING, getLives());
 	activeFramePointer = background;
@@ -201,11 +198,11 @@ void drawLives() {
 }
 
 void eraseLife(int lives){
-	//Update the position to be at the top left of the life to be erased
+	// Update the position to be at the top left of the life to be erased
 	point_t lifePos;
 	lifePos.x = LIFESTARTX, lifePos.y = LIFESTARTY;
 	lifePos.x += ((lives)*LIFEXSPACING*2) + (2*(lives)*TANKWIDTH);
-	//erase the bitmap of the life in the bacckground and foreground
+	// Erase the bitmap of the life in the bacckground and foreground
 	activeFramePointer = background;
 	drawBitmap(tank_15x8, lifePos, TANKWIDTH, TANKHEIGHT, true, BLACK, false);
 	activeFramePointer = foreground;
@@ -217,7 +214,7 @@ void drawNewBunkers() {
 	point_t bunker_pos;
 	bunker_pos.y = BUNKERSTARTY;
 	bunker_pos.x = BUNKERSTARTX;
-	//Draw the bunkers in the foreground and background
+	// Draw the bunkers in the foreground and background
 	activeFramePointer = foreground;
 	drawBitmapRepeat(bunker_24x18, bunker_pos, BUNKERWIDTH, BUNKERHEIGHT, true, GREEN, false, BUNKERXSPACING, 4);
 	activeFramePointer = background;
@@ -233,15 +230,12 @@ void drawBunkerErosion(int bunker, int block){
 	*/
 	short row = block/4;
 	short col = block - (row*4);
-	//comment this out if we want to say the bottom right block is block 11 instead of block 9
+	// comment this out if we want to say the bottom right block is block 11 instead of block 9
 	if(block == 9)
 		col = 3;
 	block_pos.x = BUNKERSTARTX + (2*(bunker*(BUNKERWIDTH+BUNKERXSPACING) + (BLOCKWIDTH*col)));
 	block_pos.y = BUNKERSTARTY + (2*BLOCKHEIGHT*(row));
 	// Get erosion state to know which bitmap to use
-//	xil_printf("Position of bunker x: %d, y: %d\r\n", block_pos.x, block_pos.y);
-//	xil_printf("Bunker: %d\r\n", bunker);
-//	xil_printf("Block: %d\r\n", block);
 	uint32_t erosionState = 0;
 	switch(bunker){
 		case 0: erosionState = getBunkerErosion(0);
@@ -254,13 +248,12 @@ void drawBunkerErosion(int bunker, int block){
 		break;
 		default: break;
 	}
-//	xil_printf("erosion state: 0x%08x\r\n", erosionState);
-//	short erosion_block = 1;
-	//Determine the erosion block
+	// Determine the erosion block
 	uint32_t erosion_block = ((erosionState & (0x7 << (3*block))) >> (3*block));
-//	xil_printf("erosion_block: 0x%03x \r\n", erosion_block);
 	// Draw bunker erosion using (erase = true) flag
-	//Update the picture to reflect the erosion in the foreground and background
+	// Update the picture to reflect the erosion in the foreground
+	// Ensure we are drawing on foreground
+	activeFramePointer = foreground;
 	if(erosion_block == 0x0){
 		//do nothing
 	}
@@ -276,6 +269,7 @@ void drawBunkerErosion(int bunker, int block){
 	else {
 		drawBitmap(bunkerDamage3_6x6, block_pos, BLOCKWIDTH, BLOCKHEIGHT, true, BLACK, false);
 	}
+	// Update the picture to reflect the erosion in the background
 	activeFramePointer = background;
 	if(erosion_block == 0x0){
 		//do nothing
@@ -292,6 +286,7 @@ void drawBunkerErosion(int bunker, int block){
 	else {
 		drawBitmap(bunkerDamage3_6x6, block_pos, BLOCKWIDTH, BLOCKHEIGHT, true, BLACK, false);
 	}
+	// Reset to draw to foreground
 	activeFramePointer = foreground;
 	return;
 

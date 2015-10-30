@@ -117,8 +117,6 @@ void fireAlienBullet() {
 	temp.x = alienBlockPosition.x + (col * (2 * alien_width)) + (col * 2 * alien_x_spacing) + (alien_width - alien_x_spacing - 1);
 	temp.y = alienBlockPosition.y + (row * (2 * (alien_height))) + ((row)*alien_y_actual_spacing) + (alien_height * 2);
 	//Choose what type the bullet will be. 1 = squiggly, 0 = cross
-	//	xil_printf("row: %d, idx: %d, col: %d\r\n", row, idx, col);
-	//	xil_printf("These are the coordinates of the bullets: x- %d, y- %d\r\n", temp.x, temp.y);
 	unsigned short bulletType = rand() % 2;
 	//Choose which bullet to place
 	if (aBullet0.isFree) {
@@ -182,7 +180,6 @@ void updateAlienBlock() {
 	for (col = 0; col < 11; col++) {
 		for (row = 0; row < 5; row++) {
 			if (alienDeaths[(row * 11) + col] == false) {
-//				xil_printf("index of live alien: %d\r\n", ((row*11)+col));
 				//If the alien is alive, set a flag
 				alienAlive = true;
 			}
@@ -194,7 +191,6 @@ void updateAlienBlock() {
 		//Reset for the next column
 		alienAlive = false;
 	}
-	// xil_printf("colWithLiveAlien: %x\n\r", colWithLiveAlien);
 	//Determine the right side first
 	//If the number anded with 1 is 0, there is no live alien in the column
 	if ((colWithLiveAlien & col11_mask) == 0) {
