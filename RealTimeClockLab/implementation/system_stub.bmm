@@ -1,4 +1,4 @@
-// File: E:\ECEN427\RealTimeClockLab\implementation\system_stub.bmm
+// File: C:\Madsen\RealTimeClockLab\implementation\system_stub.bmm
 
 ADDRESS_MAP microblaze_0 MICROBLAZE-LE 100
 	ADDRESS_SPACE microblaze_0_bram_block_combined COMBINED [0x00000000:0x00007fff]

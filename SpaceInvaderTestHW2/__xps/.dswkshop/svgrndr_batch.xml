@@ -43,6 +43,8 @@
 
   <RENDERIMG RASNAME="C:\Madsen\SpaceInvaderTestHW2\SDK\SDK_Export\hw\imgs\fit_timer_0.jpg" SVGNAME="C:\Madsen\SpaceInvaderTestHW2\SDK\SDK_Export\hw\imgs\fit_timer_0.svg" TMPSVGFN="C:\Madsen\SpaceInvaderTestHW2\__xps\.dswkshop\fit_timer_0.svg"/>
 
+  <RENDERIMG RASNAME="C:\Madsen\SpaceInvaderTestHW2\SDK\SDK_Export\hw\imgs\pit_timer_0.jpg" SVGNAME="C:\Madsen\SpaceInvaderTestHW2\SDK\SDK_Export\hw\imgs\pit_timer_0.svg" TMPSVGFN="C:\Madsen\SpaceInvaderTestHW2\__xps\.dswkshop\pit_timer_0.svg"/>
+
   <RENDERIMG RASNAME="C:\Madsen\SpaceInvaderTestHW2\SDK\SDK_Export\hw\imgs\system_blkd.jpg" SVGNAME="C:\Madsen\SpaceInvaderTestHW2\SDK\SDK_Export\hw\imgs\system_blkd.svg" TMPSVGFN="C:\Madsen\SpaceInvaderTestHW2\__xps\.dswkshop\system_blkd.svg"/>
 
 </RENDERBATCH>

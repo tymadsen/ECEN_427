@@ -41,7 +41,7 @@ BEGIN axi_intc
  BUS_INTERFACE S_AXI = axi4lite_0
  PORT IRQ = microblaze_0_interrupt
  PORT S_AXI_ACLK = clk_100_0000MHz
- PORT INTR = DIP_Switches_8Bits_IP2INTC_Irpt & Push_Buttons_5Bits_IP2INTC_Irpt & fit_timer_0_Interrupt
+ PORT INTR = DIP_Switches_8Bits_IP2INTC_Irpt & Push_Buttons_5Bits_IP2INTC_Irpt & fit_timer_0_Interrupt & blink_0_USER_PIT_INTERRUPT
 END
 
 BEGIN lmb_v10
@@ -107,6 +107,14 @@ BEGIN microblaze
  PORT INTERRUPT = microblaze_0_interrupt
 END
 
+BEGIN fit_timer
+ PARAMETER INSTANCE = fit_timer_0
+ PARAMETER HW_VER = 1.01.b
+ PARAMETER C_NO_CLOCKS = 1000000
+ PORT Clk = clk_100_0000MHz
+ PORT Interrupt = fit_timer_0_Interrupt
+END
+
 BEGIN mdm
  PARAMETER INSTANCE = debug_module
  PARAMETER HW_VER = 2.00.b
@@ -131,6 +139,16 @@ BEGIN clock_generator
  PORT CLKOUT0 = clk_100_0000MHz
  PORT RST = RESET
  PORT CLKIN = GCLK
+END
+
+BEGIN blink
+ PARAMETER INSTANCE = blink_0
+ PARAMETER HW_VER = 1.00.a
+ PARAMETER C_BASEADDR = 0x7c600000
+ PARAMETER C_HIGHADDR = 0x7c60ffff
+ BUS_INTERFACE S_AXI = axi4lite_0
+ PORT S_AXI_ACLK = clk_100_0000MHz
+ PORT USER_PIT_INTERRUPT = blink_0_USER_PIT_INTERRUPT
 END
 
 BEGIN axi_interconnect
@@ -198,13 +216,5 @@ BEGIN axi_gpio
  PORT S_AXI_ACLK = clk_100_0000MHz
  PORT GPIO_IO_I = DIP_Switches_8Bits_TRI_I
  PORT IP2INTC_Irpt = DIP_Switches_8Bits_IP2INTC_Irpt
-END
-
-BEGIN fit_timer
- PARAMETER INSTANCE = fit_timer_0
- PARAMETER HW_VER = 1.01.b
- PARAMETER C_NO_CLOCKS = 1000000
- PORT Clk = clk_100_0000MHz
- PORT Interrupt = fit_timer_0_Interrupt
 END
 
