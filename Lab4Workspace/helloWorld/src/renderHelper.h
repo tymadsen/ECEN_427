@@ -8,14 +8,15 @@
 #ifndef RENDERHELPER_H_
 #define RENDERHELPER_H_
 
+#include "globals.h"
 
 void updateAliens();
+void fireAlienBulletHelper();
 void moveTankLeft();
 void moveTankRight();
 void killTankHelper(bool death1, bool reset);
 void shootTankBullet();
 void updateAllBullets();
-void fireAlienBulletHelper();
 void flySpaceship();
 void updateSpaceshipHelper();
 void eraseSpaceshipScore(bool erase);

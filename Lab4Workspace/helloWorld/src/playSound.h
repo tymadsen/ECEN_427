@@ -7,6 +7,7 @@
 
 #ifndef PLAYSOUND_H_
 #define PLAYSOUND_H_
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -54,7 +55,7 @@ void playTankBullet();
 void playSaucerExplosionSound();
 void playAlienExplosionSound();
 void playTankExplosionSound();
-void playSpaceshipSound();
 void setSpaceshipSoundPlaying(bool isFree);
+void playSpaceshipSound();
 
 #endif /* PLAYSOUND_H_ */

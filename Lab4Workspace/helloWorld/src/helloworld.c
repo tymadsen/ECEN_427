@@ -19,79 +19,56 @@
 /*
  * helloworld.c: simple test application
  */
-#include "xgpio.h"          // Provides access to PB GPIO driver.
-#include <stdio.h>
+#include <xgpio.h>          	// Provides access to PB GPIO driver.
+#include <xaxivdma.h>
+#include <xio.h>
+#include <unistd.h>
+#include "mb_interface.h"   	// provides the microblaze interrupt enables, etc.
+#include "xintc_l.h"        	// Provides handy macros for the interrupt controller.
+#include "xac97_l.h"					// xac97 sound
 #include "platform.h"
 #include "xparameters.h"
-#include "xaxivdma.h"
-#include "xio.h"
 #include "time.h"
-#include "unistd.h"
-#include "mb_interface.h"   // provides the microblaze interrupt enables, etc.
-#include "xintc_l.h"        // Provides handy macros for the interrupt controller.
 #include "render.h"
 #include "renderHelper.h"
-#include "tankGlobals.h"
-#include "alienGlobals.h"
-#include "spaceshipGlobals.h"
-#include "xintc_l.h"        // Provides handy macros for the interrupt controller.
-#include "xac97_l.h"		// xac97 sound
-#include "playSound.h"
 
-#define DEBUG
-#define LEFTBTN 0x8				// Left (Hour) button mask
-#define RIGHTBTN 0x2			// Right (Second) button mask
-#define CENTERBTN 0x1			// Center (Minute) button mask
-#define UPBTN 0x10				// Up btn
-#define DOWNBTN 0x4				// Down btn
-#define TRUE 1
-#define FALSE 0
-void print(char *str);
+#define LEFTBTN 		0x8					// Left (Hour) button mask
+#define RIGHTBTN 		0x2					// Right (Second) button mask
+#define CENTERBTN 	0x1					// Center (Minute) button mask
+#define UPBTN 			0x10				// Up btn
+#define DOWNBTN 		0x4					// Down btn
+#define FIFOSIZE 		512					// Size of AC97 Fifo
 
-#define FRAME_BUFFER_0_ADDR 0xC1000000  // Starting location in DDR where we will store the images that we display.
-#define MAX_SILLY_TIMER 10000000;
-#define PIXEL_ADJUSTMENT 4
-
-#define ALIEN_HEIGHT 16
-#define WORD_WIDTH 32
-#define WHITE 	0x00FFFFFF
-#define RED 	0x00FF0000
-#define GREEN 	0x0000FF00
-#define BLUE 	0x000000FF
-#define BLACK 	0x00000000
-
+// startLevel function prototype
 void startLevel(bool first);
 
-bool gameIsOver = false;
-bool levelIsOver = false;
+bool gameIsOver = false;					// Game over flag
+bool levelIsOver = false;					// Level ended flag
+bool started = false;							// Game started flag
 
-int fitCounter = 0;			// Counter for fit interrupts, goes up to 100 and resets
-int screenUpdateCounter = 0;		// Counter for updating the time, goes up to 20 and resets
-int updateSpaceshipCounter = 0;
-int currentButtonState;		// Value the button interrupt handler saves button values to
-int alienBulletCounter = 0;		//Contains the count until the random time an alien bullet will be fired
-int spaceshipCounter = 0;		//Counts to the next time a spaceship will appear
-int randBulletTime = 0;
-int randSpaceshipTime = 0;
-int alienUpdateTime = 60;		//The time that will increase as more and more aliens are killed
-bool started = false;
-int ssValueDisplayCounter = 0;
-int tankKilledCounter = 0;
-int volumeUpdateCounter = 0;
-int fifoCount = 0;
-int currentSound = 0;
-int maxSamples = 0;
-int currentVolume = AC97_VOL_MID;
-int fifoSize = 512;
+int fitCounter = 0;								// Counter for fit interrupts, goes up to 100 and resets
+int screenUpdateCounter = 0;			// Counter for updating the time, goes up to 20 and resets
+int updateSpaceshipCounter = 0;		// Counter for updating the spaceship
+int currentButtonState;						// Value the button interrupt handler saves button values to
+int alienBulletCounter = 0;				// Contains the count until the random time an alien bullet will be fired
+int spaceshipCounter = 0;					// Counts to the next time a spaceship will appear
+int randBulletTime = 0;						// This will be set to a random number for spacing alien bullets
+int randSpaceshipTime = 0;				// Random time set to determine when the Spaceship will come out
+int alienUpdateTime = 60;					// The time that will decrease as more and more aliens are killed
+int ssValueDisplayCounter = 0;		// Counter for the spaceship score flashing animation
+int tankKilledCounter = 0;				// Counter for tank death animation
+int volumeUpdateCounter = 0;			// For debouncing the volume buttons	
+int currentVolume = AC97_VOL_MID;	// Initialize volume to mid point
 
 XGpio gpLED;  // This is a handle for the LED GPIO block.
 XGpio gpPB;   // This is a handle for the push-button GPIO block.
 
 void fifo_interrupt_handler(){
-//	xil_printf("fifo interrupt\n");
+	// Add only 128(512/4) samples at a time
+	// And make sure we are no overfilling the FIFO
 	int i = 0;
-	while(i < (fifoSize/4) && !XAC97_isInFIFOFull(XPAR_AXI_AC97_0_BASEADDR)){
-		//Call getCurrentSample from playSound.h
+	while(i < (FIFOSIZE/4) && !XAC97_isInFIFOFull(XPAR_AXI_AC97_0_BASEADDR)){
+		// Call getCurrentSample from playSound.h
 		uint32_t sample = getCurrentSample();
 		XAC97_mSetInFifoData(XPAR_AXI_AC97_0_BASEADDR, sample);
 		i++;
@@ -99,6 +76,7 @@ void fifo_interrupt_handler(){
 }
 
 void updateScreenElements(){
+	// Update tank, and bullets on the screen
 	if(started && isTankFree()){
 		updateAllBullets();
 		if(currentButtonState & LEFTBTN){
@@ -111,35 +89,30 @@ void updateScreenElements(){
 			shootTankBullet();
 		}
 	}
-	return;
+	
 }
 
 void updateKillTankAnimation() {
-//Start switching the animations, switching every 1/4 second
+	// Start switching the animations, switching every 1/4 second
 	if(tankKilledCounter == 25 || tankKilledCounter == 75){
-//		xil_printf("Printing death1\r\n");
 		killTankHelper(true, false);
 	}
 	if(tankKilledCounter == 50 || tankKilledCounter == 100){
-//		xil_printf("Printing death2\r\n");
 		killTankHelper(false, false);
 	}
 	if(tankKilledCounter == 125){
-//		xil_printf("reseting\r\n");
 		killTankHelper(false, true);
 	}
 }
 
 void updateSpaceshipScore(){
 	if(ssValueDisplayCounter == 50 || ssValueDisplayCounter == 150){
-		//If the score has been on for 1/2 second, erase it
-//		xil_printf("We are going to erase the spaceship value\r\n");
+		// If the score has been on for 1/2 second, erase it
 		if(getSpaceship()->isFree){
 			eraseSpaceshipScore(true);
 		}
 	}
 	if(ssValueDisplayCounter == 100){
-//		xil_printf("We are going to draw the spaceship value\r\n");
 		if(getSpaceship()->isFree){
 			eraseSpaceshipScore(false);
 		}
@@ -147,6 +120,7 @@ void updateSpaceshipScore(){
 }
 
 void timer_interrupt_handler() {
+	// Increment counters...
 	fitCounter++;
 	screenUpdateCounter++;
 	alienBulletCounter++;
@@ -155,7 +129,7 @@ void timer_interrupt_handler() {
 	ssValueDisplayCounter++;
 	tankKilledCounter++;
 	volumeUpdateCounter++;
-//	xil_printf("ssCounter: %d\r\n", ssValueDisplayCounter);
+
 	if(!gameIsOver){
 		// The FIT counter that will update the aliens every half second
 		if(fitCounter >= alienUpdateTime) {
@@ -167,36 +141,31 @@ void timer_interrupt_handler() {
 		}
 		// The screen will update every 5ms
 		if(screenUpdateCounter >= 6) {
-			//Call function to update the screen
+			// Call function to update the screen
 			updateScreenElements();
 			screenUpdateCounter = 0;
 		}
-		//An alienBullet will fire at a random time between (1*25 - 10*25)
+		// An alienBullet will fire at a random time between (1*25 - 10*25)
 		if(alienBulletCounter >= randBulletTime){
-	//		xil_printf("Fire Alien Bullet\r\n");
 			if(started && isTankFree())
 				fireAlienBulletHelper();
 			randBulletTime = (rand()%10)*25 + 50;
 			alienBulletCounter = 0;
 		}
-		//The spaceship will go across the screen at a random time between 1-20 seconds;
+		// The spaceship will go across the screen at a random time between 1-20 seconds;
 		if(spaceshipCounter >= randSpaceshipTime){
-	//		xil_printf("Send out the saucer\r\n");
 			if(started && isTankFree()){
 				flySpaceship();
-	//			xil_printf("We are sending out the saucer\r\n");
 			}
 			randSpaceshipTime = (rand()%25)*100 + 2000;
 			spaceshipCounter = 0;
 		}
 		if(isSpaceshipHitHelper()){
-	//		xil_printf("We are reseting the value counter\r\n");
 			ssValueDisplayCounter = 0;
 			setSpaceshipHitHelper(false);
 		}
-		//Will move the spaceship across the screen
+		// Will move the spaceship across the screen
 		if(updateSpaceshipCounter >= 5){
-	//		xil_printf("We are updating the saucer position\r\n");
 			if(started && isTankFree())
 				updateSpaceshipHelper();
 			updateSpaceshipCounter = 0;
@@ -204,24 +173,27 @@ void timer_interrupt_handler() {
 	}
 	updateKillTankAnimation();
 	updateSpaceshipScore();
-	//If the tank is not free, it has been hit
+	// If the tank is not free, it has been hit
 	if(isTankHit()){
 		if(started){
 			tankKilledCounter = 0;
 			setIsTankHit(false);
 		}
 	}
-
+	// Use the FIT to "debounce" the button
 	if(volumeUpdateCounter >= 20){
-
+		// Up button is pushed
 		if(currentButtonState & UPBTN){
-			//Increase volume
+			// Increase volume
 			currentVolume -= AC97_VOL_ATTN_1_5_DB;
+			// If volume is at max, make max the limit
 			if(currentVolume < AC97_VOL_MAX)
 				currentVolume = AC97_VOL_MAX;
+		// Else if down is pushed
 		}else if(currentButtonState & DOWNBTN){
-			//Decrease volume
+			// Decrease volume
 			currentVolume += AC97_VOL_ATTN_1_5_DB;
+			// If volume is at min, make min the limit
 			if(currentVolume > AC97_VOL_MIN)
 				currentVolume = AC97_VOL_MIN;
 		}
@@ -234,18 +206,17 @@ void timer_interrupt_handler() {
 
 // This is invoked each time there is a change in the button state (result of a push or a bounce).
 void pb_interrupt_handler() {
-	// Clear the GPIO interrupt.
 	XGpio_InterruptGlobalDisable(&gpPB);                // Turn off all PB interrupts for now.
 	currentButtonState = XGpio_DiscreteRead(&gpPB, 1);  // Get the current state of the buttons.
-
+	
+	// Do some checking to see if the game is over
+	// This allows using any button to restart the game once it is over
 	if(levelIsOver){
-
-		levelIsOver = false;
-		xil_printf("level: %d\ngame: %d\n", levelIsOver, gameIsOver);
 		if(gameIsOver){
 			startLevel(true);
 			gameIsOver = false;
-		}else{
+		}
+		else {
 			startLevel(false);
 		}
 		levelIsOver = false;
@@ -267,13 +238,15 @@ void interrupt_handler_dispatcher(void* ptr) {
 		XIntc_AckIntr(XPAR_INTC_0_BASEADDR, XPAR_PUSH_BUTTONS_5BITS_IP2INTC_IRPT_MASK);
 		pb_interrupt_handler();
 	}
-	//Check the sound interrupt
+	// Check the sound interrupt
 	if(intc_status & XPAR_AXI_AC97_0_INTERRUPT_MASK){
 		fifo_interrupt_handler();
 		XIntc_AckIntr(XPAR_INTC_0_BASEADDR, XPAR_AXI_AC97_0_INTERRUPT_MASK);
 	}
 }
 
+// This will clear the screen for a new game if the flad is true, 
+// otherwise it will clear the screen for a new level
 void startLevel(bool first){
 	initScreen(!first);
 	randBulletTime = (rand()%10)*50 + 100;
@@ -285,9 +258,9 @@ int main()
 	init_platform();                   // Necessary for all programs.
 	int Status;                        // Keep track of success/failure of system function calls.
 	XAxiVdma videoDMAController;
-    // Initialize the GPIO peripherals.
-    int success;
-    success = XGpio_Initialize(&gpPB, XPAR_PUSH_BUTTONS_5BITS_DEVICE_ID);
+	// Initialize the GPIO peripherals.
+	int success;
+	success = XGpio_Initialize(&gpPB, XPAR_PUSH_BUTTONS_5BITS_DEVICE_ID);
 	// There are 3 steps to initializing the vdma driver and IP.
 	// Step 1: lookup the memory structure that is used to access the vdma driver.
 	XAxiVdma_Config * VideoDMAConfig = XAxiVdma_LookupConfig(XPAR_AXI_VDMA_0_DEVICE_ID);
@@ -311,9 +284,9 @@ int main()
 	myFrameConfig.WriteDelayTimerCount = 10;
 	Status = XAxiVdma_SetFrameCounter(&videoDMAController, &myFrameConfig);
 	if (Status != XST_SUCCESS) {
-		 xil_printf("Set frame counter failed %d\r\n", Status);
-		 if(Status == XST_VDMA_MISMATCH_ERROR)
-			 xil_printf("DMA Mismatch Error\r\n");
+		xil_printf("Set frame counter failed %d\r\n", Status);
+		if(Status == XST_VDMA_MISMATCH_ERROR)
+			xil_printf("DMA Mismatch Error\r\n");
 	}
 	// Now we tell the driver about the geometry of our frame buffer and a few other things.
 	// Our image is 480 x 640.
@@ -333,37 +306,40 @@ int main()
 	// We need to give the frame buffer pointers to the memory that it will use. This memory
 	// is where you will write your video data. The vdma IP/driver then streams it to the HDMI
 	// IP.
-	 myFrameBuffer.FrameStoreStartAddr[0] = FRAME_BUFFER_0_ADDR;
-	 myFrameBuffer.FrameStoreStartAddr[1] = FRAME_BUFFER_0_ADDR + 4*640*480;
-    // Set the push button peripheral to be inputs.
-    XGpio_SetDataDirection(&gpPB, 1, 0x0000001F);
-    // Enable the global GPIO interrupt for push buttons.
-    XGpio_InterruptGlobalEnable(&gpPB);
-    // Enable all interrupts in the push button peripheral.
-    XGpio_InterruptEnable(&gpPB, 0xFFFFFFFF);
+	myFrameBuffer.FrameStoreStartAddr[0] = FRAME_BUFFER_0_ADDR;
+	myFrameBuffer.FrameStoreStartAddr[1] = FRAME_BUFFER_0_ADDR + 4*640*480;
+	// Set the push button peripheral to be inputs.
+	XGpio_SetDataDirection(&gpPB, 1, 0x0000001F);
+	// Enable the global GPIO interrupt for push buttons.
+	XGpio_InterruptGlobalEnable(&gpPB);
+	// Enable all interrupts in the push button peripheral.
+	XGpio_InterruptEnable(&gpPB, 0xFFFFFFFF);
 
-    microblaze_register_handler(interrupt_handler_dispatcher, NULL);
-    XIntc_EnableIntr(XPAR_INTC_0_BASEADDR,
-	    		(XPAR_FIT_TIMER_0_INTERRUPT_MASK | XPAR_PUSH_BUTTONS_5BITS_IP2INTC_IRPT_MASK | XPAR_AXI_AC97_0_INTERRUPT_MASK));
-    XIntc_MasterEnable(XPAR_INTC_0_BASEADDR);
-    microblaze_enable_interrupts();
+	microblaze_register_handler(interrupt_handler_dispatcher, NULL);
+	// Enable interrupts for FIT, Push Buttons, and FIFO on the AC97
+	XIntc_EnableIntr(XPAR_INTC_0_BASEADDR,
+									(XPAR_FIT_TIMER_0_INTERRUPT_MASK | 
+									XPAR_PUSH_BUTTONS_5BITS_IP2INTC_IRPT_MASK | 
+									XPAR_AXI_AC97_0_INTERRUPT_MASK));
+	XIntc_MasterEnable(XPAR_INTC_0_BASEADDR);
+	microblaze_enable_interrupts();
 
-    XAC97_HardReset(XPAR_AXI_AC97_0_BASEADDR);
-   	XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_ExtendedAudioStat, 1);
-   	XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_PCM_DAC_Rate, AC97_PCM_RATE_11025_HZ);
-   	XAC97_mSetControl(XPAR_AXI_AC97_0_BASEADDR, AC97_ENABLE_IN_FIFO_INTERRUPT);
+	XAC97_HardReset(XPAR_AXI_AC97_0_BASEADDR);
+	XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_ExtendedAudioStat, 1);
+	XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_PCM_DAC_Rate, AC97_PCM_RATE_11025_HZ);
+	XAC97_mSetControl(XPAR_AXI_AC97_0_BASEADDR, AC97_ENABLE_IN_FIFO_INTERRUPT);
 
 
-    if(XST_FAILURE == XAxiVdma_DmaSetBufferAddr(&videoDMAController, XAXIVDMA_READ,myFrameBuffer.FrameStoreStartAddr)) {
-		 xil_printf("DMA Set Address Failed Failed\r\n");
-	 }
-	 // Print a sanity message if you get this far.
-	 xil_printf("Woohoo! I made it through initialization.\n\r");
-	 // Now, let's get ready to start displaying some stuff on the screen.
-	 // The variables framePointer and framePointer1 are just pointers to the base address
-	 // of frame 0 and frame 1.
-	 // Just paint some large red, green, blue, and white squares in different
-	 // positions of the image for each frame in the buffer (framePointer0 and framePointer1).
+	if(XST_FAILURE == XAxiVdma_DmaSetBufferAddr(&videoDMAController, XAXIVDMA_READ,myFrameBuffer.FrameStoreStartAddr)) {
+		xil_printf("DMA Set Address Failed Failed\r\n");
+	}
+	// Print a sanity message if you get this far.
+	xil_printf("Woohoo! I made it through initialization.\n\r");
+	// Now, let's get ready to start displaying some stuff on the screen.
+	// The variables framePointer and framePointer1 are just pointers to the base address
+	// of frame 0 and frame 1.
+	// Just paint some large red, green, blue, and white squares in different
+	// positions of the image for each frame in the buffer (framePointer0 and framePointer1).
 
 	// Let's print out the alien as ASCII characters on the screen.
 	// Each line of the alien is a 32-bit integer. We just need to strip the bits out and send
@@ -384,10 +360,13 @@ int main()
 	if (XST_FAILURE == XAxiVdma_StartParking(&videoDMAController, frameIndex,  XAXIVDMA_READ)) {
 		xil_printf("vdma parking failed\n\r");
 	}
+
+	// Start the game
 	startLevel(true);
 
-	//setvbuf(stdin, NULL, _IONBF, 0)
 	while(1) {
+		// Check if the game or level is over
+		// if so, set some flags to be handled in the interrupt handlers
 		if(!levelIsOver && isLevelOver()){
 			if(!gameIsOver && isGameOver()){
 				xil_printf("game over...\n");

@@ -23,12 +23,10 @@ void XAC97_AwaitCodecReady(Xuint32 baseaddr) {
     while(!XAC97_isCodecReady(baseaddr));
 }
 
-
 void XAC97_Delay(Xuint32 value) {
   volatile int i = value;
   while(i-- > 0);
 }
-
 
 void XAC97_SoftReset(Xuint32 BaseAddress) {
   XAC97_WriteReg(BaseAddress, AC97_Reset, 0x0000);
@@ -43,7 +41,6 @@ void XAC97_SoftReset(Xuint32 BaseAddress) {
   XAC97_ClearFifos(BaseAddress);
 }
 
-
 void XAC97_HardReset(Xuint32 BaseAddress) {
   XAC97_mSetControl(BaseAddress, AC97_ENABLE_RESET_AC97);
   XAC97_Delay(100000);
@@ -51,7 +48,6 @@ void XAC97_HardReset(Xuint32 BaseAddress) {
   XAC97_Delay(100000);
   XAC97_SoftReset(BaseAddress);
 }
-
 
 void XAC97_InitAudio(Xuint32 BaseAddress, Xuint8 Loopback) {
   Xuint8 i;
@@ -71,7 +67,6 @@ void XAC97_InitAudio(Xuint32 BaseAddress, Xuint8 Loopback) {
 
 } // end XAC97_InitAudio()
 
-
 void XAC97_EnableInput(Xuint32 BaseAddress, Xuint8 InputType) {
   XAC97_WriteReg(BaseAddress, AC97_RecordGain, AC97_VOL_MAX);
 
@@ -81,7 +76,6 @@ void XAC97_EnableInput(Xuint32 BaseAddress, Xuint8 InputType) {
     XAC97_WriteReg(BaseAddress, AC97_RecordSelect, AC97_RECORD_LINE_IN);
 }
 
-
 void XAC97_DisableInput(Xuint32 BaseAddress, Xuint8 InputType) {
   XAC97_WriteReg(BaseAddress, AC97_RecordGain, AC97_VOL_MUTE);
 
@@ -90,7 +84,6 @@ void XAC97_DisableInput(Xuint32 BaseAddress, Xuint8 InputType) {
   else if( InputType == AC97_LINE_INPUT )
     XAC97_WriteReg(BaseAddress, AC97_LineInVol, AC97_VOL_MUTE);
 }
-
 
 void XAC97_RecAudio(Xuint32 BaseAddress, Xuint32 StartAddress,
 		    Xuint32 EndAddress) {
@@ -125,8 +118,6 @@ void XAC97_RecAudio(Xuint32 BaseAddress, Xuint32 StartAddress,
 
 } // end XAC97_RecAudio()
 
-
-
 void XAC97_PlayAudio(Xuint32 BaseAddress, Xuint32 StartAddress,
 		     Xuint32 EndAddress){
   Xuint32 i;
@@ -160,7 +151,6 @@ void XAC97_PlayAudio(Xuint32 BaseAddress, Xuint32 StartAddress,
   XAC97_ClearFifos(BaseAddress);
 
 } // end XAC97_PlayAudio()
-
 
 Xuint32 XAC97_ReadFifo(Xuint32 BaseAddress) {
   while(XAC97_isOutFIFOEmpty(BaseAddress));

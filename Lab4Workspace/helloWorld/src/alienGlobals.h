@@ -7,33 +7,25 @@
 
 #ifndef ALIENGLOBALS_H_
 #define ALIENGLOBALS_H_
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <stdint.h>
+
+#include "globals.h"
 
 void resetAliens();
+bool getAlienDown();
+bool getAlienRight();
+int getLiveAliens();
 point_t getAlienBlockPosition();
 void setAlienBlockPosition(point_t point);
-
 void setAlienBullet0(point_t point, unsigned short type, bool isFree, short counter);
 void setAlienBullet1(point_t point, unsigned short type, bool isFree, short counter);
 void setAlienBullet2(point_t point, unsigned short type, bool isFree, short counter);
 void setAlienBullet3(point_t point, unsigned short type, bool isFree, short counter);
-
 aBullet* getAlienBullet(int bullet);
-
-bool getAlienRight();
-bool getAlienDown();
-int getAlienUpdateTime();
-void eraseBullet(point_t pos, unsigned short type);
-
+void fireAlienBullet();
+void updateAlienBulletCounters();
 bool* getAlienDeaths();
 void setAlienDeaths(short alien, bool dead);
 void updateAlienBlock();
-void fireAlienBullet();
-void updateAlienBulletCounters();
-
-int getLiveAliens();
+void eraseBullet(point_t pos, unsigned short type);
 
 #endif /* TANKGLOBALS_H_ */
