@@ -13,19 +13,17 @@
 *******************************************************************/
 
 #include "xparameters.h"
-#include "xgpio.h"
+#include "xtmrctr.h"
 
 /*
 * The configuration table for devices
 */
 
-XGpio_Config XGpio_ConfigTable[] =
+XTmrCtr_Config XTmrCtr_ConfigTable[] =
 {
 	{
-		XPAR_PUSH_BUTTONS_5BITS_DEVICE_ID,
-		XPAR_PUSH_BUTTONS_5BITS_BASEADDR,
-		XPAR_PUSH_BUTTONS_5BITS_INTERRUPT_PRESENT,
-		XPAR_PUSH_BUTTONS_5BITS_IS_DUAL
+		XPAR_AXI_TIMER_0_DEVICE_ID,
+		XPAR_AXI_TIMER_0_BASEADDR
 	}
 };
 

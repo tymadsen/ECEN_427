@@ -105,5 +105,6 @@ bool isLevelOver();
 
 void incScore(int alienNum, bool spaceshipHit);
 int getScore();
+int getAlienUpdateTime();
 
 #endif /* GLOBALS_H_ */

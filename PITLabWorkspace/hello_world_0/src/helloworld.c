@@ -169,9 +169,9 @@ void pb_interrupt_handler() {
 void interrupt_handler_dispatcher(void* ptr) {
 	int intc_status = XIntc_GetIntrStatus(XPAR_INTC_0_BASEADDR);
 	// Check the FIT interrupt first.
-	if ((intc_status & XPAR_BLINK_0_USER_PIT_INTERRUPT_MASK)){
+	if ((intc_status & XPAR_PIT_TIMER_0_USER_PIT_INTERRUPT_MASK)){
 //		xil_printf("pit intr\r\n");
-		XIntc_AckIntr(XPAR_INTC_0_BASEADDR, XPAR_BLINK_0_USER_PIT_INTERRUPT_MASK);
+		XIntc_AckIntr(XPAR_INTC_0_BASEADDR, XPAR_PIT_TIMER_0_USER_PIT_INTERRUPT_MASK);
 		if(clockDisabled == 0){
 			timer_interrupt_handler();
 		}
@@ -198,7 +198,7 @@ int main (void) {
 
     microblaze_register_handler(interrupt_handler_dispatcher, NULL);
     XIntc_EnableIntr(XPAR_INTC_0_BASEADDR,
-    		(XPAR_BLINK_0_USER_PIT_INTERRUPT_MASK | XPAR_PUSH_BUTTONS_5BITS_IP2INTC_IRPT_MASK));
+    		(XPAR_PIT_TIMER_0_USER_PIT_INTERRUPT_MASK | XPAR_PUSH_BUTTONS_5BITS_IP2INTC_IRPT_MASK));
     XIntc_MasterEnable(XPAR_INTC_0_BASEADDR);
     microblaze_enable_interrupts();
 

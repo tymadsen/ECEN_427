@@ -9,7 +9,7 @@
 #define PIT_H_
 
 #include <stdio.h>          // xil_printf and so forth.
-#include "mblaze_nt_types.h"
+#include "stdint.h"
 #include "xil_io.h"
 #include "xparameters.h"
 
@@ -20,15 +20,14 @@
 #define PIT_DISABLE_INTERRUPT_MASK 	~(PIT_ENABLE_INTERRUPT_MASK)
 #define PIT_ENABLE_RELOAD_MASK 		0x00000004
 #define PIT_DISABLE_RELOAD_MASK 	~(PIT_ENABLE_RELOAD_MASK)
-#define PIT_BASE_ADDR 				XPAR_BLINK_0_BASEADDR
 #define PIT_CONTROL_REG_OFFSET		0x00000000
 #define PIT_DELAY_VAL_REG_OFFSET	0x00000004
 
 /***************** Macros (Inline Functions) Definitions ********************/
 #define PIT_EnableControlStatus(Mask) \
-	Xil_Out32((PIT_BASE_ADDR), (Xil_In32(PIT_BASE_ADDR) | Mask))
+	Xil_Out32((XPAR_PIT_TIMER_0_BASEADDR), (Xil_In32(XPAR_PIT_TIMER_0_BASEADDR) | Mask))
 #define PIT_DisableControlStatus(Mask) \
-	Xil_Out32((PIT_BASE_ADDR), (Xil_In32(PIT_BASE_ADDR) & Mask))
+	Xil_Out32((XPAR_PIT_TIMER_0_BASEADDR), (Xil_In32(XPAR_PIT_TIMER_0_BASEADDR) & Mask))
 
 /************************** Function Prototypes *****************************/
 

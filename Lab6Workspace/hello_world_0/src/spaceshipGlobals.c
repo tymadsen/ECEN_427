@@ -4,6 +4,7 @@
 #include "render.h"
 #include "bitmaps.h"
 #include "spaceshipGlobals.h"
+#include "playSound.h"
 
 saucer spaceship;
 

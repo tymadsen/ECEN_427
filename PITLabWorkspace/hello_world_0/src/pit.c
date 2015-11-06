@@ -9,7 +9,8 @@
 
 
 void PIT_SetDelayValue(u32 val){
-	Xil_Out32((PIT_BASE_ADDR) + (PIT_DELAY_VAL_REG_OFFSET), val);
+	Xil_Out32((XPAR_PIT_TIMER_0_BASEADDR) + (PIT_DELAY_VAL_REG_OFFSET), val);
+	xil_printf("Delay Value set to %d: \r\n", Xil_In32((XPAR_PIT_TIMER_0_BASEADDR) + (PIT_DELAY_VAL_REG_OFFSET)));
 }
 
 void PIT_EnableCounter(){
@@ -30,6 +31,7 @@ void PIT_DisableInterrupts(){
 
 void PIT_EnableReloadCounter(){
 	PIT_EnableControlStatus(PIT_ENABLE_RELOAD_MASK);
+	xil_printf("Control register value: %d\r\n", Xil_In32(XPAR_PIT_TIMER_0_BASEADDR));
 }
 
 void PIT_DisableReloadCounter(){
