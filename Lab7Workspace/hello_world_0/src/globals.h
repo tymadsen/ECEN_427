@@ -103,6 +103,10 @@ int getLives();
 bool isGameOver();
 bool isLevelOver();
 
+point_t getDeadAlienLoc();
+int isAlienExploded();
+void setAlienExploded();
+
 void incScore(int alienNum, bool spaceshipHit);
 int getScore();
 int getAlienUpdateTime();

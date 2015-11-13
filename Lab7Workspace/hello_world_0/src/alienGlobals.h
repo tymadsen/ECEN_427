@@ -30,8 +30,8 @@ void eraseBullet(point_t pos, unsigned short type);
 
 bool* getAlienDeaths();
 void setAlienDeaths(short alien, bool dead);
-void updateAlienBlock();
-void fireAlienBullet();
+void updateAlienBlock(int direction);
+void fireAlienBullet(unsigned short bullet);
 void updateAlienBulletCounters();
 
 int getLiveAliens();

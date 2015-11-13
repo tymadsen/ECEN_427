@@ -17,6 +17,8 @@ int lives = 3;
 int score = 0;
 point_t oldSpaceshipLocation;
 int spaceshipScore = 0;
+point_t deadAlienPos;
+int alienExploded = 0;
 
 uint32_t bunkerStates[] = { 0, 0, 0, 0 };
 
@@ -99,6 +101,8 @@ void updateBullets() {
 				pos.y = alien_pos.y + (alien_row * (ALIENHEIGHT + ALIENYSPACING)) - 2;
 				drawBitmap(alien_explosion_12x10, pos, 12, 10, true, WHITE, false);
 				//Play explosion sound
+				alienExploded = 1;
+				deadAlienPos = pos;
 				playAlienExplosionSound();
 				// Erase tank bullet
 				render(true, tank_bullet_render_mask, 0, UP);
@@ -182,6 +186,19 @@ void ifBulletHitBunkers(aBullet* bullet, int x, int y){
  point_t getOldSpaceshipLoc(){
  	return oldSpaceshipLocation;
  }
+
+point_t getDeadAlienLoc(){
+	return deadAlienPos;
+}
+
+int isAlienExploded(){
+	return alienExploded;
+}
+
+void setAlienExploded(int set){
+	alienExploded = set;
+	return;
+}
 
 bool bulletHitTank(int x, int y){
 	point_t tank_pos = getTankPosition();

@@ -51,7 +51,7 @@
 #define ALIENXSPACING 2
 #define ALIENYSPACING 20
 #define ALIENBLOCKSTARTX 167
-#define ALIENBLOCKSTARTY 75
+#define ALIENBLOCKSTARTY 130
 #define ALIENSPERROW 11
 // Bullet dimension/spacing
 #define BULLETHEIGHT 7
@@ -84,7 +84,7 @@ void killTank(bool erase, bool death1);
 void drawTankBullet(bool erase);
 void drawSpaceship(bool erase, int direction);
 void printSpaceshipValue(int spaceshipValue, point_t position, bool erase);
-void drawAliens(bool erase, bool in_pose);
+void drawAliens(bool erase, bool in_pose, int direction);
 const uint32_t* determineAlienBulletBitmap(short bulletType, short counter);
 void drawAlienBullet(bool erase, short bullet_number);
 void drawGameOver();

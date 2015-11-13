@@ -36,6 +36,7 @@
 #include "spaceshipGlobals.h"
 #include "playSound.h"
 #include "renderHelper.h"
+#include "globals.h"
 
 #define LEFTBTN 		0x8					// Left (Hour) button mask
 #define RIGHTBTN 		0x2					// Right (Second) button mask
@@ -61,11 +62,12 @@ unsigned alienBulletCounter = 0;				// Contains the count until the random time 
 unsigned spaceshipCounter = 0;					// Counts to the next time a spaceship will appear
 unsigned randBulletTime = 0;						// This will be set to a random number for spacing alien bullets
 unsigned randSpaceshipTime = 0;				// Random time set to determine when the Spaceship will come out
-unsigned alienUpdateTime = 60;					// The time that will decrease as more and more aliens are killed
+//unsigned alienUpdateTime = 60;					// The time that will decrease as more and more aliens are killed
 unsigned ssValueDisplayCounter = 0;		// Counter for the spaceship score flashing animation
 unsigned tankKilledCounter = 0;				// Counter for tank death animation
 unsigned volumeUpdateCounter = 0;			// For debouncing the volume buttons
 int currentVolume = AC97_VOL_MID;	// Initialize volume to mid point
+point_t alienExplosion;
 
 char buffer[BUFFERLENGTH+1];
 int buffIndex = 0;
@@ -133,7 +135,7 @@ void timer_interrupt_handler() {
 	// Increment counters...
 	pitCounter++;
 	screenUpdateCounter++;
-	alienBulletCounter++;
+//	alienBulletCounter++;
 	spaceshipCounter++;
 	updateSpaceshipCounter++;
 	ssValueDisplayCounter++;
@@ -142,13 +144,13 @@ void timer_interrupt_handler() {
 
 	if(!gameIsOver){
 		// The pit counter that will update the aliens every half second
-		if(pitCounter >= alienUpdateTime) {
-			if(started && isTankFree()){
-				updateAliens();
-			}
-			alienUpdateTime = getAlienUpdateTime();
-			pitCounter = 0;
-		}
+//		if(pitCounter >= alienUpdateTime) {
+//			if(started && isTankFree()){
+////				updateAliens();
+//			}
+//			alienUpdateTime = getAlienUpdateTime();
+//			pitCounter = 0;
+//		}
 		// The screen will update every 5ms
 		if(screenUpdateCounter >= 6) {
 			// Call function to update the screen
@@ -157,16 +159,27 @@ void timer_interrupt_handler() {
 			}
 			screenUpdateCounter = 0;
 		}
+		if(isAlienExploded() == 1){
+			//If an alien has exploded, start the timer and reset it to 0
+			pitCounter = 0;
+			//Then get the position of the exploded alien and erase the bitmap
+			alienExplosion = getDeadAlienLoc();
+			setAlienExploded(0);
+		}
+		if(pitCounter == 60){
+			//Use this to erase the explosion
+			eraseExplosion(alienExplosion);
+		}
 		// An alienBullet will fire at a random time between (1*25 - 10*25)
 //		xil_printf("alien bullet counter: %d randBulletTime: %d\r\n",  alienBulletCounter, randBulletTime);
 
-		if(alienBulletCounter >= randBulletTime){
-//			xil_printf("Fire an alien bullet\n\r");
-			if(started && isTankFree())
-				fireAlienBulletHelper();
-			randBulletTime = (rand()%10)*25 + 50;
-			alienBulletCounter = 0;
-		}
+//		if(alienBulletCounter >= randBulletTime){
+////			xil_printf("Fire an alien bullet\n\r");
+//			if(started && isTankFree())
+//				fireAlienBulletHelper();
+//			randBulletTime = (rand()%10)*25 + 50;
+//			alienBulletCounter = 0;
+//		}
 		// The spaceship will go across the screen at a random time between 1-20 seconds;
 		if(spaceshipCounter >= randSpaceshipTime){
 			if(started && isTankFree()){
@@ -388,7 +401,7 @@ int main()
 	// Start the game
 	startLevel(true);
 	microblaze_enable_interrupts();
-	int loadValue;
+//	int loadValue;
 	char input;
 	setvbuf(stdin, NULL, _IONBF, 0);
 	while(1) {
@@ -410,39 +423,51 @@ int main()
 		// blocking call: wait until a character is present
 //		input = getchar();
 //
-
-		if(input >= '0' && input <= '9'){
-//			xil_printf("\r\ngOT A ONE \r\n\r\n");
-			// pause pit so we can get a new value
-			PIT_DisableCounter();
-//			xil_printf("\r\nValue to load: ");
-//			input = getchar();
-//			input = getchar();
-			while(input != '\r' && input != '\n' && buffIndex < 10){
-				if(input >= '0' && input <= '9'){
-					buffer[buffIndex] = input;
-					xil_printf("%c", input);
-					buffIndex++;
-				}
-				input = getchar();
-			}
-			buffer[buffIndex] = '\0';
-			xil_printf("buffer: %s\r\n",buffer);
-//			//convert to number
-//			//write to delay reg
-			loadValue = atoi(buffer);
-//			xil_printf("\n\r");
-//			xil_printf("value is: %d\r\n", atoi(buffer));
-			if(loadValue > 0 && loadValue <= 1000000000){
-				PIT_SetDelayValue(loadValue);
-				xil_printf("Timer has been updated!\r\n");
-			}
-			else {
-				xil_printf("Timer has NOT been updated!\r\n");
-			}
-			PIT_EnableCounter();
-			buffIndex = 0;
+		//Lets control the aliens!
+		if(input == '1'){
+			moveAlienLeft();
 		}
+		if(input == '3'){
+			moveAlienRight();
+		}
+		if(input == '2'){
+			fireAlienBulletHelper(0);
+		}
+		if(input == '5'){
+			fireAlienBulletHelper(1);
+		}
+//		if(input >= '0' && input <= '9'){
+////			xil_printf("\r\ngOT A ONE \r\n\r\n");
+//			// pause pit so we can get a new value
+//			PIT_DisableCounter();
+////			xil_printf("\r\nValue to load: ");
+////			input = getchar();
+////			input = getchar();
+//			while(input != '\r' && input != '\n' && buffIndex < 10){
+//				if(input >= '0' && input <= '9'){
+//					buffer[buffIndex] = input;
+//					xil_printf("%c", input);
+//					buffIndex++;
+//				}
+//				input = getchar();
+//			}
+//			buffer[buffIndex] = '\0';
+//			xil_printf("buffer: %s\r\n",buffer);
+////			//convert to number
+////			//write to delay reg
+//			loadValue = atoi(buffer);
+////			xil_printf("\n\r");
+////			xil_printf("value is: %d\r\n", atoi(buffer));
+//			if(loadValue > 0 && loadValue <= 1000000000){
+//				PIT_SetDelayValue(loadValue);
+//				xil_printf("Timer has been updated!\r\n");
+//			}
+//			else {
+//				xil_printf("Timer has NOT been updated!\r\n");
+//			}
+//			PIT_EnableCounter();
+//			buffIndex = 0;
+//		}
 
 		input = getchar();
 //		xil_printf("got character: %c\r\n", input);

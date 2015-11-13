@@ -70,7 +70,7 @@ void initScreen(bool newLevel) {
 	point_t aBP;
 	aBP.x = ALIENBLOCKSTARTX, aBP.y = ALIENBLOCKSTARTY;
 	setAlienBlockPosition(aBP);
-	drawAliens(false, true);
+	drawAliens(false, true, LEFT);
 
 	return;
 }
@@ -91,7 +91,7 @@ void render(bool erase, int render_objects_mask, short index, int direction) {
 	if((render_objects_mask & tank_bullet_render_mask) != 0)
 		drawTankBullet(erase);
 	if((render_objects_mask & alien_block_render_mask) != 0){
-		drawAliens(erase, alien_in);
+		drawAliens(erase, alien_in, direction);
 		if(!erase) {
 			alien_in = !alien_in; }
 	}
@@ -354,7 +354,7 @@ void drawTankBullet(bool erase) {
 	return;
 }
 
-void drawAliens(bool erase, bool in_pose) {
+void drawAliens(bool erase, bool in_pose, int direction) {
 	//Use row and col to traverse the bit map of each alien
 	//xil_printf("We are in the drawAliens Function %d\r\n", in_pose);
 	int  alienRow, color;
@@ -377,12 +377,7 @@ void drawAliens(bool erase, bool in_pose) {
 			// drawBitmap(bitmap, pos, width, height, double_size, color, erase);
 			bool eraseDead = deaths[col+(ALIENSPERROW*alienRow)];
 			if(erase){
-				if(getAlienRight() == true){
-					eraseBitmap(new_pos, ALIENWIDTH,ALIENHEIGHT, true, color, RIGHT, false); }
-				else {
-					eraseBitmap(new_pos, ALIENWIDTH, ALIENHEIGHT, true, color, LEFT, false); }
-				if(getAlienDown() == true) {
-					eraseBitmap(new_pos, ALIENWIDTH,ALIENHEIGHT, true, color, DOWN, false); }
+				eraseBitmap(new_pos, ALIENWIDTH,ALIENHEIGHT, true, color, direction, false);
 			}
 			else{
 				if(alienRow == 0){

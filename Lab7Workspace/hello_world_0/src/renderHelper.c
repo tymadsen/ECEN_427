@@ -19,20 +19,32 @@
 #define LEFT 2
 #define RIGHT 3
 
-void updateAliens(){
-	//Erase the aliens, update the block, and redraw
-	render(true, alien_block_render_mask, 0, DOWN);
-	updateAlienBlock();
-	playAlienSound();
-	render(false,alien_block_render_mask, 0, DOWN);
+//void updateAliens(){
+//	//Erase the aliens, update the block, and redraw
+//	render(true, alien_block_render_mask, 0, DOWN);
+//	updateAlienBlock();
+//	playAlienSound();
+//	render(false,alien_block_render_mask, 0, DOWN);
+//	return;
+//}
+
+void fireAlienBulletHelper(int bullet){
+	//Fire the alien bullet and draw the bullet
+	fireAlienBullet(bullet);
+	render(false, alien_bullet_render_mask,0, DOWN);
 	return;
 }
 
-void fireAlienBulletHelper(){
-	//Fire the alien bullet and draw the bullet
-	fireAlienBullet();
-	render(false, alien_bullet_render_mask,0, DOWN);
-	return;
+void moveAlienLeft(){
+	render(true, alien_block_render_mask, 0, LEFT);
+	updateAlienBlock(LEFT);
+	render(false, alien_block_render_mask, 0, LEFT);
+}
+
+void moveAlienRight(){
+	render(true, alien_block_render_mask, 0, RIGHT);
+	updateAlienBlock(RIGHT);
+	render(false, alien_block_render_mask, 0, RIGHT);
 }
 
 void moveTankLeft(){
@@ -132,4 +144,8 @@ void setSpaceshipHitHelper(bool hit){
 	//Used to start the timer for displaying the flashing spaceship score
 	setSpaceshipHit(hit);
 	return;
+}
+
+void eraseAlienExplosion(point_t alien){
+	//erase the explosion
 }
