@@ -1,0 +1,1 @@
+-intstyle "ise" -incremental -o "C:/Madsen/NES_CONTROLLER_TEST/nes_controller_isim_beh.exe" -prj "C:/Madsen/NES_CONTROLLER_TEST/nes_controller_beh.prj" "work.nes_controller" 

@@ -100,6 +100,7 @@ Address Map for Processor microblaze_0
   (0x41400000-0x4140ffff) debug_module	axi4lite_0
   (0x41c00000-0x41c0ffff) axi_timer_0	axi4lite_0
   (0x70e00000-0x70e0ffff) pit_timer_0	axi4lite_0
+  (0x78a00000-0x78a0ffff) nes_controller_0	axi4lite_0
   (0x7e200000-0x7e20ffff) axi_vdma_0	axi4lite_0
   (0x7e220000-0x7e22ffff) axi_hdmi_0	axi4lite_0
   (0x7e240000-0x7e24ffff) axi_ac97_0	axi4lite_0
@@ -123,7 +124,7 @@ Checking platform address map ...
 Checking platform configuration ...
 IPNAME: lmb_v10, INSTANCE: microblaze_0_ilmb - 1 master(s) : 1 slave(s) 
 IPNAME: lmb_v10, INSTANCE: microblaze_0_dlmb - 1 master(s) : 1 slave(s) 
-IPNAME: axi_interconnect, INSTANCE: axi4lite_0 - 1 master(s) : 10 slave(s) 
+IPNAME: axi_interconnect, INSTANCE: axi4lite_0 - 1 master(s) : 11 slave(s) 
 IPNAME: axi_interconnect, INSTANCE: axi4_0 - 3 master(s) : 1 slave(s) 
 
 Checking port drivers...
@@ -173,7 +174,7 @@ WARNING:EDK:4181 - PORT: s2mm_prmry_reset_out_n, CONNECTOR: S2MM_RESET_OUT_N -
    C:\Xilinx\13.4\ISE_DS\EDK\hw\XilinxProcessorIPLib\pcores\axi_vdma_v5_00_a\dat
    a\axi_vdma_v2_1_0.mpd line 224 
 WARNING:EDK:4181 - PORT: M_AXIS_S2MM_ACLK, CONNECTOR: M_AXIS_S2MM_ACLK_int -
-   floating connection - C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 246 
+   floating connection - C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 253 
 
 Performing Clock DRCs...
 
@@ -309,64 +310,73 @@ Managing hardware (BBD-specified) netlist files ...
 
 Managing cache ...
 IPNAME:proc_sys_reset INSTANCE:proc_sys_reset_0 -
-C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 66 - Copying cache
+C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 73 - Copying cache
 implementation netlist
 IPNAME:lmb_v10 INSTANCE:microblaze_0_ilmb -
-C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 79 - Copying cache
-implementation netlist
-IPNAME:lmb_bram_if_cntlr INSTANCE:microblaze_0_i_bram_ctrl -
 C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 86 - Copying cache
 implementation netlist
-IPNAME:lmb_v10 INSTANCE:microblaze_0_dlmb -
-C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 95 - Copying cache
+IPNAME:lmb_bram_if_cntlr INSTANCE:microblaze_0_i_bram_ctrl -
+C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 93 - Copying cache
 implementation netlist
-IPNAME:lmb_bram_if_cntlr INSTANCE:microblaze_0_d_bram_ctrl -
+IPNAME:lmb_v10 INSTANCE:microblaze_0_dlmb -
 C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 102 - Copying cache
 implementation netlist
-IPNAME:bram_block INSTANCE:microblaze_0_bram_block -
-C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 111 - Copying cache
+IPNAME:lmb_bram_if_cntlr INSTANCE:microblaze_0_d_bram_ctrl -
+C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 109 - Copying cache
 implementation netlist
-IPNAME:microblaze INSTANCE:microblaze_0 -
+IPNAME:bram_block INSTANCE:microblaze_0_bram_block -
 C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 118 - Copying cache
 implementation netlist
+IPNAME:microblaze INSTANCE:microblaze_0 -
+C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 125 - Copying cache
+implementation netlist
 IPNAME:mdm INSTANCE:debug_module - C:\Madsen\SpaceInvadersCreativeHW\system.mhs
-line 146 - Copying cache implementation netlist
+line 153 - Copying cache implementation netlist
 IPNAME:axi_vdma INSTANCE:axi_vdma_0 -
-C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 181 - Copying cache
+C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 188 - Copying cache
 implementation netlist
 IPNAME:axi_gpio INSTANCE:push_buttons_5bits -
-C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 201 - Copying cache
+C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 208 - Copying cache
 implementation netlist
 IPNAME:axi_hdmi INSTANCE:axi_hdmi_0 -
-C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 216 - Copying cache
+C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 223 - Copying cache
 implementation netlist
 IPNAME:axi_ac97 INSTANCE:axi_ac97_0 -
-C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 250 - Copying cache
+C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 257 - Copying cache
+implementation netlist
+IPNAME:axi_interconnect INSTANCE:axi4lite_0 -
+C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 272 - Copying cache
 implementation netlist
 IPNAME:axi_interconnect INSTANCE:axi4_0 -
-C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 273 - Copying cache
-implementation netlist
-IPNAME:axi_uartlite INSTANCE:rs232_uart_1 -
 C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 280 - Copying cache
 implementation netlist
+IPNAME:axi_uartlite INSTANCE:rs232_uart_1 -
+C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 287 - Copying cache
+implementation netlist
 IPNAME:axi_s6_ddrx INSTANCE:mcb_ddr2 -
-C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 295 - Copying cache
+C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 302 - Copying cache
 implementation netlist
 IPNAME:d_qspi_axi INSTANCE:digilent_quadspi_cntlr -
-C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 343 - Copying cache
+C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 350 - Copying cache
+implementation netlist
+IPNAME:axi_intc INSTANCE:axi_intc_0 -
+C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 362 - Copying cache
 implementation netlist
 IPNAME:axi_timer INSTANCE:axi_timer_0 -
-C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 366 - Copying cache
+C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 373 - Copying cache
 implementation netlist
 IPNAME:fit_timer INSTANCE:fit_timer_0 -
-C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 376 - Copying cache
+C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 383 - Copying cache
+implementation netlist
+IPNAME:pit_timer INSTANCE:pit_timer_0 -
+C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 391 - Copying cache
 implementation netlist
 
 Elaborating instances ...
 IPNAME:bram_block INSTANCE:microblaze_0_bram_block -
-C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 111 - elaborating IP
+C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 118 - elaborating IP
 IPNAME:clock_generator INSTANCE:clock_generator_0 -
-C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 159 - elaborating IP
+C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 166 - elaborating IP
 ClkGen elaborate status: PASSED
 ----------------------------------------
 
@@ -390,25 +400,21 @@ INFO:EDK:4211 - The following instances are synthesized with XST. The MPD option
    IMP_NETLIST=TRUE indicates that a NGC file is to be produced using XST
    synthesis. IMP_NETLIST=FALSE (default) instances are not synthesized. 
 INSTANCE:clock_generator_0 - C:\Madsen\SpaceInvadersCreativeHW\system.mhs line
-159 - Running XST synthesis
-INSTANCE:axi_ac97_0 - C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 250 -
+166 - Running XST synthesis
+INSTANCE:axi_ac97_0 - C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 257 -
 Running XST synthesis
-INSTANCE:axi4lite_0 - C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 265 -
+INSTANCE:pit_timer_0 - C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 391 -
 Running XST synthesis
-INSTANCE:axi_intc_0 - C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 355 -
-Running XST synthesis
-INSTANCE:pit_timer_0 - C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 384 -
-Running XST synthesis
+INSTANCE:nes_controller_0 - C:\Madsen\SpaceInvadersCreativeHW\system.mhs line
+401 - Running XST synthesis
 
 Running NGCBUILD ...
 IPNAME:clock_generator_0_wrapper INSTANCE:clock_generator_0 -
-C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 159 - Running NGCBUILD
-IPNAME:axi4lite_0_wrapper INSTANCE:axi4lite_0 -
-C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 265 - Running NGCBUILD
+C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 166 - Running NGCBUILD
 INFO:EDK:3509 - NCF files should not be modified as they will be regenerated.
    If any constraint needs to be overridden, this should be done by modifying
    the data/system.ucf file.
 
 Rebuilding cache ...
 
-Total run time: 48.00 seconds
+Total run time: 33.00 seconds

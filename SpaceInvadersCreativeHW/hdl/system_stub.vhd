@@ -58,7 +58,14 @@ entity system_stub is
     axi_ac97_0_Sync_pin : out std_logic;
     axi_ac97_0_SData_Out_pin : out std_logic;
     axi_ac97_0_AC97Reset_n_pin : out std_logic;
-    Push_Buttons_5Bits_TRI_I : in std_logic_vector(0 to 4)
+    Push_Buttons_5Bits_TRI_I : in std_logic_vector(0 to 4);
+    nes_controller_0_LEDs_pin : out std_logic_vector(7 downto 0);
+    nes_controller_0_C1_PULSE_pin : out std_logic;
+    nes_controller_0_C1_LATCH_pin : out std_logic;
+    nes_controller_0_C1_DATA_pin : in std_logic;
+    nes_controller_0_C2_PULSE_pin : out std_logic;
+    nes_controller_0_C2_LATCH_pin : out std_logic;
+    nes_controller_0_C2_DATA_pin : in std_logic
   );
 end system_stub;
 
@@ -115,7 +122,14 @@ architecture STRUCTURE of system_stub is
       axi_ac97_0_Sync_pin : out std_logic;
       axi_ac97_0_SData_Out_pin : out std_logic;
       axi_ac97_0_AC97Reset_n_pin : out std_logic;
-      Push_Buttons_5Bits_TRI_I : in std_logic_vector(0 to 4)
+      Push_Buttons_5Bits_TRI_I : in std_logic_vector(0 to 4);
+      nes_controller_0_LEDs_pin : out std_logic_vector(7 downto 0);
+      nes_controller_0_C1_PULSE_pin : out std_logic;
+      nes_controller_0_C1_LATCH_pin : out std_logic;
+      nes_controller_0_C1_DATA_pin : in std_logic;
+      nes_controller_0_C2_PULSE_pin : out std_logic;
+      nes_controller_0_C2_LATCH_pin : out std_logic;
+      nes_controller_0_C2_DATA_pin : in std_logic
     );
   end component;
 
@@ -175,7 +189,14 @@ begin
       axi_ac97_0_Sync_pin => axi_ac97_0_Sync_pin,
       axi_ac97_0_SData_Out_pin => axi_ac97_0_SData_Out_pin,
       axi_ac97_0_AC97Reset_n_pin => axi_ac97_0_AC97Reset_n_pin,
-      Push_Buttons_5Bits_TRI_I => Push_Buttons_5Bits_TRI_I
+      Push_Buttons_5Bits_TRI_I => Push_Buttons_5Bits_TRI_I,
+      nes_controller_0_LEDs_pin => nes_controller_0_LEDs_pin,
+      nes_controller_0_C1_PULSE_pin => nes_controller_0_C1_PULSE_pin,
+      nes_controller_0_C1_LATCH_pin => nes_controller_0_C1_LATCH_pin,
+      nes_controller_0_C1_DATA_pin => nes_controller_0_C1_DATA_pin,
+      nes_controller_0_C2_PULSE_pin => nes_controller_0_C2_PULSE_pin,
+      nes_controller_0_C2_LATCH_pin => nes_controller_0_C2_LATCH_pin,
+      nes_controller_0_C2_DATA_pin => nes_controller_0_C2_DATA_pin
     );
 
 end architecture STRUCTURE;

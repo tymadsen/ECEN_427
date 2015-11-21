@@ -138,22 +138,22 @@ architecture IMP of user_logic is
   
   --Enum type
   type rx_state_type is
-    (RESET, IDLE, STRT, BA, BB, BSEL, BSTRT, BUP, BDOWN, BLEFT, BRIGHT, DONE);
-  type tx_state_type is
-    (RST, IDL, LATCH, PULSE);
+    (IDLE, WA, BA, WB, BB, WSE, BSE, WST, BST, WU, BU, WD, BD, WL, BL, WR, BR, DONE);
+  --type tx_state_type is (RST, IDL, LATCH, PULSE);
   
   --Constants
-  constant READ_COUNTER_LIMIT             : natural   := 1_000_000;
-  constant PULSE_COUNTER_LIMIT            : natural   := 1000;
+  constant READ_TIMER_LIMIT    	        : natural   := 1_000_000;
+  constant PULSE_TIMER_LIMIT            : natural   := 1000;
   
   --USER signal declarations added here, as needed for user logic
   
   --signal pulse_timer, pulse_timer_next      : unsigned(9 downto 0);
-  signal clrTimer, pulse_sig, pulse_on,
-   pulse_sig_half, data_done, pulse_out : STD_LOGIC;
-  signal button                         : STD_LOGIC_VECTOR(7 downto 0);
-  signal rx_state_reg, rx_state_next		: rx_state_type
-	signal tx_state_reg, tx_state_next    : tx_state_type;
+  signal clrTimer, pulse_on, 
+		data_done, latch										: STD_LOGIC;
+  signal c1_buttons, c1_buttons_next,
+		c2_buttons, c2_buttons_next	        : STD_LOGIC_VECTOR(7 downto 0);
+  signal rx_state_reg, rx_state_next		: rx_state_type;
+	--signal tx_state_reg, tx_state_next    : tx_state_type;
   
   signal read_timer                     : std_logic_vector(19 downto 0); -- Timer to read buttons every 100 Hz
   signal pulse_timer                    : std_logic_vector(9 downto 0); -- Timer to sapce out pulses 
@@ -209,7 +209,11 @@ begin
                 slv_reg0(byte_index*8+7 downto byte_index*8) <= Bus2IP_Data(byte_index*8+7 downto byte_index*8);
               end if;
             end loop;
-          when others => null;
+          when others => 
+						if(data_done = '1') then
+							slv_reg0(15 downto 8) <= c2_buttons;
+							slv_reg0(7 downto 0) <= c1_buttons;
+						end if;
         end case;
       end if;
     end if;
@@ -241,27 +245,31 @@ begin
 	counter: process (Bus2IP_Clk)
 	begin
 		if (Bus2IP_Resetn = '0') then
-			read_counter <= (others => '0');
-			pulse_counter <= (others => '0');
-      rx_state_reg <= RESET;
-      tx_state_reg <= RST;
-			--pulse_on <= '0';
+			read_timer <= (others => '0');
+			pulse_timer <= (others => '0');
+      rx_state_reg <= IDLE;
+      --tx_state_reg <= RST;
+			c1_buttons <= (others => '0');
+			c2_buttons <= (others => '0');
+			latch <= '0';
 		elsif (Bus2IP_Clk 'event and Bus2IP_Clk = '1') then
-			if read_counter = READ_COUNTER_LIMIT then
-        read_counter <= (others => '0'); -- Rollover read controller timer
-				--pulse_on <= '1';
-				--button = (others => '0'); -- Reset button values
+			if read_timer = READ_TIMER_LIMIT then
+        read_timer <= (others => '0'); -- Rollover read controller timer
 				pulse_timer <= (others => '0'); -- Reset pulse timer
+				latch <= '1';
       else
-				read_counter <= read_counter + 1;
-				--pulse_on <= '0';				
+				read_timer <= read_timer + 1;				
       end if;
+			c1_buttons <= c1_buttons_next;
+			c2_buttons <= c2_buttons_next;
+			
 			
 			rx_state_reg <= rx_state_next;
-			tx_state_reg <= tx_state_next;
+			--tx_state_reg <= tx_state_next;
 			
-			if(clrTimer='1' or pulse_timer = PULSE_COUNTER_LIMIT) then
+			if(clrTimer='1' or pulse_timer = PULSE_TIMER_LIMIT) then
 				pulse_timer <= (others => '0');
+				latch <= '0';
 			else
 				pulse_timer <= pulse_timer + 1;
 			end if;
@@ -269,138 +277,158 @@ begin
 	end process counter;
 
   --Control logic
-  pulse_sig <= '1' when pulse_timer = PULSE_COUNTER_LIMIT else '0';
-  
-  pulse_sig_half <= '1' when pulse_timer = PULSE_COUNTER_LIMIT/2 else '0';
-    
+  pulse_on <= '1' when pulse_timer >= PULSE_TIMER_LIMIT/2 else '0';
+      
   --Next state logic
-  process(rx_state_reg, tx_state_reg, pulse_sig, pulse_sig_half, data_in, read_counter)
+  process(rx_state_reg, pulse_on)
   begin
     --Defaults
+		c1_buttons_next <= c1_buttons;
+		c2_buttons_next <= c2_buttons;
     rx_state_next <= rx_state_reg;
     data_done <= '0';
     case rx_state_reg is
-      when RESET => 
-        if(data_in='0') then
-          button <= (others => '0');
-          rx_state_next <= IDLE;
-        end if;
       when IDLE => 
-        if(tx_state_reg=LATCH) then
-          rx_state_next <= BA;
-        else
-          clrTimer <= '1'; -- restart the pulse_sig timer
+        if(latch = '1') then
+          rx_state_next <= WA;
         end if;
+			when WA => 
+				if(latch = '0') then
+					rx_state_next <= BA; -- set next state to BA
+					c1_buttons_next(0) <= not C1_DATA; -- save controller 1 A Button state
+					c2_buttons_next(0) <= not C2_DATA; -- save controller 2 A Button state
+				end if;
       when BA => 
-        if(tx_state_reg=PULSE) then
-          button(0) <= not data_in; -- save A Button state
-          if(pulse_sig_half='1') then -- wait half pulse and then start again
-            clrTimer <= '1'; -- restart the pulse_sig timer
-            rx_state_next <= BB; -- set next state to BB
-          end if;
+				if(pulse_on = '1') then -- wait for pulse to go high to change state
+          rx_state_next <= WB; -- set next state to WB
         end if;
-      when BB => 
-        if(pulse_sig='1') then
-          rx_state_next <= BSEL;
+      when WB => 
+				if(pulse_on = '0') then -- wait for pulse to go low to change state
+					rx_state_next <= BB;
+					c1_buttons_next(1) <= not C1_DATA; -- save controller 1 B Button state
+					c2_buttons_next(1) <= not C2_DATA; -- save controller 2 B Button state
         end if;
-        if(pulse_sig_half='1') then
-          button(1) <= not data_in; -- save B Button state
+			when BB => 
+				if(pulse_on = '1') then -- wait for pulse to go high to change state
+					rx_state_next <= WSE;
         end if;
-      when BSEL => 
-        if(pulse_sig='1') then
-          rx_state_next <= BSTRT;
+      when WSE => 
+        if(pulse_on = '0') then -- wait for pulse to go low to change state
+          rx_state_next <= BSE;
+					c1_buttons_next(2) <= not C1_DATA; -- save controller 1 Select Button state
+					c2_buttons_next(2) <= not C2_DATA; -- save controller 2 Select Button state
         end if;
-        if(pulse_sig_half='1') then
-          button(2) <= not data_in; -- save Select Button state
+			when BSE => 
+        if(pulse_on = '1') then -- wait for pulse to go high to change state
+          rx_state_next <= WST;
         end if;
-      when BSTRT => 
-        if(pulse_sig='1') then
-          rx_state_next <= BUP;
+			when WST => 
+        if(pulse_on = '0') then -- wait for pulse to go low to change state
+          rx_state_next <= BST;
+					c1_buttons_next(3) <= not C1_DATA; -- save controller 1 Start Button state
+					c2_buttons_next(3) <= not C2_DATA; -- save controller 2 Start Button state
         end if;
-        if(pulse_sig_half='1') then
-          button(3) <= not data_in; -- save Start Button state
+			when BST => 
+        if(pulse_on = '1') then -- wait for pulse to go high to change state
+          rx_state_next <= WU;
         end if;
-      when BUP => 
-        if(pulse_sig='1') then
-          rx_state_next <= BDOWN;
+			when WU => 
+        if(pulse_on = '0') then -- wait for pulse to go low to change state
+          rx_state_next <= BU;
+					c1_buttons_next(4) <= not C1_DATA; -- save controller 1 Up Button state
+					c2_buttons_next(4) <= not C2_DATA; -- save controller 2 Up Button state
         end if;
-        if(pulse_sig_half='1') then
-          button(4) <= not data_in; -- save Up Button state
+			when BU => 
+        if(pulse_on = '1') then -- wait for pulse to go high to change state
+          rx_state_next <= WD;
         end if;
-      when BDOWN => 
-        if(pulse_sig='1') then
-          rx_state_next <= BLEFT;
+			when WD => 
+        if(pulse_on = '0') then -- wait for pulse to go low to change state
+          rx_state_next <= BD;
+					c1_buttons_next(5) <= not C1_DATA; -- save controller 1 Down Button state
+					c2_buttons_next(5) <= not C2_DATA; -- save controller 2 Down Button state
         end if;
-        if(pulse_sig_half='1') then
-          button(5) <= not data_in; -- save Down Button state
+			when BD => 
+        if(pulse_on = '1') then -- wait for pulse to go high to change state
+          rx_state_next <= WL;
         end if;
-      when BLEFT => 
-        if(pulse_sig='1') then
-          rx_state_next <= BRIGHT;
+			when WL => 
+        if(pulse_on = '0') then -- wait for pulse to go low to change state
+          rx_state_next <= BL;
+					c1_buttons_next(6) <= not C1_DATA; -- save controller 1 Left Button state
+					c2_buttons_next(6) <= not C2_DATA; -- save controller 2 Left Button state
         end if;
-        if(pulse_sig_half='1') then
-          button(6) <= not data_in; -- save Left Button state
+			when BL => 
+        if(pulse_on = '1') then -- wait for pulse to go high to change state
+          rx_state_next <= WR;
         end if;
-      when BRIGHT => 
-        if(pulse_sig='1') then
+			when WR => 
+        if(pulse_on = '0') then -- wait for pulse to go low to change state
+          rx_state_next <= BR;
+					c1_buttons_next(7) <= not C1_DATA; -- save controller 1 Right Button state
+					c2_buttons_next(7) <= not C2_DATA; -- save controller 2 Right Button state
+        end if;
+			when BR => 
+        if(pulse_on = '1') then -- wait for pulse to go high to change state
           rx_state_next <= DONE;
         end if;
-        if(pulse_sig_half='1') then
-          button(7) <= not data_in; -- save Right Button state
-        end if;
       when DONE =>
-        if(pulse_sig_half='1') then
-          if(data_in='0') then
-            data_done <= '1';
-          end if;
+        if(pulse_on = '0') then
+					rx_state_next <= IDLE;
+          data_done <= '1';
         end if;
-        rx_state_next <= IDLE;
-    end case;
-
-    tx_state_next <= tx_state_reg;
-    case tx_state_reg is
-      when RST => 
-        if(pulse_sig='0') then
-          tx_state_next <= LATCH;
-          clrTimer <= '1'; -- reset the timer
-        end if;
-      when IDL => 
-        if(read_counter=READ_COUNTER_LIMIT) then
-          state_next <= LATCH;
-          clrTimer <= '1'; -- reset the timer
-        end if;
-      when LATCH => 
-        if(pulse_sig='1') then
-          state_next <= PULSE;
-        end if;
-      when PULSE => 
-        if(pulse_sig='1') then
-          pulse_out <= '1';
-        end if;
-        if(pulse_sig_half='1') then
-          pulse_out <= '0';
-        end if;
-        if(data_done='1') then
-          pulse_out <= '0';
-          state_next <= IDL;
-        end if;
+			when others =>
+				if(latch = '1') then
+          rx_state_next <= WA;
+				end if;
     end case;
   end process;
+	
+--	process(tx_state_reg, pulse_on, read_counter)
+--	begin
+--		--Defaults
+--    tx_state_next <= tx_state_reg;
+--		latch <= '0';
+--    case tx_state_reg is
+--      when RST => 
+--        if(pulse_on = '0') then
+--          tx_state_next <= LATCH;
+--          clrTimer <= '1'; -- reset the timer
+--        end if;
+--      when IDL => 
+--        if(read_counter = READ_COUNTER_LIMIT) then
+--          state_next <= LATCH;
+--          clrTimer <= '1'; -- reset the timer
+--        end if;
+--      when LATCH => 
+--				latch <= '1';
+--        if(pulse_on = '1') then
+--          state_next <= PULSE;
+--        end if;
+--      when PULSE => 
+--        if(pulse_on = '1') then
+--          pulse_out <= '1';
+--        end if;
+--        if(pulse_on = '1') then
+--          pulse_out <= '0';
+--        end if;
+--        if(data_done = '1') then
+--          pulse_out <= '0';
+--          state_next <= IDL;
+--        end if;
+--    end case;
+--  end process;
     
   --Output logic
 	-- write buttons to slv register
-	-- assert pulse
-	-- assert latch
-	-- Attach button values to LEDs
-	LEDs <= button when data_done='1' else (others => '0');
 	
-  rx_busy <= '0' when (state_reg=IDLE) else
-          '1';
-  data_strobe <= '1' when data_done='1' else
-            '0';
-  data_out <= shift_reg when data_done='1' else
-          "00000000";
-  clrTimer <= '1' when state_reg=IDLE or state_reg=POWER_UP else
-          '0';
+	
+	LEDs <= c1_buttons; -- Attach button values to LEDs
+	C1_PULSE <= pulse_on; -- assert pulse
+	C1_LATCH <= latch; -- assert latch
+	C2_PULSE <= pulse_on; -- assert pulse
+	C2_LATCH <= latch; -- assert latch
+	
+  clrTimer <= '1' when rx_state_reg = IDLE else '0';
 
 end IMP;

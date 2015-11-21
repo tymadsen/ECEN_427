@@ -131,7 +131,9 @@ pcores/axi_ac97_v1_00_a/hdl/vhdl/opb_ac97.vhd \
 pcores/axi_ac97_v1_00_a/hdl/vhdl/user_logic.vhd \
 pcores/axi_ac97_v1_00_a/hdl/vhdl/axi_ac97.vhd \
 pcores/pit_timer_v1_00_a/hdl/vhdl/user_logic.vhd \
-pcores/pit_timer_v1_00_a/hdl/vhdl/pit_timer.vhd
+pcores/pit_timer_v1_00_a/hdl/vhdl/pit_timer.vhd \
+pcores/nes_controller_v1_00_a/hdl/vhdl/user_logic.vhd \
+pcores/nes_controller_v1_00_a/hdl/vhdl/nes_controller.vhd
 
 WRAPPER_NGC_FILES = implementation/proc_sys_reset_0_wrapper.ngc \
 implementation/microblaze_0_ilmb_wrapper.ngc \
@@ -154,7 +156,8 @@ implementation/digilent_quadspi_cntlr_wrapper.ngc \
 implementation/axi_intc_0_wrapper.ngc \
 implementation/axi_timer_0_wrapper.ngc \
 implementation/fit_timer_0_wrapper.ngc \
-implementation/pit_timer_0_wrapper.ngc
+implementation/pit_timer_0_wrapper.ngc \
+implementation/nes_controller_0_wrapper.ngc
 
 POSTSYN_NETLIST = implementation/$(SYSTEM).ngc
 

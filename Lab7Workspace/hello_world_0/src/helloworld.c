@@ -168,7 +168,7 @@ void timer_interrupt_handler() {
 		}
 		if(pitCounter == 60){
 			//Use this to erase the explosion
-			eraseExplosion(alienExplosion);
+			eraseAlienExplosion(alienExplosion);
 		}
 		// An alienBullet will fire at a random time between (1*25 - 10*25)
 //		xil_printf("alien bullet counter: %d randBulletTime: %d\r\n",  alienBulletCounter, randBulletTime);

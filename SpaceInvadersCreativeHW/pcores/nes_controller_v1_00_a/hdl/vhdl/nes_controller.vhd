@@ -309,13 +309,13 @@ begin
     (
       -- MAP USER PORTS BELOW THIS LINE ------------------
       --USER ports mapped here
-			LEDs													 => LEDs,
 			C1_PULSE											 => C1_PULSE,
 			C1_LATCH											 => C1_LATCH,
 			C1_DATA												 => C1_DATA,
 			C2_PULSE											 => C2_PULSE,
 			C2_LATCH											 => C2_LATCH,
 			C2_DATA												 => C2_DATA,
+			LEDs													 => LEDs,
       -- MAP USER PORTS ABOVE THIS LINE ------------------
 
       Bus2IP_Clk                     => ipif_Bus2IP_Clk,

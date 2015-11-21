@@ -23,6 +23,31 @@ NET Push_Buttons_5Bits_TRI_I[2] LOC = "P3"  |  IOSTANDARD = "LVCMOS18";
 NET Push_Buttons_5Bits_TRI_I[3] LOC = "F6"  |  IOSTANDARD = "LVCMOS18";
 NET Push_Buttons_5Bits_TRI_I[4] LOC = "F5"  |  IOSTANDARD = "LVCMOS18";
 #
+#
+#LEDs
+#
+NET nes_controller_0_LEDs_pin[0] LOC = "U18"  |  IOSTANDARD = "LVCMOS33";
+NET nes_controller_0_LEDs_pin[1] LOC = "M14"  |  IOSTANDARD = "LVCMOS33";
+NET nes_controller_0_LEDs_pin[2] LOC = "N14"  |  IOSTANDARD = "LVCMOS33";
+NET nes_controller_0_LEDs_pin[3] LOC = "L14"  |  IOSTANDARD = "LVCMOS33";
+NET nes_controller_0_LEDs_pin[4] LOC = "M13"  |  IOSTANDARD = "LVCMOS33";
+NET nes_controller_0_LEDs_pin[5] LOC = "D4"   |  IOSTANDARD = "LVCMOS33";
+NET nes_controller_0_LEDs_pin[6] LOC = "P16"  |  IOSTANDARD = "LVCMOS33";
+NET nes_controller_0_LEDs_pin[7] LOC = "N12"  |  IOSTANDARD = "LVCMOS33";
+#
+#
+#Controller 1 pins
+#
+NET nes_controller_0_C1_DATA_pin LOC = "U7" | IOSTANDARD = "LVCMOS33"; #IO15-P
+NET nes_controller_0_C1_LATCH_pin LOC = "N7" | IOSTANDARD = "LVCMOS33"; #IO16-P
+NET nes_controller_0_C1_PULSE_pin LOC = "T6" | IOSTANDARD = "LVCMOS33"; #IO17-P
+#
+#
+#Controller 2 pins
+#
+NET nes_controller_0_C2_DATA_pin LOC = "R7" | IOSTANDARD = "LVCMOS33"; #IO18-P
+NET nes_controller_0_C2_LATCH_pin LOC = "N6" | IOSTANDARD = "LVCMOS33"; #IO19-P
+NET nes_controller_0_C2_PULSE_pin LOC = "U5" | IOSTANDARD = "LVCMOS33"; #IO20-P
 # additional constraints
 #
 
