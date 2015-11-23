@@ -31,9 +31,6 @@ WARNING:EDK:3605 - Use of the repository located at
    (equivalent of $XILINX_EDK/../edk_user_repository) is now deprecated. 
    It is recommended that you use Global SearchPath preference to specify search
    paths that apply to all the projects.
-WARNING:EDK -
-   C:\Madsen\SpaceInvadersCreativeHW\pcores\pit_timer_v1_00_a\data\pit_timer_v2_
-   1_0.mpd line 39	Unknown PORT subproperty SENSITIVY
 
 Overriding IP level properties ...
 INFO:EDK:4130 - IPNAME: microblaze, INSTANCE:microblaze_0 - tcl is overriding
@@ -251,7 +248,7 @@ INFO:EDK:4130 - IPNAME: axi_s6_ddrx, INSTANCE:MCB_DDR2 - tcl is overriding
    C:\Xilinx\13.4\ISE_DS\EDK\hw\XilinxProcessorIPLib\pcores\axi_s6_ddrx_v1_05_a\
    data\axi_s6_ddrx_v2_1_0.mpd line 230 
 INFO:EDK:4130 - IPNAME: axi_intc, INSTANCE:axi_intc_0 - tcl is overriding
-   PARAMETER C_KIND_OF_INTR value to 0b11111111111111111111111111110011 -
+   PARAMETER C_KIND_OF_INTR value to 0b11111111111111111111111111110010 -
    C:\Xilinx\13.4\ISE_DS\EDK\hw\XilinxProcessorIPLib\pcores\axi_intc_v1_01_a\dat
    a\axi_intc_v2_1_0.mpd line 81 
 INFO:EDK:4130 - IPNAME: axi_intc, INSTANCE:axi_intc_0 - tcl is overriding

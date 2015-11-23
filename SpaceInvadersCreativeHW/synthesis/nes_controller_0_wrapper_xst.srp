@@ -448,29 +448,8 @@ Elaborating entity <address_decoder> (architecture <IMP>) with generics from lib
 INFO:HDLCompiler:679 - "C:/Xilinx/13.4/ISE_DS/EDK/hw/XilinxProcessorIPLib/pcores/axi_lite_ipif_v1_01_a/hdl/vhdl/slave_attachment.vhd" Line 412. Case statement is complete. others clause is never selected
 
 Elaborating entity <user_logic> (architecture <IMP>) with generics from library <nes_controller_v1_00_a>.
-WARNING:HDLCompiler:92 - "C:/Madsen/SpaceInvadersCreativeHW/pcores/nes_controller_v1_00_a/hdl/vhdl/user_logic.vhd" Line 247: bus2ip_resetn should be on the sensitivity list of the process
-WARNING:HDLCompiler:92 - "C:/Madsen/SpaceInvadersCreativeHW/pcores/nes_controller_v1_00_a/hdl/vhdl/user_logic.vhd" Line 286: c1_buttons should be on the sensitivity list of the process
-WARNING:HDLCompiler:92 - "C:/Madsen/SpaceInvadersCreativeHW/pcores/nes_controller_v1_00_a/hdl/vhdl/user_logic.vhd" Line 287: c2_buttons should be on the sensitivity list of the process
-WARNING:HDLCompiler:92 - "C:/Madsen/SpaceInvadersCreativeHW/pcores/nes_controller_v1_00_a/hdl/vhdl/user_logic.vhd" Line 292: latch should be on the sensitivity list of the process
-WARNING:HDLCompiler:92 - "C:/Madsen/SpaceInvadersCreativeHW/pcores/nes_controller_v1_00_a/hdl/vhdl/user_logic.vhd" Line 296: latch should be on the sensitivity list of the process
-WARNING:HDLCompiler:92 - "C:/Madsen/SpaceInvadersCreativeHW/pcores/nes_controller_v1_00_a/hdl/vhdl/user_logic.vhd" Line 298: c1_data should be on the sensitivity list of the process
-WARNING:HDLCompiler:92 - "C:/Madsen/SpaceInvadersCreativeHW/pcores/nes_controller_v1_00_a/hdl/vhdl/user_logic.vhd" Line 299: c2_data should be on the sensitivity list of the process
-WARNING:HDLCompiler:92 - "C:/Madsen/SpaceInvadersCreativeHW/pcores/nes_controller_v1_00_a/hdl/vhdl/user_logic.vhd" Line 308: c1_data should be on the sensitivity list of the process
-WARNING:HDLCompiler:92 - "C:/Madsen/SpaceInvadersCreativeHW/pcores/nes_controller_v1_00_a/hdl/vhdl/user_logic.vhd" Line 309: c2_data should be on the sensitivity list of the process
-WARNING:HDLCompiler:92 - "C:/Madsen/SpaceInvadersCreativeHW/pcores/nes_controller_v1_00_a/hdl/vhdl/user_logic.vhd" Line 318: c1_data should be on the sensitivity list of the process
-WARNING:HDLCompiler:92 - "C:/Madsen/SpaceInvadersCreativeHW/pcores/nes_controller_v1_00_a/hdl/vhdl/user_logic.vhd" Line 319: c2_data should be on the sensitivity list of the process
-WARNING:HDLCompiler:92 - "C:/Madsen/SpaceInvadersCreativeHW/pcores/nes_controller_v1_00_a/hdl/vhdl/user_logic.vhd" Line 328: c1_data should be on the sensitivity list of the process
-WARNING:HDLCompiler:92 - "C:/Madsen/SpaceInvadersCreativeHW/pcores/nes_controller_v1_00_a/hdl/vhdl/user_logic.vhd" Line 329: c2_data should be on the sensitivity list of the process
-WARNING:HDLCompiler:92 - "C:/Madsen/SpaceInvadersCreativeHW/pcores/nes_controller_v1_00_a/hdl/vhdl/user_logic.vhd" Line 338: c1_data should be on the sensitivity list of the process
-WARNING:HDLCompiler:92 - "C:/Madsen/SpaceInvadersCreativeHW/pcores/nes_controller_v1_00_a/hdl/vhdl/user_logic.vhd" Line 339: c2_data should be on the sensitivity list of the process
-WARNING:HDLCompiler:92 - "C:/Madsen/SpaceInvadersCreativeHW/pcores/nes_controller_v1_00_a/hdl/vhdl/user_logic.vhd" Line 348: c1_data should be on the sensitivity list of the process
-WARNING:HDLCompiler:92 - "C:/Madsen/SpaceInvadersCreativeHW/pcores/nes_controller_v1_00_a/hdl/vhdl/user_logic.vhd" Line 349: c2_data should be on the sensitivity list of the process
-WARNING:HDLCompiler:92 - "C:/Madsen/SpaceInvadersCreativeHW/pcores/nes_controller_v1_00_a/hdl/vhdl/user_logic.vhd" Line 358: c1_data should be on the sensitivity list of the process
-WARNING:HDLCompiler:92 - "C:/Madsen/SpaceInvadersCreativeHW/pcores/nes_controller_v1_00_a/hdl/vhdl/user_logic.vhd" Line 359: c2_data should be on the sensitivity list of the process
-WARNING:HDLCompiler:92 - "C:/Madsen/SpaceInvadersCreativeHW/pcores/nes_controller_v1_00_a/hdl/vhdl/user_logic.vhd" Line 368: c1_data should be on the sensitivity list of the process
-WARNING:HDLCompiler:92 - "C:/Madsen/SpaceInvadersCreativeHW/pcores/nes_controller_v1_00_a/hdl/vhdl/user_logic.vhd" Line 369: c2_data should be on the sensitivity list of the process
-WARNING:HDLCompiler:92 - "C:/Madsen/SpaceInvadersCreativeHW/pcores/nes_controller_v1_00_a/hdl/vhdl/user_logic.vhd" Line 381: latch should be on the sensitivity list of the process
-INFO:HDLCompiler:679 - "C:/Madsen/SpaceInvadersCreativeHW/pcores/nes_controller_v1_00_a/hdl/vhdl/user_logic.vhd" Line 380. Case statement is complete. others clause is never selected
+WARNING:HDLCompiler:92 - "C:/Madsen/SpaceInvadersCreativeHW/pcores/nes_controller_v1_00_a/hdl/vhdl/user_logic.vhd" Line 244: bus2ip_resetn should be on the sensitivity list of the process
+INFO:HDLCompiler:679 - "C:/Madsen/SpaceInvadersCreativeHW/pcores/nes_controller_v1_00_a/hdl/vhdl/user_logic.vhd" Line 378. Case statement is complete. others clause is never selected
 
 =========================================================================
 *                           HDL Synthesis                               *
@@ -591,19 +570,19 @@ WARNING:Xst:37 - Detected unknown constraint/property "sigis". This constraint/p
         C_SLV_DWIDTH = 32
 WARNING:Xst:37 - Detected unknown constraint/property "sigis". This constraint/property is not supported by the current software release and will be ignored.
 WARNING:Xst:37 - Detected unknown constraint/property "sigis". This constraint/property is not supported by the current software release and will be ignored.
-    Found 1-bit register for signal <latch>.
     Found 20-bit register for signal <read_timer>.
     Found 10-bit register for signal <pulse_timer>.
     Found 5-bit register for signal <rx_state_reg>.
     Found 8-bit register for signal <c1_buttons>.
     Found 8-bit register for signal <c2_buttons>.
+    Found 8-bit register for signal <LEDs>.
     Found 32-bit register for signal <slv_reg0>.
     Found finite state machine <FSM_1> for signal <rx_state_reg>.
     -----------------------------------------------------------------------
     | States             | 18                                             |
-    | Transitions        | 36                                             |
-    | Inputs             | 2                                              |
-    | Outputs            | 6                                              |
+    | Transitions        | 38                                             |
+    | Inputs             | 3                                              |
+    | Outputs            | 7                                              |
     | Clock              | Bus2IP_Clk (rising_edge)                       |
     | Reset              | Bus2IP_Resetn (negative)                       |
     | Reset type         | asynchronous                                   |
@@ -612,14 +591,16 @@ WARNING:Xst:37 - Detected unknown constraint/property "sigis". This constraint/p
     | Encoding           | auto                                           |
     | Implementation     | LUT                                            |
     -----------------------------------------------------------------------
-    Found 20-bit adder for signal <read_timer[19]_GND_16_o_add_8_OUT> created at line 261.
-    Found 10-bit adder for signal <pulse_timer[9]_GND_16_o_add_12_OUT> created at line 274.
-    Found 10-bit comparator greater for signal <pulse_on_INV_37_o> created at line 280
+    Found 20-bit adder for signal <read_timer[19]_GND_16_o_add_8_OUT> created at line 255.
+    Found 10-bit adder for signal <pulse_timer[9]_GND_16_o_add_13_OUT> created at line 269.
+    Found 10-bit comparator greater for signal <pulse_on_INV_24_o> created at line 275
+    Found 20-bit comparator greater for signal <GND_16_o_read_timer[19]_LessThan_24_o> created at line 277
+    Found 20-bit comparator greater for signal <read_timer[19]_GND_16_o_LessThan_25_o> created at line 277
     Summary:
 	inferred   2 Adder/Subtractor(s).
-	inferred  79 D-type flip-flop(s).
-	inferred   1 Comparator(s).
-	inferred  84 Multiplexer(s).
+	inferred  86 D-type flip-flop(s).
+	inferred   3 Comparator(s).
+	inferred  58 Multiplexer(s).
 	inferred   1 Finite State Machine(s).
 Unit <user_logic> synthesized.
 
@@ -632,21 +613,22 @@ Macro Statistics
  20-bit adder                                          : 1
  4-bit adder                                           : 1
 # Registers                                            : 16
- 1-bit register                                        : 7
+ 1-bit register                                        : 6
  10-bit register                                       : 1
  2-bit register                                        : 2
  20-bit register                                       : 1
  32-bit register                                       : 2
  4-bit register                                        : 1
- 8-bit register                                        : 2
-# Comparators                                          : 1
+ 8-bit register                                        : 3
+# Comparators                                          : 3
  10-bit comparator greater                             : 1
-# Multiplexers                                         : 86
- 1-bit 2-to-1 multiplexer                              : 66
+ 20-bit comparator greater                             : 2
+# Multiplexers                                         : 60
+ 1-bit 2-to-1 multiplexer                              : 52
  10-bit 2-to-1 multiplexer                             : 1
  20-bit 2-to-1 multiplexer                             : 1
  32-bit 2-to-1 multiplexer                             : 4
- 8-bit 2-to-1 multiplexer                              : 14
+ 8-bit 2-to-1 multiplexer                              : 2
 # FSMs                                                 : 2
 
 =========================================================================
@@ -673,14 +655,15 @@ Macro Statistics
  10-bit up counter                                     : 1
  20-bit up counter                                     : 1
  4-bit up counter                                      : 1
-# Registers                                            : 91
- Flip-Flops                                            : 91
-# Comparators                                          : 1
+# Registers                                            : 98
+ Flip-Flops                                            : 98
+# Comparators                                          : 3
  10-bit comparator greater                             : 1
-# Multiplexers                                         : 84
- 1-bit 2-to-1 multiplexer                              : 66
+ 20-bit comparator greater                             : 2
+# Multiplexers                                         : 58
+ 1-bit 2-to-1 multiplexer                              : 52
  32-bit 2-to-1 multiplexer                             : 4
- 8-bit 2-to-1 multiplexer                              : 14
+ 8-bit 2-to-1 multiplexer                              : 2
 # FSMs                                                 : 2
 
 =========================================================================
@@ -733,66 +716,10 @@ Optimizing unit <slave_attachment> ...
 Optimizing unit <user_logic> ...
 WARNING:Xst:1293 - FF/Latch <nes_controller_0/AXI_LITE_IPIF_I/I_SLAVE_ATTACHMENT/s_axi_bresp_i_1> has a constant value of 0 in block <nes_controller_0_wrapper>. This FF/Latch will be trimmed during the optimization process.
 WARNING:Xst:1896 - Due to other FF/Latch trimming, FF/Latch <nes_controller_0/AXI_LITE_IPIF_I/I_SLAVE_ATTACHMENT/s_axi_rresp_i_1> has a constant value of 0 in block <nes_controller_0_wrapper>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1710 - FF/Latch <nes_controller_0/USER_LOGIC_I/latch> (without init value) has a constant value of 0 in block <nes_controller_0_wrapper>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <nes_controller_0/USER_LOGIC_I/c1_buttons_0> (without init value) has a constant value of 0 in block <nes_controller_0_wrapper>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <nes_controller_0/USER_LOGIC_I/c1_buttons_1> (without init value) has a constant value of 0 in block <nes_controller_0_wrapper>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <nes_controller_0/USER_LOGIC_I/c1_buttons_2> (without init value) has a constant value of 0 in block <nes_controller_0_wrapper>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <nes_controller_0/USER_LOGIC_I/c1_buttons_3> (without init value) has a constant value of 0 in block <nes_controller_0_wrapper>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <nes_controller_0/USER_LOGIC_I/c1_buttons_4> (without init value) has a constant value of 0 in block <nes_controller_0_wrapper>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <nes_controller_0/USER_LOGIC_I/c1_buttons_5> (without init value) has a constant value of 0 in block <nes_controller_0_wrapper>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <nes_controller_0/USER_LOGIC_I/c1_buttons_6> (without init value) has a constant value of 0 in block <nes_controller_0_wrapper>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <nes_controller_0/USER_LOGIC_I/c1_buttons_7> (without init value) has a constant value of 0 in block <nes_controller_0_wrapper>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <nes_controller_0/USER_LOGIC_I/c2_buttons_0> (without init value) has a constant value of 0 in block <nes_controller_0_wrapper>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <nes_controller_0/USER_LOGIC_I/c2_buttons_1> (without init value) has a constant value of 0 in block <nes_controller_0_wrapper>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <nes_controller_0/USER_LOGIC_I/c2_buttons_2> (without init value) has a constant value of 0 in block <nes_controller_0_wrapper>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <nes_controller_0/USER_LOGIC_I/c2_buttons_3> (without init value) has a constant value of 0 in block <nes_controller_0_wrapper>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <nes_controller_0/USER_LOGIC_I/c2_buttons_4> (without init value) has a constant value of 0 in block <nes_controller_0_wrapper>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <nes_controller_0/USER_LOGIC_I/c2_buttons_5> (without init value) has a constant value of 0 in block <nes_controller_0_wrapper>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <nes_controller_0/USER_LOGIC_I/c2_buttons_6> (without init value) has a constant value of 0 in block <nes_controller_0_wrapper>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <nes_controller_0/USER_LOGIC_I/c2_buttons_7> (without init value) has a constant value of 0 in block <nes_controller_0_wrapper>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <nes_controller_0/USER_LOGIC_I/pulse_timer_0> (without init value) has a constant value of 0 in block <nes_controller_0_wrapper>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <nes_controller_0/USER_LOGIC_I/pulse_timer_1> (without init value) has a constant value of 0 in block <nes_controller_0_wrapper>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <nes_controller_0/USER_LOGIC_I/pulse_timer_2> (without init value) has a constant value of 0 in block <nes_controller_0_wrapper>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <nes_controller_0/USER_LOGIC_I/pulse_timer_3> (without init value) has a constant value of 0 in block <nes_controller_0_wrapper>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <nes_controller_0/USER_LOGIC_I/pulse_timer_4> (without init value) has a constant value of 0 in block <nes_controller_0_wrapper>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <nes_controller_0/USER_LOGIC_I/pulse_timer_5> (without init value) has a constant value of 0 in block <nes_controller_0_wrapper>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <nes_controller_0/USER_LOGIC_I/pulse_timer_6> (without init value) has a constant value of 0 in block <nes_controller_0_wrapper>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <nes_controller_0/USER_LOGIC_I/pulse_timer_7> (without init value) has a constant value of 0 in block <nes_controller_0_wrapper>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <nes_controller_0/USER_LOGIC_I/pulse_timer_8> (without init value) has a constant value of 0 in block <nes_controller_0_wrapper>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1895 - Due to other FF/Latch trimming, FF/Latch <nes_controller_0/USER_LOGIC_I/pulse_timer_9> (without init value) has a constant value of 0 in block <nes_controller_0_wrapper>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1896 - Due to other FF/Latch trimming, FF/Latch <nes_controller_0/USER_LOGIC_I/rx_state_reg_FSM_FFd3> has a constant value of 0 in block <nes_controller_0_wrapper>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1896 - Due to other FF/Latch trimming, FF/Latch <nes_controller_0/USER_LOGIC_I/rx_state_reg_FSM_FFd5> has a constant value of 0 in block <nes_controller_0_wrapper>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1896 - Due to other FF/Latch trimming, FF/Latch <nes_controller_0/USER_LOGIC_I/rx_state_reg_FSM_FFd4> has a constant value of 0 in block <nes_controller_0_wrapper>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1896 - Due to other FF/Latch trimming, FF/Latch <nes_controller_0/USER_LOGIC_I/rx_state_reg_FSM_FFd2> has a constant value of 0 in block <nes_controller_0_wrapper>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:1896 - Due to other FF/Latch trimming, FF/Latch <nes_controller_0/USER_LOGIC_I/rx_state_reg_FSM_FFd1> has a constant value of 0 in block <nes_controller_0_wrapper>. This FF/Latch will be trimmed during the optimization process.
-WARNING:Xst:2677 - Node <nes_controller_0/USER_LOGIC_I/read_timer_19> of sequential type is unconnected in block <nes_controller_0_wrapper>.
-WARNING:Xst:2677 - Node <nes_controller_0/USER_LOGIC_I/read_timer_18> of sequential type is unconnected in block <nes_controller_0_wrapper>.
-WARNING:Xst:2677 - Node <nes_controller_0/USER_LOGIC_I/read_timer_17> of sequential type is unconnected in block <nes_controller_0_wrapper>.
-WARNING:Xst:2677 - Node <nes_controller_0/USER_LOGIC_I/read_timer_16> of sequential type is unconnected in block <nes_controller_0_wrapper>.
-WARNING:Xst:2677 - Node <nes_controller_0/USER_LOGIC_I/read_timer_15> of sequential type is unconnected in block <nes_controller_0_wrapper>.
-WARNING:Xst:2677 - Node <nes_controller_0/USER_LOGIC_I/read_timer_14> of sequential type is unconnected in block <nes_controller_0_wrapper>.
-WARNING:Xst:2677 - Node <nes_controller_0/USER_LOGIC_I/read_timer_13> of sequential type is unconnected in block <nes_controller_0_wrapper>.
-WARNING:Xst:2677 - Node <nes_controller_0/USER_LOGIC_I/read_timer_12> of sequential type is unconnected in block <nes_controller_0_wrapper>.
-WARNING:Xst:2677 - Node <nes_controller_0/USER_LOGIC_I/read_timer_11> of sequential type is unconnected in block <nes_controller_0_wrapper>.
-WARNING:Xst:2677 - Node <nes_controller_0/USER_LOGIC_I/read_timer_10> of sequential type is unconnected in block <nes_controller_0_wrapper>.
-WARNING:Xst:2677 - Node <nes_controller_0/USER_LOGIC_I/read_timer_9> of sequential type is unconnected in block <nes_controller_0_wrapper>.
-WARNING:Xst:2677 - Node <nes_controller_0/USER_LOGIC_I/read_timer_8> of sequential type is unconnected in block <nes_controller_0_wrapper>.
-WARNING:Xst:2677 - Node <nes_controller_0/USER_LOGIC_I/read_timer_7> of sequential type is unconnected in block <nes_controller_0_wrapper>.
-WARNING:Xst:2677 - Node <nes_controller_0/USER_LOGIC_I/read_timer_6> of sequential type is unconnected in block <nes_controller_0_wrapper>.
-WARNING:Xst:2677 - Node <nes_controller_0/USER_LOGIC_I/read_timer_5> of sequential type is unconnected in block <nes_controller_0_wrapper>.
-WARNING:Xst:2677 - Node <nes_controller_0/USER_LOGIC_I/read_timer_4> of sequential type is unconnected in block <nes_controller_0_wrapper>.
-WARNING:Xst:2677 - Node <nes_controller_0/USER_LOGIC_I/read_timer_3> of sequential type is unconnected in block <nes_controller_0_wrapper>.
-WARNING:Xst:2677 - Node <nes_controller_0/USER_LOGIC_I/read_timer_2> of sequential type is unconnected in block <nes_controller_0_wrapper>.
-WARNING:Xst:2677 - Node <nes_controller_0/USER_LOGIC_I/read_timer_1> of sequential type is unconnected in block <nes_controller_0_wrapper>.
-WARNING:Xst:2677 - Node <nes_controller_0/USER_LOGIC_I/read_timer_0> of sequential type is unconnected in block <nes_controller_0_wrapper>.
 
 Mapping all equations...
 Building and optimizing final netlist ...
 Found area constraint ratio of 100 (+ 0) on block nes_controller_0_wrapper, actual ratio is 0.
-FlipFlop nes_controller_0/AXI_LITE_IPIF_I/I_SLAVE_ATTACHMENT/I_DECODER/Bus_RNW_reg has been replicated 3 time(s)
-FlipFlop nes_controller_0/AXI_LITE_IPIF_I/I_SLAVE_ATTACHMENT/I_DECODER/ce_out_i_0 has been replicated 4 time(s)
-FlipFlop nes_controller_0/AXI_LITE_IPIF_I/I_SLAVE_ATTACHMENT/state_FSM_FFd1 has been replicated 1 time(s)
-FlipFlop nes_controller_0/AXI_LITE_IPIF_I/I_SLAVE_ATTACHMENT/state_FSM_FFd2 has been replicated 2 time(s)
 
 Final Macro Processing ...
 
@@ -800,8 +727,8 @@ Final Macro Processing ...
 Final Register Report
 
 Macro Statistics
-# Registers                                            : 85
- Flip-Flops                                            : 85
+# Registers                                            : 134
+ Flip-Flops                                            : 134
 
 =========================================================================
 
@@ -824,17 +751,24 @@ Top Level Output File Name         : nes_controller_0_wrapper.ngc
 
 Primitive and Black Box Usage:
 ------------------------------
-# BELS                             : 83
+# BELS                             : 264
 #      GND                         : 1
-#      INV                         : 1
-#      LUT3                        : 3
-#      LUT4                        : 35
-#      LUT5                        : 40
-#      LUT6                        : 2
-#      MUXF7                       : 1
-# FlipFlops/Latches                : 85
-#      FD                          : 14
-#      FDR                         : 39
+#      INV                         : 4
+#      LUT1                        : 28
+#      LUT2                        : 33
+#      LUT3                        : 46
+#      LUT4                        : 23
+#      LUT5                        : 30
+#      LUT6                        : 38
+#      MUXCY                       : 28
+#      MUXF7                       : 2
+#      VCC                         : 1
+#      XORCY                       : 30
+# FlipFlops/Latches                : 134
+#      FD                          : 3
+#      FDC                         : 51
+#      FDE                         : 8
+#      FDR                         : 40
 #      FDRE                        : 32
 
 Device utilization summary:
@@ -844,16 +778,16 @@ Selected Device : 6slx45csg324-3
 
 
 Slice Logic Utilization: 
- Number of Slice Registers:              85  out of  54576     0%  
- Number of Slice LUTs:                   81  out of  27288     0%  
-    Number used as Logic:                81  out of  27288     0%  
+ Number of Slice Registers:             134  out of  54576     0%  
+ Number of Slice LUTs:                  202  out of  27288     0%  
+    Number used as Logic:               202  out of  27288     0%  
 
 Slice Logic Distribution: 
- Number of LUT Flip Flop pairs used:     91
-   Number with an unused Flip Flop:       6  out of     91     6%  
-   Number with an unused LUT:            10  out of     91    10%  
-   Number of fully used LUT-FF pairs:    75  out of     91    82%  
-   Number of unique control sets:         4
+ Number of LUT Flip Flop pairs used:    202
+   Number with an unused Flip Flop:      68  out of    202    33%  
+   Number with an unused LUT:             0  out of    202     0%  
+   Number of fully used LUT-FF pairs:   134  out of    202    66%  
+   Number of unique control sets:         7
 
 IO Utilization: 
  Number of IOs:                         162
@@ -882,7 +816,7 @@ Clock Information:
 -----------------------------------+-------------------------------------------------------------------------+-------+
 Clock Signal                       | Clock buffer(FF name)                                                   | Load  |
 -----------------------------------+-------------------------------------------------------------------------+-------+
-S_AXI_ACLK                         | NONE(nes_controller_0/AXI_LITE_IPIF_I/I_SLAVE_ATTACHMENT/state_FSM_FFd1)| 85    |
+S_AXI_ACLK                         | NONE(nes_controller_0/AXI_LITE_IPIF_I/I_SLAVE_ATTACHMENT/state_FSM_FFd1)| 134   |
 -----------------------------------+-------------------------------------------------------------------------+-------+
 INFO:Xst:2169 - HDL ADVISOR - Some clock signals were not automatically buffered by XST with BUFG/BUFR resources. Please use the buffer_type constraint in order to insert these buffers to the clock signals to help prevent skew problems.
 
@@ -894,9 +828,9 @@ Timing Summary:
 ---------------
 Speed Grade: -3
 
-   Minimum period: 2.461ns (Maximum Frequency: 406.339MHz)
-   Minimum input arrival time before clock: 1.941ns
-   Maximum output required time after clock: 1.531ns
+   Minimum period: 5.349ns (Maximum Frequency: 186.967MHz)
+   Minimum input arrival time before clock: 2.407ns
+   Maximum output required time after clock: 4.254ns
    Maximum combinational path delay: No path found
 
 Timing Details:
@@ -905,65 +839,68 @@ All values displayed in nanoseconds (ns)
 
 =========================================================================
 Timing constraint: Default period analysis for Clock 'S_AXI_ACLK'
-  Clock period: 2.461ns (frequency: 406.339MHz)
-  Total number of paths / destination ports: 432 / 155
+  Clock period: 5.349ns (frequency: 186.967MHz)
+  Total number of paths / destination ports: 3041 / 213
 -------------------------------------------------------------------------
-Delay:               2.461ns (Levels of Logic = 3)
-  Source:            nes_controller_0/AXI_LITE_IPIF_I/I_SLAVE_ATTACHMENT/state_FSM_FFd2_1 (FF)
-  Destination:       nes_controller_0/AXI_LITE_IPIF_I/I_SLAVE_ATTACHMENT/state_FSM_FFd1 (FF)
+Delay:               5.349ns (Levels of Logic = 4)
+  Source:            nes_controller_0/USER_LOGIC_I/read_timer_0 (FF)
+  Destination:       nes_controller_0/USER_LOGIC_I/c2_buttons_7 (FF)
   Source Clock:      S_AXI_ACLK rising
   Destination Clock: S_AXI_ACLK rising
 
-  Data Path: nes_controller_0/AXI_LITE_IPIF_I/I_SLAVE_ATTACHMENT/state_FSM_FFd2_1 to nes_controller_0/AXI_LITE_IPIF_I/I_SLAVE_ATTACHMENT/state_FSM_FFd1
+  Data Path: nes_controller_0/USER_LOGIC_I/read_timer_0 to nes_controller_0/USER_LOGIC_I/c2_buttons_7
                                 Gate     Net
     Cell:in->out      fanout   Delay   Delay  Logical Name (Net Name)
     ----------------------------------------  ------------
-     FDR:C->Q              6   0.447   0.745  nes_controller_0/AXI_LITE_IPIF_I/I_SLAVE_ATTACHMENT/state_FSM_FFd2_1 (nes_controller_0/AXI_LITE_IPIF_I/I_SLAVE_ATTACHMENT/state_FSM_FFd2_1)
-     LUT5:I4->O            2   0.205   0.617  nes_controller_0/AXI_LITE_IPIF_I/I_SLAVE_ATTACHMENT/state_FSM_FFd1-In1 (nes_controller_0/AXI_LITE_IPIF_I/I_SLAVE_ATTACHMENT/state_FSM_FFd1-In1)
-     LUT5:I4->O            1   0.205   0.000  nes_controller_0/AXI_LITE_IPIF_I/I_SLAVE_ATTACHMENT/state_FSM_FFd1-In3_G (N5)
-     MUXF7:I1->O           2   0.140   0.000  nes_controller_0/AXI_LITE_IPIF_I/I_SLAVE_ATTACHMENT/state_FSM_FFd1-In3 (nes_controller_0/AXI_LITE_IPIF_I/I_SLAVE_ATTACHMENT/state_FSM_FFd1-In)
-     FDR:D                     0.102          nes_controller_0/AXI_LITE_IPIF_I/I_SLAVE_ATTACHMENT/state_FSM_FFd1
+     FDC:C->Q              3   0.447   1.015  nes_controller_0/USER_LOGIC_I/read_timer_0 (nes_controller_0/USER_LOGIC_I/read_timer_0)
+     LUT6:I0->O            4   0.203   0.912  nes_controller_0/USER_LOGIC_I/GND_16_o_read_timer[19]_LessThan_24_o31 (nes_controller_0/USER_LOGIC_I/GND_16_o_read_timer[19]_LessThan_24_o3)
+     LUT5:I2->O           18   0.205   1.050  nes_controller_0/USER_LOGIC_I/GND_16_o_read_timer[19]_LessThan_24_o34 (nes_controller_0/USER_LOGIC_I/GND_16_o_read_timer[19]_LessThan_24_o)
+     LUT6:I5->O           16   0.205   1.005  nes_controller_0/USER_LOGIC_I/_n0186_inv1 (nes_controller_0/USER_LOGIC_I/_n0186_inv)
+     LUT5:I4->O            1   0.205   0.000  nes_controller_0/USER_LOGIC_I/c2_buttons_7_rstpot (nes_controller_0/USER_LOGIC_I/c2_buttons_7_rstpot)
+     FDC:D                     0.102          nes_controller_0/USER_LOGIC_I/c2_buttons_7
     ----------------------------------------
-    Total                      2.461ns (1.099ns logic, 1.362ns route)
-                                       (44.7% logic, 55.3% route)
+    Total                      5.349ns (1.367ns logic, 3.982ns route)
+                                       (25.6% logic, 74.4% route)
 
 =========================================================================
 Timing constraint: Default OFFSET IN BEFORE for Clock 'S_AXI_ACLK'
-  Total number of paths / destination ports: 124 / 81
+  Total number of paths / destination ports: 146 / 132
 -------------------------------------------------------------------------
-Offset:              1.941ns (Levels of Logic = 1)
+Offset:              2.407ns (Levels of Logic = 1)
   Source:            S_AXI_ARESETN (PAD)
-  Destination:       nes_controller_0/USER_LOGIC_I/slv_reg0_31 (FF)
+  Destination:       nes_controller_0/USER_LOGIC_I/rx_state_reg_FSM_FFd1 (FF)
   Destination Clock: S_AXI_ACLK rising
 
-  Data Path: S_AXI_ARESETN to nes_controller_0/USER_LOGIC_I/slv_reg0_31
+  Data Path: S_AXI_ARESETN to nes_controller_0/USER_LOGIC_I/rx_state_reg_FSM_FFd1
                                 Gate     Net
     Cell:in->out      fanout   Delay   Delay  Logical Name (Net Name)
     ----------------------------------------  ------------
-     INV:I->O             33   0.206   1.305  nes_controller_0/USER_LOGIC_I/Bus2IP_Resetn_inv1_INV_0 (nes_controller_0/AXI_LITE_IPIF_I/I_SLAVE_ATTACHMENT/rst_rstpot)
+     INV:I->O             84   0.206   1.771  nes_controller_0/USER_LOGIC_I/Bus2IP_Resetn_inv1_INV_0 (nes_controller_0/AXI_LITE_IPIF_I/I_SLAVE_ATTACHMENT/rst_rstpot)
      FDR:R                     0.430          nes_controller_0/USER_LOGIC_I/slv_reg0_0
     ----------------------------------------
-    Total                      1.941ns (0.636ns logic, 1.305ns route)
-                                       (32.8% logic, 67.2% route)
+    Total                      2.407ns (0.636ns logic, 1.771ns route)
+                                       (26.4% logic, 73.6% route)
 
 =========================================================================
 Timing constraint: Default OFFSET OUT AFTER for Clock 'S_AXI_ACLK'
-  Total number of paths / destination ports: 43 / 37
+  Total number of paths / destination ports: 141 / 49
 -------------------------------------------------------------------------
-Offset:              1.531ns (Levels of Logic = 1)
-  Source:            nes_controller_0/AXI_LITE_IPIF_I/I_SLAVE_ATTACHMENT/I_DECODER/Bus_RNW_reg_1 (FF)
-  Destination:       S_AXI_ARREADY (PAD)
+Offset:              4.254ns (Levels of Logic = 3)
+  Source:            nes_controller_0/USER_LOGIC_I/read_timer_12 (FF)
+  Destination:       C1_LATCH (PAD)
   Source Clock:      S_AXI_ACLK rising
 
-  Data Path: nes_controller_0/AXI_LITE_IPIF_I/I_SLAVE_ATTACHMENT/I_DECODER/Bus_RNW_reg_1 to S_AXI_ARREADY
+  Data Path: nes_controller_0/USER_LOGIC_I/read_timer_12 to C1_LATCH
                                 Gate     Net
     Cell:in->out      fanout   Delay   Delay  Logical Name (Net Name)
     ----------------------------------------  ------------
-     FD:C->Q               3   0.447   0.879  nes_controller_0/AXI_LITE_IPIF_I/I_SLAVE_ATTACHMENT/I_DECODER/Bus_RNW_reg_1 (nes_controller_0/AXI_LITE_IPIF_I/I_SLAVE_ATTACHMENT/I_DECODER/Bus_RNW_reg_1)
-     LUT3:I0->O            1   0.205   0.000  nes_controller_0/AXI_LITE_IPIF_I/I_SLAVE_ATTACHMENT/rd_done1 (S_AXI_ARREADY)
+     FDC:C->Q              4   0.447   0.931  nes_controller_0/USER_LOGIC_I/read_timer_12 (nes_controller_0/USER_LOGIC_I/read_timer_12)
+     LUT4:I0->O            1   0.203   0.808  nes_controller_0/USER_LOGIC_I/read_timer[19]_GND_16_o_LessThan_25_o23 (nes_controller_0/USER_LOGIC_I/read_timer[19]_GND_16_o_LessThan_25_o22)
+     LUT4:I1->O           20   0.205   1.457  nes_controller_0/USER_LOGIC_I/read_timer[19]_GND_16_o_LessThan_25_o24 (nes_controller_0/USER_LOGIC_I/read_timer[19]_GND_16_o_LessThan_25_o)
+     LUT6:I0->O            0   0.203   0.000  nes_controller_0/USER_LOGIC_I/latch1 (C2_LATCH)
     ----------------------------------------
-    Total                      1.531ns (0.652ns logic, 0.879ns route)
-                                       (42.6% logic, 57.4% route)
+    Total                      4.254ns (1.058ns logic, 3.196ns route)
+                                       (24.9% logic, 75.1% route)
 
 =========================================================================
 
@@ -975,13 +912,13 @@ Clock to Setup on destination clock S_AXI_ACLK
                | Src:Rise| Src:Fall| Src:Rise| Src:Fall|
 Source Clock   |Dest:Rise|Dest:Rise|Dest:Fall|Dest:Fall|
 ---------------+---------+---------+---------+---------+
-S_AXI_ACLK     |    2.461|         |         |         |
+S_AXI_ACLK     |    5.349|         |         |         |
 ---------------+---------+---------+---------+---------+
 
 =========================================================================
 
 
-Total REAL time to Xst completion: 6.00 secs
+Total REAL time to Xst completion: 5.00 secs
 Total CPU time to Xst completion: 5.46 secs
  
 --> 
@@ -989,6 +926,6 @@ Total CPU time to Xst completion: 5.46 secs
 Total memory usage is 280352 kilobytes
 
 Number of errors   :    0 (   0 filtered)
-Number of warnings :   91 (   0 filtered)
+Number of warnings :   18 (   0 filtered)
 Number of infos    :    7 (   0 filtered)
 
