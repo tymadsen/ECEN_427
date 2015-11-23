@@ -368,6 +368,9 @@ implementation netlist
 IPNAME:pit_timer INSTANCE:pit_timer_0 -
 C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 391 - Copying cache
 implementation netlist
+IPNAME:nes_controller INSTANCE:nes_controller_0 -
+C:\Madsen\SpaceInvadersCreativeHW\system.mhs line 401 - Copying cache
+implementation netlist
 
 Elaborating instances ...
 IPNAME:bram_block INSTANCE:microblaze_0_bram_block -
@@ -380,7 +383,7 @@ ClkGen elaborate status: PASSED
 Writing HDL for elaborated instances ...
 
 Inserting wrapper level ...
-Completion time: 0.00 seconds
+Completion time: 1.00 seconds
 
 Constructing platform-level connectivity ...
 Completion time: 0.00 seconds
@@ -414,4 +417,4 @@ INFO:EDK:3509 - NCF files should not be modified as they will be regenerated.
 
 Rebuilding cache ...
 
-Total run time: 33.00 seconds
+Total run time: 36.00 seconds

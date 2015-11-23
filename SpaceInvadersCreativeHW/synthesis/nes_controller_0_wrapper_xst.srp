@@ -448,8 +448,8 @@ Elaborating entity <address_decoder> (architecture <IMP>) with generics from lib
 INFO:HDLCompiler:679 - "C:/Xilinx/13.4/ISE_DS/EDK/hw/XilinxProcessorIPLib/pcores/axi_lite_ipif_v1_01_a/hdl/vhdl/slave_attachment.vhd" Line 412. Case statement is complete. others clause is never selected
 
 Elaborating entity <user_logic> (architecture <IMP>) with generics from library <nes_controller_v1_00_a>.
-WARNING:HDLCompiler:92 - "C:/Madsen/SpaceInvadersCreativeHW/pcores/nes_controller_v1_00_a/hdl/vhdl/user_logic.vhd" Line 244: bus2ip_resetn should be on the sensitivity list of the process
-INFO:HDLCompiler:679 - "C:/Madsen/SpaceInvadersCreativeHW/pcores/nes_controller_v1_00_a/hdl/vhdl/user_logic.vhd" Line 378. Case statement is complete. others clause is never selected
+WARNING:HDLCompiler:92 - "C:/Madsen/SpaceInvadersCreativeHW/pcores/nes_controller_v1_00_a/hdl/vhdl/user_logic.vhd" Line 245: bus2ip_resetn should be on the sensitivity list of the process
+INFO:HDLCompiler:679 - "C:/Madsen/SpaceInvadersCreativeHW/pcores/nes_controller_v1_00_a/hdl/vhdl/user_logic.vhd" Line 379. Case statement is complete. others clause is never selected
 
 =========================================================================
 *                           HDL Synthesis                               *
@@ -591,11 +591,11 @@ WARNING:Xst:37 - Detected unknown constraint/property "sigis". This constraint/p
     | Encoding           | auto                                           |
     | Implementation     | LUT                                            |
     -----------------------------------------------------------------------
-    Found 20-bit adder for signal <read_timer[19]_GND_16_o_add_8_OUT> created at line 255.
-    Found 10-bit adder for signal <pulse_timer[9]_GND_16_o_add_13_OUT> created at line 269.
-    Found 10-bit comparator greater for signal <pulse_on_INV_24_o> created at line 275
-    Found 20-bit comparator greater for signal <GND_16_o_read_timer[19]_LessThan_24_o> created at line 277
-    Found 20-bit comparator greater for signal <read_timer[19]_GND_16_o_LessThan_25_o> created at line 277
+    Found 20-bit adder for signal <read_timer[19]_GND_16_o_add_8_OUT> created at line 256.
+    Found 10-bit adder for signal <pulse_timer[9]_GND_16_o_add_13_OUT> created at line 270.
+    Found 10-bit comparator greater for signal <pulse_on_INV_24_o> created at line 276
+    Found 20-bit comparator greater for signal <GND_16_o_read_timer[19]_LessThan_24_o> created at line 278
+    Found 20-bit comparator greater for signal <read_timer[19]_GND_16_o_LessThan_25_o> created at line 278
     Summary:
 	inferred   2 Adder/Subtractor(s).
 	inferred  86 D-type flip-flop(s).
@@ -918,8 +918,8 @@ S_AXI_ACLK     |    5.349|         |         |         |
 =========================================================================
 
 
-Total REAL time to Xst completion: 5.00 secs
-Total CPU time to Xst completion: 5.46 secs
+Total REAL time to Xst completion: 6.00 secs
+Total CPU time to Xst completion: 5.56 secs
  
 --> 
 

@@ -77,9 +77,9 @@ architecture Behavioral of nes_controller is
 begin
 	
 	-- Create counter for read timer and pulse timer
-	counter: process (clk)
+	counter: process (clk, rst)
 	begin
-		if (rst = '1') then
+		if (rst = '0') then
 			read_timer <= (others => '0');
 			pulse_timer <= (others => '0');
       rx_state_reg <= IDLE;

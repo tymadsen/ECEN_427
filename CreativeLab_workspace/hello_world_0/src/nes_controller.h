@@ -14,6 +14,7 @@
 #include "xbasic_types.h"
 #include "xstatus.h"
 #include "xil_io.h"
+#include "xparameters.h"
 
 /************************** Constant Definitions ***************************/
 
@@ -93,9 +94,15 @@
 #define NES_CONTROLLER_mReadSlaveReg0(BaseAddress, RegOffset) \
  	Xil_In32((BaseAddress) + (NES_CONTROLLER_SLV_REG0_OFFSET) + (RegOffset))
 
+#define NES_CONTROLLER_1_BUTTONS_MASK 0x000000FF
+#define NES_CONTROLLER_2_BUTTONS_MASK 0x0000FF00
+#define NES_CONTROLLER_2_RSHIFT_OFFSET 8
+
 /************************** Function Prototypes ****************************/
 
-void NES_CONTROLLER_read(Xuint32 addr);
+void NES_CONTROLLER_read();
+unsigned int NES_CONTROLLER_1_read();
+unsigned int NES_CONTROLLER_2_read();
 
 /**
  *

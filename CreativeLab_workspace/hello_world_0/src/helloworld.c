@@ -47,6 +47,15 @@
 #define FIFOSIZE 		512					// Size of AC97 Fifo
 #define BUFFERLENGTH 10
 
+#define NES_A_BTN_MASK 0x80
+#define NES_B_BTN_MASK 0x40
+#define NES_SEL_BTN_MASK 0x20
+#define NES_START_BTN_MASK 0x10
+#define NES_UP_BTN_MASK 0x8
+#define NES_DOWN_BTN_MASK 0x4
+#define NES_LEFT_BTN_MASK 0x2
+#define NES_RIGHT_BTN_MASK 0x1
+
 // startLevel and getInt function prototype
 void startLevel(bool first);
 
@@ -67,6 +76,9 @@ unsigned randSpaceshipTime = 0;				// Random time set to determine when the Spac
 unsigned ssValueDisplayCounter = 0;		// Counter for the spaceship score flashing animation
 unsigned tankKilledCounter = 0;				// Counter for tank death animation
 unsigned volumeUpdateCounter = 0;			// For debouncing the volume buttons
+unsigned controllerReadCounter = 0;			// for reading the controllers
+unsigned c1_buttons = 0;					// button values from controller 1
+unsigned c2_buttons = 0;					// button values from controller 2
 int currentVolume = AC97_VOL_MID;	// Initialize volume to mid point
 point_t alienExplosion;
 
@@ -91,6 +103,7 @@ void fifo_interrupt_handler(){
 void updateScreenElements(){
 	// Update tank, and bullets on the screen
 	if(started && isTankFree()){
+
 		updateAllBullets();
 		if(currentButtonState & LEFTBTN){
 			moveTankLeft();
@@ -142,6 +155,7 @@ void timer_interrupt_handler() {
 	ssValueDisplayCounter++;
 	tankKilledCounter++;
 	volumeUpdateCounter++;
+	controllerReadCounter++;
 
 	if(!gameIsOver){
 		// The pit counter that will update the aliens every half second
@@ -199,6 +213,46 @@ void timer_interrupt_handler() {
 				updateSpaceshipHelper();
 			updateSpaceshipCounter = 0;
 		}
+		if(controllerReadCounter >= 10){
+
+	//		NES_B_BTN_MASK 0x40
+	//		#define NES_SEL_BTN_MASK 0x20
+	//		#define NES_START_BTN_MASK 0x10
+	//		#define NES_UP_BTN_MASK 0x8
+	//		#define NES_DOWN_BTN_MASK 0x4
+	//		#define NES_LEFT_BTN_MASK 0x2
+	//		#define NES_RIGHT_BTN_MASK
+			c1_buttons = NES_CONTROLLER_1_read();
+			if(started && isTankFree()){
+				updateAllBullets();
+				if(c1_buttons & NES_LEFT_BTN_MASK){
+					moveTankLeft();
+				}
+				else if(c1_buttons & NES_RIGHT_BTN_MASK) {
+					moveTankRight();
+				}
+				if(c1_buttons & (NES_A_BTN_MASK | NES_B_BTN_MASK)){
+					shootTankBullet();
+				}
+			}
+			//Lets control the aliens!
+			// Get controller 2 button values
+			c2_buttons = NES_CONTROLLER_2_read();
+
+			if(c2_buttons & NES_LEFT_BTN_MASK){
+				moveAlienLeft();
+			}
+			if(c2_buttons & NES_RIGHT_BTN_MASK){
+				moveAlienRight();
+			}
+			if(c2_buttons & NES_A_BTN_MASK){
+				fireAlienBulletHelper(0);
+			}
+			if(c2_buttons & NES_B_BTN_MASK){
+				fireAlienBulletHelper(1);
+			}
+			controllerReadCounter = 0;
+		}
 	}
 	if(started){
 		updateKillTankAnimation();
@@ -252,7 +306,7 @@ void pb_interrupt_handler() {
 		}
 		levelIsOver = false;
 	}
-	NES_CONTROLLER_read(XPAR_NES_CONTROLLER_0_BASEADDR);
+//	NES_CONTROLLER_read(XPAR_NES_CONTROLLER_0_BASEADDR);
 	XGpio_InterruptClear(&gpPB, 0xFFFFFFFF);            // Ack the PB interrupt.
 	XGpio_InterruptGlobalEnable(&gpPB);                 // Re-enable PB interrupts.
 }
@@ -424,19 +478,19 @@ int main()
 		// blocking call: wait until a character is present
 //		input = getchar();
 //
-		//Lets control the aliens!
-		if(input == '1'){
-			moveAlienLeft();
-		}
-		if(input == '3'){
-			moveAlienRight();
-		}
-		if(input == '2'){
-			fireAlienBulletHelper(0);
-		}
-		if(input == '5'){
-			fireAlienBulletHelper(1);
-		}
+//		//Lets control the aliens!
+//		if(input == '1'){
+//			moveAlienLeft();
+//		}
+//		if(input == '3'){
+//			moveAlienRight();
+//		}
+//		if(input == '2'){
+//			fireAlienBulletHelper(0);
+//		}
+//		if(input == '5'){
+//			fireAlienBulletHelper(1);
+//		}
 //		if(input >= '0' && input <= '9'){
 ////			xil_printf("\r\ngOT A ONE \r\n\r\n");
 //			// pause pit so we can get a new value

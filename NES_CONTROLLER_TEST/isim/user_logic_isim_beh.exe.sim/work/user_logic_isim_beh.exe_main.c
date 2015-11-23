@@ -29,10 +29,10 @@ int main(int argc, char **argv)
     ieee_p_2592010699_init();
     ieee_p_3499444699_init();
     ieee_p_3620187407_init();
-    work_a_2297139822_3212880686_init();
+    work_a_3268654154_3306564128_init();
 
 
-    xsi_register_tops("work_a_2297139822_3212880686");
+    xsi_register_tops("work_a_3268654154_3306564128");
 
     IEEE_P_2592010699 = xsi_get_engine_memory("ieee_p_2592010699");
     xsi_register_ieee_std_logic_1164(IEEE_P_2592010699);

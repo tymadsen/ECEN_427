@@ -1,0 +1,12 @@
+#-----------------------------------------------------------
+# PlanAhead v13.4 (64-bit)
+# Build 157570 by hdbuild on Fri Dec 16 13:06:31 MST 2011
+# Start of session at: Mon Nov 23 15:13:59 2015
+# Process ID: 5984
+# Log file: C:/Madsen/NES_CONTROLLER_TEST/planAhead_run_1/planAhead.log
+# Journal file: C:/Madsen/NES_CONTROLLER_TEST/planAhead_run_1/planAhead.jou
+#-----------------------------------------------------------
+start_gui
+source C:/Madsen/NES_CONTROLLER_TEST/pa.fromNetlist.tcl
+exit
+stop_gui

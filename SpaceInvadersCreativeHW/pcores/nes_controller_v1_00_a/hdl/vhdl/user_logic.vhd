@@ -153,7 +153,7 @@ architecture IMP of user_logic is
   signal rx_state_reg, rx_state_next		: rx_state_type;
   
   signal read_timer                     : std_logic_vector(19 downto 0); -- Timer to read buttons every 100 Hz
-  signal pulse_timer                    : std_logic_vector(9 downto 0); -- Timer to sapce out pulses 
+  signal pulse_timer                    : std_logic_vector(9 downto 0); -- Timer to space out pulses 
   ------------------------------------------
   -- Signals for user logic slave model s/w accessible register example
   ------------------------------------------
@@ -207,6 +207,7 @@ begin
               end if;
             end loop;
           when others => 
+						slv_reg0(31 downto 28) <= read_timer(19 downto 16); -- set highest bits of timer to top 4 bits of reg
 						if(data_done = '1') then
 							slv_reg0(15 downto 8) <= c2_buttons;
 							slv_reg0(7 downto 0) <= c1_buttons;
