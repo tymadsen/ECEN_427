@@ -269,9 +269,13 @@ void updateAlienBlock(int direction) {
 		alienBlockPosition.x += pixel_adjustment;
 	}
 	//If the block is moving left, detract the pixels
-	else {
+	else if(direction == LEFT){
 		alienDown = false;
 		alienBlockPosition.x -= pixel_adjustment;
+	}
+	else {
+		alienDown = true;
+		alienBlockPosition.y += (alien_height*3)/2;
 	}
 	//If the block has hit the right side of the screen, set them equal to the screen and move them down
 	if ((alienBlockPosition.x + alien_block_width - rightOffset) > 640) {

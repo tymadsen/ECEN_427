@@ -72,7 +72,8 @@ unsigned alienBulletCounter = 0;				// Contains the count until the random time 
 unsigned spaceshipCounter = 0;					// Counts to the next time a spaceship will appear
 unsigned randBulletTime = 0;						// This will be set to a random number for spacing alien bullets
 unsigned randSpaceshipTime = 0;				// Random time set to determine when the Spaceship will come out
-//unsigned alienUpdateTime = 60;					// The time that will decrease as more and more aliens are killed
+unsigned alienUpdateTime = 1600;					// The time that will determine when the alien block moves down
+unsigned alienUpdateCounter = 0;
 unsigned ssValueDisplayCounter = 0;		// Counter for the spaceship score flashing animation
 unsigned tankKilledCounter = 0;				// Counter for tank death animation
 unsigned volumeUpdateCounter = 0;			// For debouncing the volume buttons
@@ -156,6 +157,7 @@ void timer_interrupt_handler() {
 	tankKilledCounter++;
 	volumeUpdateCounter++;
 	controllerReadCounter++;
+	alienUpdateCounter++;
 
 	if(!gameIsOver){
 		// The pit counter that will update the aliens every half second
@@ -181,7 +183,7 @@ void timer_interrupt_handler() {
 			alienExplosion = getDeadAlienLoc();
 			setAlienExploded(0);
 		}
-		if(pitCounter == 60){
+		if(pitCounter == 25){
 			//Use this to erase the explosion
 			eraseAlienExplosion(alienExplosion);
 		}
@@ -200,7 +202,7 @@ void timer_interrupt_handler() {
 			if(started && isTankFree()){
 				flySpaceship();
 			}
-			randSpaceshipTime = (rand()%25)*100 + 2000;
+			randSpaceshipTime = (rand()%25)*100 + 2500;
 			spaceshipCounter = 0;
 		}
 		if(isSpaceshipHitHelper()){
@@ -213,8 +215,12 @@ void timer_interrupt_handler() {
 				updateSpaceshipHelper();
 			updateSpaceshipCounter = 0;
 		}
-		if(controllerReadCounter >= 10){
-
+		if(alienUpdateCounter >= alienUpdateTime){
+			moveAliensDown();
+			alienUpdateCounter = 0;
+		}
+//		if(controllerReadCounter >= 10){
+//
 	//		NES_B_BTN_MASK 0x40
 	//		#define NES_SEL_BTN_MASK 0x20
 	//		#define NES_START_BTN_MASK 0x10
@@ -253,40 +259,40 @@ void timer_interrupt_handler() {
 			}
 			controllerReadCounter = 0;
 		}
-	}
-	if(started){
-		updateKillTankAnimation();
-		updateSpaceshipScore();
-	}
-	// If the tank is not free, it has been hit
-	if(isTankHit()){
 		if(started){
-			tankKilledCounter = 0;
-			setIsTankHit(false);
+			updateKillTankAnimation();
+			updateSpaceshipScore();
 		}
-	}
-	// Use the pit to "debounce" the button
-	if(volumeUpdateCounter >= 20){
-		// Up button is pushed
-		if(currentButtonState & UPBTN){
-			// Increase volume
-			currentVolume -= AC97_VOL_ATTN_1_5_DB;
-			// If volume is at max, make max the limit
-			if(currentVolume < AC97_VOL_MAX)
-				currentVolume = AC97_VOL_MAX;
-		// Else if down is pushed
-		}else if(currentButtonState & DOWNBTN){
-			// Decrease volume
-			currentVolume += AC97_VOL_ATTN_1_5_DB;
-			// If volume is at min, make min the limit
-			if(currentVolume > AC97_VOL_MIN)
-				currentVolume = AC97_VOL_MIN;
+		// If the tank is not free, it has been hit
+		if(isTankHit()){
+			if(started){
+				tankKilledCounter = 0;
+				setIsTankHit(false);
+			}
 		}
-		// Write to volume registers to update the new volume
-		XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_MasterVol, currentVolume);
-		XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol, currentVolume);
-		volumeUpdateCounter = 0;
-	}
+		// Use the pit to "debounce" the button
+		if(volumeUpdateCounter >= 20){
+			// Up button is pushed
+			if(currentButtonState & UPBTN){
+				// Increase volume
+				currentVolume -= AC97_VOL_ATTN_1_5_DB;
+				// If volume is at max, make max the limit
+				if(currentVolume < AC97_VOL_MAX)
+					currentVolume = AC97_VOL_MAX;
+			// Else if down is pushed
+			}else if(currentButtonState & DOWNBTN){
+				// Decrease volume
+				currentVolume += AC97_VOL_ATTN_1_5_DB;
+				// If volume is at min, make min the limit
+				if(currentVolume > AC97_VOL_MIN)
+					currentVolume = AC97_VOL_MIN;
+			}
+			// Write to volume registers to update the new volume
+			XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_MasterVol, currentVolume);
+			XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol, currentVolume);
+			volumeUpdateCounter = 0;
+		}
+
 }
 
 // This is invoked each time there is a change in the button state (result of a push or a bounce).
