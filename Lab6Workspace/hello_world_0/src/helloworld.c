@@ -26,7 +26,7 @@
 #include <unistd.h>
 #include "mb_interface.h"   	// provides the microblaze interrupt enables, etc.
 #include "xintc_l.h"        	// Provides handy macros for the interrupt controller.
-#include "pit.h"				// Provides handy macros for the PIT registers
+//#include "pit.h"				// Provides handy macros for the PIT registers
 #include "xac97_l.h"			// xac97 sound
 #include "platform.h"
 #include "xparameters.h"
@@ -49,7 +49,6 @@
 void startLevel(bool first);
 
 bool gameIsOver = false;					// Game over flag
-bool levelIsOver = false;					// Level ended flag
 bool started = false;							// Game started flag
 
 
@@ -226,19 +225,6 @@ void pb_interrupt_handler() {
 	XGpio_InterruptGlobalDisable(&gpPB);                // Turn off all PB interrupts for now.
 	currentButtonState = XGpio_DiscreteRead(&gpPB, 1);  // Get the current state of the buttons.
 
-	// Do some checking to see if the game is over
-	// This allows using any button to restart the game once it is over
-	if(levelIsOver){
-		if(gameIsOver){
-			startLevel(true);
-			gameIsOver = false;
-		}
-		else {
-			startLevel(false);
-		}
-		levelIsOver = false;
-	}
-
 	XGpio_InterruptClear(&gpPB, 0xFFFFFFFF);            // Ack the PB interrupt.
 	XGpio_InterruptGlobalEnable(&gpPB);                 // Re-enable PB interrupts.
 }
@@ -246,8 +232,8 @@ void pb_interrupt_handler() {
 void interrupt_handler_dispatcher(void* ptr) {
 	int intc_status = XIntc_GetIntrStatus(XPAR_INTC_0_BASEADDR);
 	// Check the pit interrupt first.
-	if (intc_status & XPAR_PIT_TIMER_0_USER_PIT_INTERRUPT_MASK){
-		XIntc_AckIntr(XPAR_INTC_0_BASEADDR, XPAR_PIT_TIMER_0_USER_PIT_INTERRUPT_MASK);
+	if (intc_status & XPAR_FIT_TIMER_0_INTERRUPT_MASK){
+		XIntc_AckIntr(XPAR_INTC_0_BASEADDR, XPAR_FIT_TIMER_0_INTERRUPT_MASK);
 //		xil_printf("pit\n\r");
 		timer_interrupt_handler();
 	}
@@ -268,6 +254,8 @@ void interrupt_handler_dispatcher(void* ptr) {
 // This will clear the screen for a new game if the flad is true,
 // otherwise it will clear the screen for a new level
 void startLevel(bool first){
+	gameIsOver = false;
+	setIsTankFree(true);
 	initScreen(!first);
 	randBulletTime = (rand()%10)*50 + 100;
 	randSpaceshipTime = (rand()%25)*100 + 1000;
@@ -335,16 +323,16 @@ int main()
 	// Enable all interrupts in the push button peripheral.
 	XGpio_InterruptEnable(&gpPB, 0xFFFFFFFF);
 
-	xil_printf("Starting the fit stuff\n\r");
-	PIT_SetDelayValue(1000000);
-	PIT_EnableReloadCounter();
-	PIT_EnableInterrupts();
-	PIT_EnableCounter();
-	xil_printf("Made it past the fit stuff\r\n");
+//	xil_printf("Starting the fit stuff\n\r");
+//	PIT_SetDelayValue(1000000);
+//	PIT_EnableReloadCounter();
+//	PIT_EnableInterrupts();
+//	PIT_EnableCounter();
+//	xil_printf("Made it past the fit stuff\r\n");
 
 	microblaze_register_handler(interrupt_handler_dispatcher, NULL);
 	// Enable interrupts for pit, Push Buttons, and FIFO on the AC97
-	XIntc_EnableIntr(XPAR_INTC_0_BASEADDR,(XPAR_PIT_TIMER_0_USER_PIT_INTERRUPT_MASK | XPAR_PUSH_BUTTONS_5BITS_IP2INTC_IRPT_MASK | XPAR_AXI_AC97_0_INTERRUPT_MASK));
+	XIntc_EnableIntr(XPAR_INTC_0_BASEADDR,(XPAR_FIT_TIMER_0_INTERRUPT_MASK | XPAR_PUSH_BUTTONS_5BITS_IP2INTC_IRPT_MASK | XPAR_AXI_AC97_0_INTERRUPT_MASK));
 	XIntc_MasterEnable(XPAR_INTC_0_BASEADDR);
 
 
@@ -388,63 +376,57 @@ int main()
 	// Start the game
 	startLevel(true);
 	microblaze_enable_interrupts();
-	int loadValue;
-	char input;
 	setvbuf(stdin, NULL, _IONBF, 0);
 	while(1) {
 
 		// Check if the game or level is over
 		// if so, set some flags to be handled in the interrupt handlers
-		if(!levelIsOver && isLevelOver()){
-			if(!gameIsOver && isGameOver()){
-				xil_printf("game over...\n");
-				// Draw GameOver
-				drawGameOver();
-				gameIsOver = true;
-			}
-			levelIsOver = true;
+		if(!gameIsOver && isGameOver()){
+			xil_printf("game over...\n");
+			// Draw GameOver
+			drawGameOver();
+			gameIsOver = true;
 		}
-		xil_printf("im going to kill myself\r\n");
+
 
 		started = true;
 		// blocking call: wait until a character is present
 //		input = getchar();
+////
 //
+//		if(input >= '0' && input <= '9'){
+////			xil_printf("\r\ngOT A ONE \r\n\r\n");
+//			// pause pit so we can get a new value
+//			PIT_DisableCounter();
+////			xil_printf("\r\nValue to load: ");
+////			input = getchar();
+////			input = getchar();
+//			while(input != '\r' && input != '\n' && buffIndex < 10){
+//				if(input >= '0' && input <= '9'){
+//					buffer[buffIndex] = input;
+//					xil_printf("%c", input);
+//					buffIndex++;
+//				}
+//				input = getchar();
+//			}
+//			buffer[buffIndex] = '\0';
+//			xil_printf("buffer: %s\r\n",buffer);
+////			//convert to number
+////			//write to delay reg
+//			loadValue = atoi(buffer);
+////			xil_printf("\n\r");
+////			xil_printf("value is: %d\r\n", atoi(buffer));
+//			if(loadValue > 0 && loadValue <= 1000000000){
+//				PIT_SetDelayValue(loadValue);
+//				xil_printf("Timer has been updated!\r\n");
+//			}
+//			else {
+//				xil_printf("Timer has NOT been updated!\r\n");
+//			}
+//			PIT_EnableCounter();
+//			buffIndex = 0;
+//		}
 
-		if(input >= '0' && input <= '9'){
-//			xil_printf("\r\ngOT A ONE \r\n\r\n");
-			// pause pit so we can get a new value
-			PIT_DisableCounter();
-//			xil_printf("\r\nValue to load: ");
-//			input = getchar();
-//			input = getchar();
-			while(input != '\r' && input != '\n' && buffIndex < 10){
-				if(input >= '0' && input <= '9'){
-					buffer[buffIndex] = input;
-					xil_printf("%c", input);
-					buffIndex++;
-				}
-				input = getchar();
-			}
-			buffer[buffIndex] = '\0';
-			xil_printf("buffer: %s\r\n",buffer);
-//			//convert to number
-//			//write to delay reg
-			loadValue = atoi(buffer);
-//			xil_printf("\n\r");
-//			xil_printf("value is: %d\r\n", atoi(buffer));
-			if(loadValue > 0 && loadValue <= 1000000000){
-				PIT_SetDelayValue(loadValue);
-				xil_printf("Timer has been updated!\r\n");
-			}
-			else {
-				xil_printf("Timer has NOT been updated!\r\n");
-			}
-			PIT_EnableCounter();
-			buffIndex = 0;
-		}
-
-		input = getchar();
 //		xil_printf("got character: %c\r\n", input);
 	}
 
