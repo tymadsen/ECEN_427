@@ -101,7 +101,6 @@ void ifBulletHitBunkers(aBullet* bullet, int x, int y);
 void setLives(bool increment);
 int getLives();
 bool isGameOver();
-bool isLevelOver();
 
 point_t getDeadAlienLoc();
 int isAlienExploded();

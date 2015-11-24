@@ -213,7 +213,7 @@ void timer_interrupt_handler() {
 				updateSpaceshipHelper();
 			updateSpaceshipCounter = 0;
 		}
-		if(controllerReadCounter >= 10){
+		if(controllerReadCounter >= 8){
 
 	//		NES_B_BTN_MASK 0x40
 	//		#define NES_SEL_BTN_MASK 0x20
@@ -222,19 +222,19 @@ void timer_interrupt_handler() {
 	//		#define NES_DOWN_BTN_MASK 0x4
 	//		#define NES_LEFT_BTN_MASK 0x2
 	//		#define NES_RIGHT_BTN_MASK
-			c1_buttons = NES_CONTROLLER_1_read();
-			if(started && isTankFree()){
-				updateAllBullets();
-				if(c1_buttons & NES_LEFT_BTN_MASK){
-					moveTankLeft();
-				}
-				else if(c1_buttons & NES_RIGHT_BTN_MASK) {
-					moveTankRight();
-				}
-				if(c1_buttons & (NES_A_BTN_MASK | NES_B_BTN_MASK)){
-					shootTankBullet();
-				}
-			}
+//			c1_buttons = NES_CONTROLLER_1_read();
+//			if(started && isTankFree()){
+//				updateAllBullets();
+//				if(c1_buttons & NES_LEFT_BTN_MASK){
+//					moveTankLeft();
+//				}
+//				else if(c1_buttons & NES_RIGHT_BTN_MASK) {
+//					moveTankRight();
+//				}
+//				if(c1_buttons & (NES_A_BTN_MASK | NES_B_BTN_MASK)){
+//					shootTankBullet();
+//				}
+//			}
 			//Lets control the aliens!
 			// Get controller 2 button values
 			c2_buttons = NES_CONTROLLER_2_read();
@@ -296,16 +296,16 @@ void pb_interrupt_handler() {
 
 	// Do some checking to see if the game is over
 	// This allows using any button to restart the game once it is over
-	if(levelIsOver){
-		if(gameIsOver){
-			startLevel(true);
-			gameIsOver = false;
-		}
-		else {
-			startLevel(false);
-		}
-		levelIsOver = false;
-	}
+//	if(levelIsOver){
+//		if(gameIsOver){
+//			startLevel(true);
+//			gameIsOver = false;
+//		}
+//		else {
+//			startLevel(false);
+//		}
+//		levelIsOver = false;
+//	}
 //	NES_CONTROLLER_read(XPAR_NES_CONTROLLER_0_BASEADDR);
 	XGpio_InterruptClear(&gpPB, 0xFFFFFFFF);            // Ack the PB interrupt.
 	XGpio_InterruptGlobalEnable(&gpPB);                 // Re-enable PB interrupts.
@@ -457,22 +457,18 @@ int main()
 	startLevel(true);
 	microblaze_enable_interrupts();
 //	int loadValue;
-	char input;
+//	char input;
 	setvbuf(stdin, NULL, _IONBF, 0);
 	while(1) {
 
 		// Check if the game or level is over
 		// if so, set some flags to be handled in the interrupt handlers
-		if(!levelIsOver && isLevelOver()){
-			if(!gameIsOver && isGameOver()){
-				xil_printf("game over...\n");
-				// Draw GameOver
-				drawGameOver();
-				gameIsOver = true;
-			}
-			levelIsOver = true;
+		if(!gameIsOver && isGameOver()){
+			xil_printf("game over...\n");
+			// Draw GameOver
+			drawGameOver();
+			gameIsOver = true;
 		}
-		xil_printf("im going to kill myself\r\n");
 
 		started = true;
 		// blocking call: wait until a character is present
@@ -524,7 +520,7 @@ int main()
 //			buffIndex = 0;
 //		}
 
-		input = getchar();
+//		input = getchar();
 //		xil_printf("got character: %c\r\n", input);
 	}
 

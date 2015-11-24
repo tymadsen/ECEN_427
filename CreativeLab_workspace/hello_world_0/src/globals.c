@@ -306,20 +306,18 @@ int getLives() {
 }
 
 bool isGameOver() {
-	return (getLiveAliens() != 0);
-}
-
-bool isLevelOver() {
 	int i = 54;
 	int row = 0;
 	bool gameOver = false;
 	//If the player has no lives left, the game is over
 	if (lives == 0) {
+		xil_printf("No more lives! Game over.\r\n");
 		playTankExplosionSound();
 		return true;
 	}
 	//If all of the aliens are dead, the game is over
 	if(getLiveAliens() == 0){
+		xil_printf("No more aliens! Level over.\r\n");
 		return true;
 	}
 	//If the aliens have reached the bottom of the bunker, the game is over
@@ -353,6 +351,7 @@ bool isLevelOver() {
 	if ((getAlienBlockPosition().y + (row * alien_height * 2) + (row - 1) * (spacing)) >= (BUNKERSTARTY + BUNKERHEIGHT * 2)) {
 //		xil_printf("Position: %d, bunker: %d\r\n",(alienBlockPosition.y + (row * alien_height * 2) + (row - 1) * (spacing)),(BUNKERSTARTY + BUNKERHEIGHT * 2));
 //		xil_printf("The row is: %d\r\n", row);
+		xil_printf("Aliens reached earth! Level over.\r\n");
 		return true;
 	}
 	return false;
