@@ -289,10 +289,6 @@ int getLives() {
 }
 
 bool isGameOver() {
-	return (getLiveAliens() != 0);
-}
-
-bool isLevelOver() {
 	int i = 54;
 	int row = 0;
 	bool gameOver = false;

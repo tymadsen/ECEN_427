@@ -49,7 +49,6 @@
 void startLevel(bool first);
 
 bool gameIsOver = false;					// Game over flag
-bool levelIsOver = false;					// Level ended flag
 bool started = false;							// Game started flag
 
 
@@ -226,19 +225,6 @@ void pb_interrupt_handler() {
 	XGpio_InterruptGlobalDisable(&gpPB);                // Turn off all PB interrupts for now.
 	currentButtonState = XGpio_DiscreteRead(&gpPB, 1);  // Get the current state of the buttons.
 
-	// Do some checking to see if the game is over
-	// This allows using any button to restart the game once it is over
-	if(levelIsOver){
-		if(gameIsOver){
-			startLevel(true);
-			gameIsOver = false;
-		}
-		else {
-			startLevel(false);
-		}
-		levelIsOver = false;
-	}
-
 	XGpio_InterruptClear(&gpPB, 0xFFFFFFFF);            // Ack the PB interrupt.
 	XGpio_InterruptGlobalEnable(&gpPB);                 // Re-enable PB interrupts.
 }
@@ -268,6 +254,8 @@ void interrupt_handler_dispatcher(void* ptr) {
 // This will clear the screen for a new game if the flad is true,
 // otherwise it will clear the screen for a new level
 void startLevel(bool first){
+	gameIsOver = false;
+	setIsTankFree(true);
 	initScreen(!first);
 	randBulletTime = (rand()%10)*50 + 100;
 	randSpaceshipTime = (rand()%25)*100 + 1000;
@@ -388,23 +376,18 @@ int main()
 	// Start the game
 	startLevel(true);
 	microblaze_enable_interrupts();
-	int loadValue;
-	char input;
 	setvbuf(stdin, NULL, _IONBF, 0);
 	while(1) {
 
 		// Check if the game or level is over
 		// if so, set some flags to be handled in the interrupt handlers
-		if(!levelIsOver && isLevelOver()){
-			if(!gameIsOver && isGameOver()){
-				xil_printf("game over...\n");
-				// Draw GameOver
-				drawGameOver();
-				gameIsOver = true;
-			}
-			levelIsOver = true;
+		if(!gameIsOver && isGameOver()){
+			xil_printf("game over...\n");
+			// Draw GameOver
+			drawGameOver();
+			gameIsOver = true;
 		}
-		xil_printf("im going to kill myself\r\n");
+
 
 		started = true;
 		// blocking call: wait until a character is present
@@ -444,7 +427,6 @@ int main()
 //			buffIndex = 0;
 //		}
 
-		input = getchar();
 //		xil_printf("got character: %c\r\n", input);
 	}
 
