@@ -50,7 +50,7 @@
 #define ALIENWIDTH 12
 #define ALIENXSPACING 2
 #define ALIENYSPACING 20
-#define ALIENBLOCKSTARTX 167
+#define ALIENBLOCKSTARTX 50
 #define ALIENBLOCKSTARTY 75
 #define ALIENSPERROW 11
 // Bullet dimension/spacing
