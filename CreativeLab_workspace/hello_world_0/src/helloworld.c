@@ -60,7 +60,6 @@
 void startLevel(bool first);
 
 bool gameIsOver = false;					// Game over flag
-bool levelIsOver = false;					// Level ended flag
 bool started = false;							// Game started flag
 
 
@@ -72,11 +71,13 @@ unsigned alienBulletCounter = 0;				// Contains the count until the random time 
 unsigned spaceshipCounter = 0;					// Counts to the next time a spaceship will appear
 unsigned randBulletTime = 0;						// This will be set to a random number for spacing alien bullets
 unsigned randSpaceshipTime = 0;				// Random time set to determine when the Spaceship will come out
-//unsigned alienUpdateTime = 60;					// The time that will decrease as more and more aliens are killed
+unsigned alienUpdateTime = 1200;					// The time that will determine when the alien block moves down
+unsigned alienUpdateCounter = 0;
 unsigned ssValueDisplayCounter = 0;		// Counter for the spaceship score flashing animation
 unsigned tankKilledCounter = 0;				// Counter for tank death animation
 unsigned volumeUpdateCounter = 0;			// For debouncing the volume buttons
 unsigned controllerReadCounter = 0;			// for reading the controllers
+unsigned alienSlower = 0;
 unsigned c1_buttons = 0;					// button values from controller 1
 unsigned c2_buttons = 0;					// button values from controller 2
 int currentVolume = AC97_VOL_MID;	// Initialize volume to mid point
@@ -156,16 +157,9 @@ void timer_interrupt_handler() {
 	tankKilledCounter++;
 	volumeUpdateCounter++;
 	controllerReadCounter++;
+	alienUpdateCounter++;
 
 	if(!gameIsOver){
-		// The pit counter that will update the aliens every half second
-//		if(pitCounter >= alienUpdateTime) {
-//			if(started && isTankFree()){
-////				updateAliens();
-//			}
-//			alienUpdateTime = getAlienUpdateTime();
-//			pitCounter = 0;
-//		}
 		// The screen will update every 5ms
 		if(screenUpdateCounter >= 6) {
 			// Call function to update the screen
@@ -181,26 +175,16 @@ void timer_interrupt_handler() {
 			alienExplosion = getDeadAlienLoc();
 			setAlienExploded(0);
 		}
-		if(pitCounter == 60){
+		if(pitCounter == 25){
 			//Use this to erase the explosion
 			eraseAlienExplosion(alienExplosion);
 		}
-		// An alienBullet will fire at a random time between (1*25 - 10*25)
-//		xil_printf("alien bullet counter: %d randBulletTime: %d\r\n",  alienBulletCounter, randBulletTime);
-
-//		if(alienBulletCounter >= randBulletTime){
-////			xil_printf("Fire an alien bullet\n\r");
-//			if(started && isTankFree())
-//				fireAlienBulletHelper();
-//			randBulletTime = (rand()%10)*25 + 50;
-//			alienBulletCounter = 0;
-//		}
 		// The spaceship will go across the screen at a random time between 1-20 seconds;
 		if(spaceshipCounter >= randSpaceshipTime){
 			if(started && isTankFree()){
 				flySpaceship();
 			}
-			randSpaceshipTime = (rand()%25)*100 + 2000;
+			randSpaceshipTime = (rand()%25)*100 + 2500;
 			spaceshipCounter = 0;
 		}
 		if(isSpaceshipHitHelper()){
@@ -213,45 +197,73 @@ void timer_interrupt_handler() {
 				updateSpaceshipHelper();
 			updateSpaceshipCounter = 0;
 		}
+
+		if(alienUpdateCounter >= alienUpdateTime){
+			moveAliensDown();
+			alienUpdateCounter = 0;
+		}
 		if(controllerReadCounter >= 8){
-
-	//		NES_B_BTN_MASK 0x40
-	//		#define NES_SEL_BTN_MASK 0x20
-	//		#define NES_START_BTN_MASK 0x10
-	//		#define NES_UP_BTN_MASK 0x8
-	//		#define NES_DOWN_BTN_MASK 0x4
-	//		#define NES_LEFT_BTN_MASK 0x2
-	//		#define NES_RIGHT_BTN_MASK
-//			c1_buttons = NES_CONTROLLER_1_read();
-//			if(started && isTankFree()){
-//				updateAllBullets();
-//				if(c1_buttons & NES_LEFT_BTN_MASK){
-//					moveTankLeft();
-//				}
-//				else if(c1_buttons & NES_RIGHT_BTN_MASK) {
-//					moveTankRight();
-//				}
-//				if(c1_buttons & (NES_A_BTN_MASK | NES_B_BTN_MASK)){
-//					shootTankBullet();
-//				}
-//			}
-			//Lets control the aliens!
-			// Get controller 2 button values
-			c2_buttons = NES_CONTROLLER_2_read();
-
-			if(c2_buttons & NES_LEFT_BTN_MASK){
-				moveAlienLeft();
+			c1_buttons = NES_CONTROLLER_1_read();
+			if(started && isTankFree()){
+				updateAllBullets();
+				if(c1_buttons & NES_LEFT_BTN_MASK){
+					moveTankLeft();
+				}
+				else if(c1_buttons & NES_RIGHT_BTN_MASK) {
+					moveTankRight();
+				}
+				if(c1_buttons & (NES_A_BTN_MASK | NES_B_BTN_MASK)){
+					shootTankBullet();
+				}
+				//Lets control the aliens!
+				// Get controller 2 button values
+				c2_buttons = NES_CONTROLLER_2_read();
+				if(alienSlower % 2 == 0){
+					if(c2_buttons & NES_LEFT_BTN_MASK){
+						moveAlienLeft();
+					}
+					if(c2_buttons & NES_RIGHT_BTN_MASK){
+						moveAlienRight();
+					}
+					if(c2_buttons & NES_A_BTN_MASK){
+						fireAlienBulletHelper(0);
+					}
+				}
+				if(alienSlower % 3 == 0){
+					if(c2_buttons & NES_B_BTN_MASK){
+						fireAlienBulletHelper(1);
+					}
+				}
+				controllerReadCounter = 0;
+				alienSlower++;
 			}
-			if(c2_buttons & NES_RIGHT_BTN_MASK){
-				moveAlienRight();
+		}
+		// Use the pit to "debounce" the button
+		if(volumeUpdateCounter >= 20){
+			// Up button is pushed
+			if(currentButtonState & UPBTN){
+				// Increase volume
+				currentVolume -= AC97_VOL_ATTN_1_5_DB;
+				// If volume is at max, make max the limit
+				if(currentVolume < AC97_VOL_MAX)
+					currentVolume = AC97_VOL_MAX;
+			// Else if down is pushed
+			}else if(currentButtonState & DOWNBTN){
+				// Decrease volume
+				currentVolume += AC97_VOL_ATTN_1_5_DB;
+				// If volume is at min, make min the limit
+				if(currentVolume > AC97_VOL_MIN)
+					currentVolume = AC97_VOL_MIN;
 			}
-			if(c2_buttons & NES_A_BTN_MASK){
-				fireAlienBulletHelper(0);
-			}
-			if(c2_buttons & NES_B_BTN_MASK){
-				fireAlienBulletHelper(1);
-			}
-			controllerReadCounter = 0;
+			// Write to volume registers to update the new volume
+			XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_MasterVol, currentVolume);
+			XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol, currentVolume);
+			volumeUpdateCounter = 0;
+		}
+	} else {
+		// Game is over, press start to start over
+		if( (NES_CONTROLLER_1_read() | NES_CONTROLLER_2_read()) & NES_START_BTN_MASK){
+			startLevel(1);
 		}
 	}
 	if(started){
@@ -265,28 +277,7 @@ void timer_interrupt_handler() {
 			setIsTankHit(false);
 		}
 	}
-	// Use the pit to "debounce" the button
-	if(volumeUpdateCounter >= 20){
-		// Up button is pushed
-		if(currentButtonState & UPBTN){
-			// Increase volume
-			currentVolume -= AC97_VOL_ATTN_1_5_DB;
-			// If volume is at max, make max the limit
-			if(currentVolume < AC97_VOL_MAX)
-				currentVolume = AC97_VOL_MAX;
-		// Else if down is pushed
-		}else if(currentButtonState & DOWNBTN){
-			// Decrease volume
-			currentVolume += AC97_VOL_ATTN_1_5_DB;
-			// If volume is at min, make min the limit
-			if(currentVolume > AC97_VOL_MIN)
-				currentVolume = AC97_VOL_MIN;
-		}
-		// Write to volume registers to update the new volume
-		XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_MasterVol, currentVolume);
-		XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol, currentVolume);
-		volumeUpdateCounter = 0;
-	}
+
 }
 
 // This is invoked each time there is a change in the button state (result of a push or a bounce).
@@ -296,17 +287,7 @@ void pb_interrupt_handler() {
 
 	// Do some checking to see if the game is over
 	// This allows using any button to restart the game once it is over
-//	if(levelIsOver){
-//		if(gameIsOver){
-//			startLevel(true);
-//			gameIsOver = false;
-//		}
-//		else {
-//			startLevel(false);
-//		}
-//		levelIsOver = false;
-//	}
-//	NES_CONTROLLER_read(XPAR_NES_CONTROLLER_0_BASEADDR);
+
 	XGpio_InterruptClear(&gpPB, 0xFFFFFFFF);            // Ack the PB interrupt.
 	XGpio_InterruptGlobalEnable(&gpPB);                 // Re-enable PB interrupts.
 }
@@ -333,9 +314,11 @@ void interrupt_handler_dispatcher(void* ptr) {
 	}
 }
 
-// This will clear the screen for a new game if the flad is true,
+// This will clear the screen for a new game if the flag is true,
 // otherwise it will clear the screen for a new level
 void startLevel(bool first){
+	gameIsOver = false;
+	setIsTankFree(true);
 	initScreen(!first);
 	randBulletTime = (rand()%10)*50 + 100;
 	randSpaceshipTime = (rand()%25)*100 + 1000;

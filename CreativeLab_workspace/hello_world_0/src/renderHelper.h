@@ -24,4 +24,5 @@ void eraseSpaceshipScore(bool erase);
 bool isSpaceshipHitHelper();
 void setSpaceshipHitHelper(bool hit);
 void eraseAlienExplosion(point_t alien);
+void moveAliensDown();
 #endif /* RENDERHELPER_H_ */

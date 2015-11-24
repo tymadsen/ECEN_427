@@ -11,6 +11,7 @@
 #include "alienGlobals.h"
 #include "spaceshipGlobals.h"
 #include "playSound.h"
+#include "bitmaps.h"
 
 
 //Erase directions
@@ -45,6 +46,12 @@ void moveAlienRight(){
 	render(true, alien_block_render_mask, 0, RIGHT);
 	updateAlienBlock(RIGHT);
 	render(false, alien_block_render_mask, 0, RIGHT);
+}
+
+void moveAliensDown(){
+	render(true, alien_block_render_mask, 0, DOWN);
+	updateAlienBlock(DOWN);
+	render(false,alien_block_render_mask, 0, DOWN);
 }
 
 void moveTankLeft(){
@@ -148,4 +155,5 @@ void setSpaceshipHitHelper(bool hit){
 
 void eraseAlienExplosion(point_t alien){
 	//erase the explosion
+	drawBitmap(alien_explosion_12x10, alien, 12, 10, true, BLACK, false);
 }
