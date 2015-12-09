@@ -1,0 +1,1 @@
+-intstyle "ise" -incremental -lib "secureip" -o "C:/Madsen/DMALabTest/user_logic_isim_beh.exe" -prj "C:/Madsen/DMALabTest/user_logic_beh.prj" "work.user_logic" 
