@@ -246,11 +246,11 @@
  *
  */
 void DMA_CONTROLLER_MasterSendWord(Xuint32 BaseAddress, Xuint32 DstAddress);
-void DMA_CONTROLLER_MasterRecvWord(Xuint32 BaseAddress, Xuint32 SrcAddress);
+void DMA_CONTROLLER_MasterRecvWord(Xuint32 BaseAddress, Xuint32 SrcAddress, Xuint32 dest);
 
 void DMA_CONTROLLER_TranseferInitialize(Xuint32 BaseAddress, Xuint32 src, Xuint32 dest, Xuint32 length);
 void DMA_CONTROLLER_TransferGoGoGOOOOO(Xuint32 BaseAddress);
-
+void DMA_CONTROLLER_TransferStopSTOPSTOOOOOOOOP(Xuint32 BaseAddress);
 /**
  *
  * Run a self-test on the driver/device. Note this may be a destructive test if

@@ -45,13 +45,18 @@ void DMA_CONTROLLER_MasterSendWord(Xuint32 BaseAddress, Xuint32 DstAddress)
   Xil_Out16(BaseAddress+DMA_CONTROLLER_MST_BE_REG_OFFSET, 0xFFFF);
 
   /*
-   * Start user logic master write transfer by writting special pattern to its go port.
+   * Start user logic master write transfer by writing special pattern to its go port.
    */
   Xil_Out8(BaseAddress+DMA_CONTROLLER_MST_GO_PORT_OFFSET, MST_START);
 }
 
-void DMA_CONTROLLER_MasterRecvWord(Xuint32 BaseAddress, Xuint32 SrcAddress)
+void DMA_CONTROLLER_MasterRecvWord(Xuint32 BaseAddress, Xuint32 SrcAddress, Xuint32 dest)
 {
+
+  Xil_Out32(BaseAddress+DMA_CONTROLLER_SLV_REG0_OFFSET, SrcAddress);
+
+  Xil_Out32(BaseAddress+DMA_CONTROLLER_SLV_REG1_OFFSET, dest);
+//  Xil_Out32(BaseAddress+DMA_CONTROLLER_SLV_REG2_OFFSET, (Xuint32) 4);
   /*
    * Set user logic master control register for read transfer.
    */
@@ -68,7 +73,7 @@ void DMA_CONTROLLER_MasterRecvWord(Xuint32 BaseAddress, Xuint32 SrcAddress)
   Xil_Out16(BaseAddress+DMA_CONTROLLER_MST_BE_REG_OFFSET, 0xFFFF);
 
   /*
-   * Start user logic master read transfer by writting special pattern to its go port.
+   * Start user logic master read transfer by writing special pattern to its go port.
    */
   Xil_Out8(BaseAddress+DMA_CONTROLLER_MST_GO_PORT_OFFSET, MST_START);
 }
@@ -76,8 +81,8 @@ void DMA_CONTROLLER_MasterRecvWord(Xuint32 BaseAddress, Xuint32 SrcAddress)
 void DMA_CONTROLLER_TranseferInitialize(Xuint32 BaseAddress, Xuint32 srcAddress, Xuint32 destAddress, Xuint32 length){
 
 	  // Set control register to burst write operation
-	  Xil_Out8(BaseAddress+DMA_CONTROLLER_MST_CNTL_REG_OFFSET, MST_BRWR);
-	  xil_printf("control reg: %x (should be: %x)\r\n", Xil_In8(BaseAddress+DMA_CONTROLLER_MST_CNTL_REG_OFFSET), MST_BRWR);
+	  Xil_Out8(BaseAddress+DMA_CONTROLLER_MST_CNTL_REG_OFFSET, MST_BRRD);
+	  xil_printf("control reg: %x (should be: %x)\r\n", Xil_In8(BaseAddress+DMA_CONTROLLER_MST_CNTL_REG_OFFSET), MST_BRRD);
 
 	  // Set slv_reg0 to src address
 	  Xil_Out32(BaseAddress+DMA_CONTROLLER_SLV_REG0_OFFSET, srcAddress);
@@ -86,15 +91,20 @@ void DMA_CONTROLLER_TranseferInitialize(Xuint32 BaseAddress, Xuint32 srcAddress,
 	  Xil_Out32(BaseAddress+DMA_CONTROLLER_SLV_REG1_OFFSET, destAddress);
 	  xil_printf("slave reg 1 (dest): %x (should be: %x)\r\n", Xil_In32(BaseAddress+DMA_CONTROLLER_SLV_REG1_OFFSET), destAddress);
 	  // Set data transfer length
-	  Xil_Out32(BaseAddress+DMA_CONTROLLER_MST_LEN_REG_OFFSET, length);
-	  xil_printf("length reg: %x (should be: %x)\r\n", Xil_In32(BaseAddress+DMA_CONTROLLER_MST_LEN_REG_OFFSET), length);
+	  Xil_Out32(BaseAddress+DMA_CONTROLLER_SLV_REG2_OFFSET, length);
+	  xil_printf("length reg: %x (should be: %x)\r\n", Xil_In32(BaseAddress+DMA_CONTROLLER_SLV_REG2_OFFSET), length);
 	  // Set byte lane value
-//	  Xil_Out16(BaseAddress+DMA_CONTROLLER_MST_BE_REG_OFFSET, 0xFFFF);
+	  Xil_Out16(BaseAddress+DMA_CONTROLLER_MST_BE_REG_OFFSET, 0xFFFF);
 
 }
 
 void DMA_CONTROLLER_TransferGoGoGOOOOO(Xuint32 BaseAddress){
 	 // Start user logic master write transfer by writting special pattern to its go port.
 	  Xil_Out8(BaseAddress+DMA_CONTROLLER_MST_GO_PORT_OFFSET, MST_START);
+}
+
+void DMA_CONTROLLER_TransferStopSTOPSTOOOOOOOOP(Xuint32 BaseAddress){
+	 // Start user logic master write transfer by writting special pattern to its go port.
+	  Xil_Out8(BaseAddress+DMA_CONTROLLER_MST_GO_PORT_OFFSET, MST_START+1);
 }
 

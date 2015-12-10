@@ -170,7 +170,7 @@ architecture IMP of user_logic is
 	signal interrupt 											: std_logic;
 	signal FIFO_Full 											: std_logic;
   signal FIFO_Empty 										: std_logic;
-	signal currentIndex										: std_logic_vector(11 downto 0);
+	signal currentIndex										: std_logic_vector(31 downto 0);
   ------------------------------------------
   -- Signals for user logic slave model s/w accessible register example
   ------------------------------------------
@@ -627,20 +627,10 @@ begin
           when CMD_READ =>
             if ( Bus2IP_Mst_CmdAck = '1' and Bus2IP_Mst_Cmplt = '0' ) then
               mst_cmd_sm_state <= CMD_WAIT_FOR_READ_DATA;
-            elsif ( Bus2IP_Mst_Cmplt = '1' ) then
-              mst_cmd_sm_state <= CMD_WRITE;
-              if ( Bus2IP_Mst_Cmd_Timeout = '1' ) then
-                -- AXI4LITE address phase timeout
-                mst_cmd_sm_set_error   <= '1';
-                mst_cmd_sm_set_timeout <= '1';
-              elsif ( Bus2IP_Mst_Error = '1' ) then
-                -- AXI4LITE data transfer error
-                mst_cmd_sm_set_error   <= '1';
-              end if;
             else
               mst_cmd_sm_state       <= CMD_READ;
-              mst_cmd_sm_rd_req      <= mst_cntl_rd_req;
-              mst_cmd_sm_wr_req      <= mst_cntl_wr_req;
+              mst_cmd_sm_rd_req      <= '1';
+              mst_cmd_sm_wr_req      <= '0';
               mst_cmd_sm_ip2bus_addr <= slv_reg0 + currentIndex;
               mst_cmd_sm_ip2bus_be   <= mst_ip2bus_be(15 downto 16-C_MST_DWIDTH/8 );
               mst_cmd_sm_bus_lock    <= mst_cntl_bus_lock;
@@ -664,20 +654,10 @@ begin
 					when CMD_WRITE =>
             if ( Bus2IP_Mst_CmdAck = '1' and Bus2IP_Mst_Cmplt = '0' ) then
               mst_cmd_sm_state <= CMD_WAIT_FOR_WRITE_DATA;
-            elsif ( Bus2IP_Mst_Cmplt = '1' ) then
-              mst_cmd_sm_state <= CMD_DONE;
-              if ( Bus2IP_Mst_Cmd_Timeout = '1' ) then
-                -- AXI4LITE address phase timeout
-                mst_cmd_sm_set_error   <= '1';
-                mst_cmd_sm_set_timeout <= '1';
-              elsif ( Bus2IP_Mst_Error = '1' ) then
-                -- AXI4LITE data transfer error
-                mst_cmd_sm_set_error   <= '1';
-              end if;
             else
               mst_cmd_sm_state       <= CMD_WRITE;
-              mst_cmd_sm_rd_req      <= mst_cntl_rd_req;
-              mst_cmd_sm_wr_req      <= mst_cntl_wr_req;
+              mst_cmd_sm_rd_req      <= '0';
+              mst_cmd_sm_wr_req      <= '1';
               mst_cmd_sm_ip2bus_addr <= slv_reg1 + currentIndex;
               mst_cmd_sm_ip2bus_be   <= mst_ip2bus_be(15 downto 16-C_MST_DWIDTH/8 );
               mst_cmd_sm_bus_lock    <= mst_cntl_bus_lock;
@@ -699,7 +679,7 @@ begin
             end if;
 
           when CMD_DONE =>
-						if(currentIndex < mst_xfer_length) then
+						if(currentIndex < slv_reg2) then
 							mst_cmd_sm_state  <= CMD_READ;
 							currentIndex <= currentIndex + 4;
 						else

@@ -372,6 +372,9 @@ line 385 - Copying cache implementation netlist
 IPNAME:axi_gpio INSTANCE:switches_8bits -
 C:\Madsen\SpaceInvaderTestHW2\system.mhs line 395 - Copying cache implementation
 netlist
+IPNAME:dma_controller INSTANCE:dma_controller_0 -
+C:\Madsen\SpaceInvaderTestHW2\system.mhs line 406 - Copying cache implementation
+netlist
 
 Elaborating instances ...
 IPNAME:bram_block INSTANCE:microblaze_0_bram_block -
@@ -384,7 +387,7 @@ ClkGen elaborate status: PASSED
 Writing HDL for elaborated instances ...
 
 Inserting wrapper level ...
-Completion time: 1.00 seconds
+Completion time: 0.00 seconds
 
 Constructing platform-level connectivity ...
 Completion time: 0.00 seconds
@@ -418,4 +421,4 @@ INFO:EDK:3509 - NCF files should not be modified as they will be regenerated.
 
 Rebuilding cache ...
 
-Total run time: 37.00 seconds
+Total run time: 43.00 seconds
