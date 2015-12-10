@@ -37,6 +37,7 @@
 #include "spaceshipGlobals.h"
 #include "playSound.h"
 #include "renderHelper.h"
+#include "xtmrctr.h"
 
 #define SW7_MASK		0x80
 #define SW6_MASK		0x40
@@ -48,6 +49,11 @@
 #define DOWNBTN 		0x4					// Down btn
 #define FIFOSIZE 		512					// Size of AC97 Fifo
 #define BUFFERLENGTH 10
+//timer numbers
+#define DMA_COUNTER 	0
+#define SW_COUNTER		1
+#define SCREENSIZE 		640*480
+//#define FRAME_BUFFER_1_ADDR FRAME_BUFFER_0_ADDR + 8*SCREENSIZE
 
 // startLevel and getInt function prototype
 void startLevel(bool first);
@@ -55,8 +61,12 @@ void startLevel(bool first);
 bool gameIsOver = false;					// Game over flag
 bool started = false;							// Game started flag
 
+
+XTmrCtr timer; // instance of timer
+
 XAxiVdma videoDMAController;
 int frameIndex;								// VDMA frameIndex (which frame we are viewing
+
 
 unsigned pitCounter = 0;								// Counter for pit interrupts, goes up to 100 and resets
 unsigned screenUpdateCounter = 0;			// Counter for updating the time, goes up to 20 and resets
@@ -172,13 +182,21 @@ void timer_interrupt_handler() {
 					//SW7 has been set high
 					xil_printf("SW7 moved up.\r\n");
 					gamePaused = true;
+					XTmrCtr_Start(&timer, DMA_COUNTER);
+					xil_printf("DMA Capture start time: %d\r\n", XTmrCtr_GetValue(&timer, DMA_COUNTER));
 					DMA_CONTROLLER_TransferGoGoGOOOOO(XPAR_DMA_CONTROLLER_0_BASEADDR);
 				}
 				else if((prevSwitchState & SW6_MASK) != (currentSwitchState & SW6_MASK) && ((currentSwitchState & SW6_MASK) == SW6_MASK)){
 					//SW6 has been set high
 					xil_printf("SW6 moved up.\r\n");
 					gamePaused = true;
-					saveScreen(FRAME_BUFFER_0_ADDR + 8*640*480);
+					//start timer
+					XTmrCtr_Start(&timer, SW_COUNTER);
+					xil_printf("Software Capture start time: %d\r\n", XTmrCtr_GetValue(&timer, SW_COUNTER));
+					saveScreen( (unsigned int *) FRAME_BUFFER_0_ADDR + 2*SCREENSIZE);
+					//stop timer
+					XTmrCtr_Stop(&timer, SW_COUNTER);
+					xil_printf("Software Capture end time: %d\r\n", XTmrCtr_GetValue(&timer, SW_COUNTER));
 					gamePaused = false;
 				}
 				if((prevSwitchState & SW5_MASK) != (currentSwitchState & SW5_MASK)){
@@ -277,7 +295,9 @@ void pb_interrupt_handler() {
 }
 
 void dma_interrupt_handler() {
-	xil_printf("DMA interrupt\r\n");
+	//xil_printf("DMA interrupt\r\n");
+	XTmrCtr_Stop(&timer, DMA_COUNTER);
+	xil_printf("DMA Capture end time: %d\r\n", XTmrCtr_GetValue(&timer, DMA_COUNTER));
 	gamePaused = false;
 }
 
@@ -377,13 +397,22 @@ int main()
 	// is where you will write your video data. The vdma IP/driver then streams it to the HDMI
 	// IP.
 	myFrameBuffer.FrameStoreStartAddr[0] = FRAME_BUFFER_0_ADDR;
-	myFrameBuffer.FrameStoreStartAddr[1] = FRAME_BUFFER_0_ADDR + 8*640*480;
+	myFrameBuffer.FrameStoreStartAddr[1] = FRAME_BUFFER_0_ADDR + 8*SCREENSIZE;
+
 	// Initialize DMA Controller
 	// set saved screen data to another frame
-	int length = 640*480;
-	int destAddr = FRAME_BUFFER_0_ADDR + 8*length;
-	DMA_CONTROLLER_TranseferInitialize(XPAR_DMA_CONTROLLER_0_BASEADDR, (Xuint32) FRAME_BUFFER_0_ADDR, (Xuint32) destAddr, (Xuint32) ((4*length)-4));
+	int length = 4*SCREENSIZE;
+	int destAddr = FRAME_BUFFER_0_ADDR + 8*SCREENSIZE;
+	DMA_CONTROLLER_TranseferInitialize(XPAR_DMA_CONTROLLER_0_BASEADDR, (Xuint32) FRAME_BUFFER_0_ADDR, (Xuint32) destAddr, (Xuint32) (length-4));
 //	DMA_CONTROLLER_TransferGoGoGOOOOO(XPAR_DMA_CONTROLLER_0_BASEADDR);
+
+	//Initialize timer
+	XTmrCtr_Initialize(&timer, XPAR_AXI_TIMER_0_DEVICE_ID);
+	//reset to 0 for both DMA and SW counters
+	XTmrCtr_SetResetValue(&timer, 0, DMA_COUNTER);
+	XTmrCtr_SetResetValue(&timer, 0, SW_COUNTER);
+
+
 	// Set the push button peripheral to be inputs.
 	XGpio_SetDataDirection(&gpPB, 1, 0x0000001F);
 	// Enable the global GPIO interrupt for push buttons.
@@ -430,7 +459,7 @@ int main()
 
 
 	// This tells the HDMI controller the resolution of your display (there must be a better way to do this).
-	XIo_Out32(XPAR_AXI_HDMI_0_BASEADDR, 640*480);
+	XIo_Out32(XPAR_AXI_HDMI_0_BASEADDR, SCREENSIZE);
 
 	// Start the DMA for the read channel only.
 	if(XST_FAILURE == XAxiVdma_DmaStart(&videoDMAController, XAXIVDMA_READ)){

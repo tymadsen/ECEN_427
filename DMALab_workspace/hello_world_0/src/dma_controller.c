@@ -78,6 +78,12 @@ void DMA_CONTROLLER_MasterRecvWord(Xuint32 BaseAddress, Xuint32 SrcAddress, Xuin
   Xil_Out8(BaseAddress+DMA_CONTROLLER_MST_GO_PORT_OFFSET, MST_START);
 }
 
+/*
+ * Initialize the DMA controller
+ * Sets the operation type to a burst read
+ * Sets source, destination and length to slave registers in the DMA controller
+ * Sets the byte lane to all
+ */
 void DMA_CONTROLLER_TranseferInitialize(Xuint32 BaseAddress, Xuint32 srcAddress, Xuint32 destAddress, Xuint32 length){
 
 	  // Set control register to burst write operation
@@ -97,7 +103,9 @@ void DMA_CONTROLLER_TranseferInitialize(Xuint32 BaseAddress, Xuint32 srcAddress,
 	  Xil_Out16(BaseAddress+DMA_CONTROLLER_MST_BE_REG_OFFSET, 0xFFFF);
 
 }
-
+/*
+ * Kicks off the read/write transaction by setting the go value (0x0a) to the master go register
+ */
 void DMA_CONTROLLER_TransferGoGoGOOOOO(Xuint32 BaseAddress){
 	 // Start user logic master write transfer by writting special pattern to its go port.
 	  Xil_Out8(BaseAddress+DMA_CONTROLLER_MST_GO_PORT_OFFSET, MST_START);
